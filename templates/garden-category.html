@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-title wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <h2><i class="fa fa-leaf bg-green"></i> Category by: {{category.category_title}}</h2>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Blog</a></li>
+                    <li class="breadcrumb-item active">{{category.category_title}}</li>
+                </ol>
+            </div>                    
+        </div>
+    </div>
+</div>
+
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                <div class="page-wrapper">
+                    <div class="blog-list clearfix">
+                        
+                        {% for blog in posts %}
+                            <div class="blog-box row">
+                                <div class="col-md-4">
+                                    <div class="post-media">
+                                        <a href="#" title="">
+                                            {% if blog.feature_img %}
+                                                <img src="{{ blog.feature_img.url }}" alt="" class="img-fluid">
+                                            {% else %}
+                                                <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid">
+                                            {% endif %}
+                                            <div class="hovereffect"></div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="blog-meta big-meta col-md-8">
+                                    <span class="bg-aqua"><a href="#" title="">{{ blog.category.category_title }}</a></span>
+                                    <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
+                                    <p>{{ blog.post_details|striptags|truncatewords:30 }}
+                                        <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px;">Read More</a>
+                                    </p>
+                                    <small><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
+                                    
+                                    <small> Posted Time: {{ blog.created_at|date:"d M, Y" }}</small>
+                                    <small>by {{ blog.author.user.username }}</small>
+                                </div>
+                            </div>
+
+                            <hr class="invis">
+
+                            {% if forloop.counter == 3 %}
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="banner-spot clearfix">
+                                            <div class="banner-img">
+                                                <img src="{% static 'upload/banner_05.jpg' %}" alt="" class="img-fluid">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="invis">
+                            {% endif %}
+
+                        {% empty %}
+                            <div class="alert alert-info">No posts found.</div>
+                        {% endfor %}
+
+                    </div></div><hr class="invis">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-start">
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div><div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                <div class="sidebar">
+                    <div class="widget">
+                        <h2 class="widget-title">Search</h2>
+                        <form class="form-inline search-form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search on the site">
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+
+                    <div class="widget">
+                        <h2 class="widget-title">Recent Posts</h2>
+                        <div class="blog-list-widget">
+                            <div class="list-group">
+                            {% for recent in recent_posts %}
+                                <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action flex-column align-items-start">
+                                    <div class="w-100 justify-content-between">
+                                    {% if recent.feature_img %}
+                            <img src="{{ recent.feature_img.url }}" alt="" class="img-fluid float-left" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
+                        {% else %}
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid float-left">
+                        {% endif %}
+                        <h5 class="mb-1">{{ recent.title|truncatechars:45 }}</h5>
+                        <small>{{ recent.created_at|date:"d M, Y" }}</small>
+                        </div>
+                        </a>
+                        {% empty %}
+                <p>No recent posts available.</p>
+                {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <h2 class="widget-title">Advertising</h2>
+                        <div class="banner-spot clearfix">
+                            <div class="banner-img">
+                                <img src="{% static 'upload/banner_04.jpg' %}" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget">
+                        <h2 class="widget-title">Popular Categories</h2>
+                        <div class="link-widget">
+                    <ul>
+                        {% for cat in categories_list %}
+                        <li>
+                        <a href="{% url 'category' cat.category_slug %}">
+                        {{ cat.category_title }} <span>({{ cat.post_count }})</span></a>
+                        </li>
+                        {% empty %}
+                        <li>No categories available.</li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                    </div>
+                </div></div></div></div></section>
+{% endblock content %}
