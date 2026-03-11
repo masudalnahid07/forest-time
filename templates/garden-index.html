@@ -21,77 +21,101 @@
                                 <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
                                 <small><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.created_at }}</a></small>
                                 <small><a href="#" title="">Posted_By {{ blog.author }}</a></small>
-                            </div></div></div></div></div>{% endfor %}
-        </div></div></section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
 <section class="section wb">
     <div class="container">
         <div class="row">
+            
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                <div class="page-wrapper">
-                    <div class="blog-list clearfix">
-                        {% for blog in list_blogs %}
-                        <div class="blog-box row">
-                            <div class="col-md-4">
-                                <div class="post-media">
-                                    <a href="{% url 'single_post' blog.slug %}" title="">
-                                        {% if blog.feature_img %}
-                                            <img src="{{ blog.feature_img.url }}" alt="" class="img-fluid">
-                                        {% else %}
-                                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid">
-                                        {% endif %}
-                                        <div class="hovereffect"></div>
-                                    </a>
-                                </div></div><div class="blog-meta big-meta col-md-8">
-                                <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
+                <div id="live-search-results">
+                    
+                    <div class="page-wrapper">
+                        <div class="blog-list clearfix">
+                            {% for blog in list_blogs %}
+                            <div class="blog-box row">
+                                <div class="col-md-4">
+                                    <div class="post-media">
+                                        <a href="{% url 'single_post' blog.slug %}" title="">
+                                            {% if blog.feature_img %}
+                                                <img src="{{ blog.feature_img.url }}" alt="" class="img-fluid">
+                                            {% else %}
+                                                <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid">
+                                            {% endif %}
+                                            <div class="hovereffect"></div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="blog-meta big-meta col-md-8">
+                                    <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
+                                    <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
+                                    
+                                    <p>{{ blog.post_details|truncatewords_html:30|safe }}
+                                    <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px;">Read More</a></p>
+                                    
+                                    <small><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
+                                    <small> Posted Time: {{ blog.created_at|date:"d M, Y"}}</small>
+                                    <small><a href="#" title="">by {{ blog.author }}</a></small>
+                                </div>
+                            </div>
 
-                                <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
+                            {% if forloop.counter == 3 %}
+                            <hr class="invis">
+                            <div class="row">
+                                <div class="col-lg-10 offset-lg-1">
+                                    <div class="banner-spot clearfix">
+                                        <div class="banner-img">
+                                            <img src="{% static 'upload/banner_05.jpg' %}" alt="" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="invis">
+                            {% endif %}
+                            <hr class="invis">
+                            {% endfor %}
+                        </div>
+                    </div> <div class="row">
+                        <div class="col-md-12">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-start">
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
 
-                                <p>{{ blog.post_details|truncatewords:30|safe }}
-                                <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px;">Read More</a></p>
-
-                            <small><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
-
-                            <small> Posted Time: {{ blog.created_at|date:"d M, Y"}}</small>
-
-                            <small><a href="#" title="">by {{ blog.author }}</a></small>
-                            </div></div>
-
-                        {% if forloop.counter == 3 %}
-                        <hr class="invis">
-                        <div class="row">
-                            <div class="col-lg-10 offset-lg-1">
-                                <div class="banner-spot clearfix">
-                                    <div class="banner-img">
-                                        <img src="{% static 'upload/banner_05.jpg' %}" alt="" class="img-fluid">
-                                    </div></div></div></div>
-                        <hr class="invis">
-                        {% endif %}
-                        <hr class="invis">
-                        {% endfor %}
-                    </div></div><div class="row">
-                    <div class="col-md-12">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-start">
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div></div></div><div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                </div> </div> <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
                 <div class="sidebar">
                     <div class="widget">
                         <h2 class="widget-title">Search</h2>
-                        <form class="form-inline search-form" action="{% url 'search' %}" method="GET">
-                                <div class="form-group">
-                                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control" placeholder="Search on the site" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        <form action="{% url 'search' %}" method="GET" style="display: flex; gap: 5px;">
+                            <input type="text" 
+                                name="q" 
+                                value="{{ query }}" 
+                                placeholder="Type to search instantly... ✨"
+                                hx-get="{% url 'search' %}" 
+                                hx-trigger="keyup changed delay:500ms" 
+                                hx-target="#live-search-results" 
+                                hx-push-url="true"
+                                oninput="if(this.value.trim() === '') { window.location.href = '{% url 'home' %}'; }"
+                                style="flex-grow: 1; width: 100%; margin-bottom: 0;">
+                            <button type="submit" style="white-space: nowrap;">Search</button>
                         </form>
-                    </div><div class="widget">
+                    </div>
+
+                    <div class="widget">
                         <h2 class="widget-title">Recent Posts</h2>
                         <div class="blog-list-widget">
                             <div class="list-group">
@@ -101,22 +125,29 @@
                                         {% if recent.feature_img %}
                                         <img src="{{ recent.feature_img.url }}" alt="" class="img-fluid float-left">
                                         {% else %}
-                                    <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid float-left">
-                                    {% endif %}
-                                <h5 class="mb-1">{{ recent.title|truncatechars:45 }}</h5>
-                                <small>{{ recent.created_at|date:"d M, Y" }}</small>
+                                        <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid float-left">
+                                        {% endif %}
+                                        <h5 class="mb-1">{{ recent.title|truncatechars:45 }}</h5>
+                                        <small>{{ recent.created_at|date:"d M, Y" }}</small>
                                     </div>
                                 </a>
-                                {% empty %}
+                            {% empty %}
                             <p>No recent posts available.</p>
                             {% endfor %}
                             </div>
-                        </div></div><div class="widget">
+                        </div>
+                    </div>
+
+                    <div class="widget">
                         <h2 class="widget-title">Advertising</h2>
                         <div class="banner-spot clearfix">
                             <div class="banner-img">
                                 <img src="{% static 'upload/banner_04.jpg' %}" alt="" class="img-fluid">
-                            </div></div></div><div class="widget">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
                         <h2 class="widget-title">Instagram Feed</h2>
                         <div class="instagram-wrapper clearfix">
                             <a href="#"><img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid"></a>
@@ -128,19 +159,25 @@
                             <a href="#"><img src="{% static 'upload/garden_sq_07.jpg' %}" alt="" class="img-fluid"></a>
                             <a href="#"><img src="{% static 'upload/garden_sq_08.jpg' %}" alt="" class="img-fluid"></a>
                             <a href="#"><img src="{% static 'upload/garden_sq_09.jpg' %}" alt="" class="img-fluid"></a>
-                        </div></div><div class="widget">
+                        </div>
+                    </div>
+
+                    <div class="widget">
                         <h2 class="widget-title">Popular Categories</h2>
                         <div class="link-widget">
-                    <ul>
-                        {% for cat in categories_list %}
-                        <li>
-                        <a href="{% url 'category' cat.category_slug %}">
-                        {{ cat.category_title }} <span>({{ cat.post_count }})</span></a>
-                        </li>
-                        {% empty %}
-                        <li>No categories available.</li>
-                        {% endfor %}
-                    </ul>
-                        </div></div></div></div></div></div></section>
-
+                            <ul>
+                                {% for cat in categories_list %}
+                                <li>
+                                    <a href="{% url 'category' cat.category_slug %}">
+                                    {{ cat.category_title }} <span>({{ cat.post_count }})</span></a>
+                                </li>
+                                {% empty %}
+                                <li>No categories available.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> </div> </div>
+</section>
 {% endblock content %}

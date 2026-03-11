@@ -7,39 +7,8 @@
             <div class="col-lg-12">
                 <div class="page-wrapper">
                     
-                    <div class="blog-title-area">
-                        {% if query %}
-                            <h3>Search Results for: "<span class="color-green">{{ query }}</span>"</h3>
-                            <p>{{ results|length }} result(s) found.</p>
-                        {% else %}
-                            <h3>Please enter a search keyword.</h3>
-                        {% endif %}
-                    </div>
-
-                    <div class="row">
-                        {% if results %}
-                            {% for post in results %}
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="blog-box">
-                                        <div class="post-media">
-                                            <a href="{% url 'single_post' post.slug %}" title="">
-                                                {% if post.feature_img %}
-                                                    <img src="{{ post.feature_img.url }}" alt="{{ post.title }}" class="img-fluid" style="width: 100%; height: 250px; object-fit: cover;">
-                                                {% endif %}
-                                            </a>
-                                        </div>
-                                        <div class="blog-meta">
-                                            <h4><a href="{% url 'single_post' post.slug %}">{{ post.title }}</a></h4>
-                                            <small>{{ post.created_at|date:"d M, Y" }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% elif query %}
-                            <div class="col-lg-12">
-                                <p>Sorry, there are no matching posts"{{ query }}".</p>
-                            </div>
-                        {% endif %}
+                    <div id="live-search-results">
+                        {% include "partials/search_results.html" %}
                     </div>
                     
                 </div>

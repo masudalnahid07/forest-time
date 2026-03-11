@@ -130,6 +130,8 @@ def search(request):
     
     if query:
         query = query.strip() # যদি ইউজার ভুল করে লেখার আগে বা পরে স্পেস দিয়ে দেয়, এটি তা মুছে ফেলবে
+        
+        # আপনার অরিজিনাল কোডটিই রাখা হলো
         results = BlogPost.objects.filter(
             Q(title__icontains=query) | Q(post_details__icontains=query),
             status='published').distinct()
@@ -138,12 +140,6 @@ def search(request):
         'query': query,
         'results': results,
     }
-
-    # যদি রিকোয়েস্টটি HTMX থেকে আসে, তাহলে শুধু আংশিক (partial) টেমপ্লেট রেন্ডার হবে
-    if request.headers.get('HX-Request'):
-        return render(request, 'partials/search_results.html', context)
-    
-    # সাধারণ পেজ রিলোড বা ডিরেক্ট লিংকের জন্য সম্পূর্ণ পেজ রেন্ডার হবে
     return render(request, 'search.html', context)
 
 
