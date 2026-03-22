@@ -1,0 +1,70 @@
+{% load static %}
+
+<div class="sidebar">
+    <div class="widget">
+        <h2 class="widget-title">Search</h2>
+        <div class="search-container">
+            <form action="{% url 'search' %}" method="GET" id="searchForm" style="width: 100%; display: flex; align-items: center; position: relative;">
+                <input type="text" 
+                    name="q" 
+                    id="sidebarSearch" 
+                    class="expandable-search" 
+                    placeholder="Instant Search ⚡ &#xf002;" 
+                    value="{{ query|default:'' }}"
+                    required 
+                    hx-get="{% url 'search' %}" 
+                    hx-trigger="keyup changed delay:500ms" 
+                    hx-target="#live-search-results"
+                    onkeydown="if(event.keyCode === 13 && this.value.trim() === '') return false;"
+                    onkeyup="if(this.value.trim() === '') location.reload();">
+                <button type="submit" class="round-text-btn" onclick="if(document.getElementById('sidebarSearch').value.trim() === '') return false;">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="widget">
+        <h2 class="widget-title">Advertising</h2>
+        <div class="banner-spot clearfix">
+            <div class="banner-img">
+                <img src="{% static 'upload/banner_04.jpg' %}" alt="Promotion" class="img-fluid">
+            </div>
+        </div>
+    </div>
+
+    <div class="widget">
+        <h2 class="widget-title">Recent Posts</h2>
+        <div class="blog-list-widget">
+            <div class="list-group">
+            {% for recent in recent_posts %}
+                <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action flex-column align-items-start" style="padding: 10px 0; border: none; border-bottom: 1px solid #eee; background: transparent;">
+                    <div class="w-100 justify-content-between">
+                        {% if recent.feature_img %}
+                            <img src="{{ recent.feature_img.url }}" alt="" class="img-fluid float-left" style="width: 55px; height: 55px; object-fit: cover; margin-right: 15px; border-radius: 4px;">
+                        {% else %}
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid float-left" style="width: 55px; margin-right: 15px;">
+                        {% endif %}
+                        <h5 class="mb-1" style="font-size: 14px; font-weight: bold; line-height: 1.4; color: inherit;">{{ recent.title|truncatechars:35 }}</h5>
+                        <small style="color: #999;">{{ recent.created_at|date:"d M, Y" }}</small>
+                    </div>
+                </a>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="widget">
+        <h2 class="widget-title">Categories</h2>
+        <div class="link-widget">
+            <ul style="list-style: none; padding: 0;">
+                {% for cat in categories_list %}
+                    <li style="margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px;">
+                        <a href="{% url 'category' cat.category_slug %}" style="color: inherit; text-decoration: none; display: block;">
+                            {{ cat.category_title }} 
+                            <span style="float: right; color: #28a745; font-weight: bold;">({{ cat.post_count }})</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

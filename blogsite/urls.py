@@ -20,10 +20,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+# ১. handler404 ইম্পোর্ট করার প্রয়োজন নেই, সরাসরি ভেরিয়েবল হিসেবে লিখলেই হয়
+# তবে ভিউটি ইম্পোর্ট করে রাখা ভালো অথবা স্ট্রিং হিসেবে পাথ দেওয়া যায়।
+
 urlpatterns = [
-path('admin/', admin.site.urls),
-path('', include('blog.urls')),
+    path('admin/', admin.site.urls),
+    path('', include('blog.urls')), # আপনার ব্লগের সব ইউআরএল এখানে
 ]
+
+# ২. কাস্টম ৪-০-৪ হ্যান্ডলার সেট করা (অ্যাপের নাম 'blog' হলে)
+handler404 = 'blog.views.custom_404_view'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

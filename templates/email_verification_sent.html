@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="d-flex align-items-center" style="min-height: 80vh; background-color: #ffffff;">
+    <div class="container-fluid px-0">
+        <div class="row w-100 mx-0">
+            
+            <div class="col-lg-6 d-flex flex-column justify-content-center px-5" style="padding-top: 5rem; padding-bottom: 5rem; padding-left: 8% !important;">
+                
+                <h1 class="font-weight-bold mb-4" style="color: #1a1a1a; font-size: 2.5rem; letter-spacing: -0.5px;">
+                    Great! Now let's verify your <br> email address.
+                </h1>
+                
+                <p class="mb-4" style="font-size: 1.1rem; color: #4a4a4a; line-height: 1.6;">
+                    To validate your registration, an email has been sent to <br>
+                    <strong style="color: #000;">{{ user_email }}</strong> with a link to verify your account.
+                </p>
+                
+                <p class="mb-5" style="font-size: 1rem; color: #666;">
+                    If you have not received the email after a few minutes, please<br>check your spam folder.
+                </p>
+                
+                <div class="mt-2">
+                    <a href="#" class="d-inline-block mb-4" style="color: #4f46e5; font-weight: 600; text-decoration: none; font-size: 1.05rem;">
+                        Resend email
+                    </a>
+                    <br>
+                    <a href="{% url 'register' %}" class="d-inline-block" style="color: #555; text-decoration: underline; font-size: 0.95rem;">
+                        Sign up with another email address
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background-color: #fdfcfb; border-left: 1px solid #f0f0f0;">
+                <img src="{% static 'upload/email_illustration.jpeg' %}" alt="Email Verification Illustration" class="img-fluid" style="max-width: 75%;">
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock content %}

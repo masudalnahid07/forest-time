@@ -922,6 +922,8 @@ div.tab button:hover {
 
 .single-post-media img {
     width: 100%;
+    height: 360px; /* আপনার আগের রিকোয়ারমেন্ট অনুযায়ী 460px দেওয়া হলো */
+    object-fit: cover;
 }
 
 .blog-title-area {
@@ -1068,9 +1070,55 @@ div.tab button:hover {
     font-weight: bold;
 }
 
+/* Homepage for hero section to bloglist marin maintain*/
 .img-fullwidth {
     width: 100%;
+    height: auto; /* ছবির অরিজিনাল রেশিও ধরে রাখবে */
+    object-fit: cover;
     margin-bottom: 2rem;
+}
+
+/* Single Post image fix */
+/* CKEditor 5 এর ইমেজ কন্টেইনার ফিক্স */
+.pp figure.image, 
+.blog-content figure.image {
+    width: 100% !important;
+    max-width: 650px !important;
+    margin: 15px auto !important;
+    display: block !important;
+}
+
+/* Single Post image fix */
+/* মূল ইমেজের সাইজ ফিক্স */
+.pp figure.image img, 
+.blog-content figure.image img, 
+.pp img, 
+.blog-content img {
+    width: 100% !important;
+    height: 360px !important;
+    object-fit: cover !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* ফিচার ইমেজের সাইজ ছোট করার জন্য */
+.single-post-media img {
+    width: 100% !important;
+    max-width: 700px !important; /* আগের 800px থেকে কমিয়ে 700px করা হলো */
+    height: 400px !important;    /* আগের 460px থেকে কমিয়ে 400px করা হলো */
+    object-fit: cover !important;
+    display: block !important;
+    margin: 0 auto !important;   /* ছবি ছোট হলেও যেন কন্টেইনারের মাঝখানে থাকে */
+}
+
+.pp ul li p {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    display: inline-block; /* অনেক সময় ব্লক এলিমেন্টের কারণে গ্যাপ হয় */
+}
+
+.pp ul li {
+    margin-bottom: 8px !important; /* এখানে আপনার পছন্দমতো গ্যাপ দিন */
 }
 
 .check {
@@ -1384,37 +1432,67 @@ hr.invis3 {
     padding-top: 1rem
 }
 
+/* টেম্পলেটের সার্চ আইকন কাস্টোমাইজ করা */
+
+/* ফর্ম কন্টেইনার */
+.search-form {
+    display: flex !important;
+    align-items: center; 
+    width: 100%;
+    max-width: 300px; 
+}
+
+.search-form .form-group {
+    flex: 1; 
+    margin: 0 !important;
+}
+
+/* ইনপুট ফিল্ড */
 .search-form .form-control {
-    border-radius: 0;
-    margin-bottom: 1.4rem;
-    border: 1px solid #edeff2;
-    font-size: 12px;
+    width: 100%;
     min-height: 45px;
-    text-transform: none;
-    font-weight: 400;
-}
-
-.search-form .form-control {
     margin: 0;
-    min-width: 240px;
-    border-right: 0;
+    font-size: 14px;
+    border: 1px solid #edeff2;
+    border-right: 0 !important;
+    
+    /* বাম পাশের কোণাগুলো গোল করার জন্য */
+    border-radius: 25px 0 0 25px !important; 
+    
+    padding-left: 15px; /* লেখা যাতে বর্ডারের একদম গায়ে লেগে না থাকে */
+    outline: none;
+    box-shadow: none;
 }
 
-.search-form .btn:hover,
-.search-form .btn:focus,
+/* সার্চ বাটন */
 .search-form .btn {
-    padding: 0;
-    border-color: #edeff2 !important;
+    width: 50px; /* আইকনের চারপাশে একটু বেশি জায়গা পাওয়ার জন্য */
     height: 45px;
-    position: absolute;
-    border-radius: 0 !important;
+    margin: 0;
+    padding: 0;
     background-color: #edeff2 !important;
-    right: 0;
     color: #a3a5a8 !important;
-    width: 45px;
-    line-height: 45px;
-    margin-left: 0
+    border: 1px solid #edeff2 !important;
+    border-left: 0 !important;
+    
+    /* ডান পাশের কোণাগুলো গোল করার জন্য */
+    border-radius: 0 25px 25px 0 !important; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 10;
+    transition: 0.3s ease-in-out;
 }
+
+/* হোভার ইফেক্ট */
+.search-form .btn:hover {
+    background-color: #d5d8dc !important;
+    color: #333 !important;
+}
+/* টেম্পলেটের সার্চ আইকন কাস্টোমাইজ করা */
 
 .sidebar .widget ul {
     list-style: none;

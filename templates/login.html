@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section wb">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-12">
+                <div class="custombox clearfix">
+                    <h4 class="small-title">Log In</h4>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" class="form-wrapper">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary mt-3">Log In</button>
+                    </form>
+                    
+                    <p class="mt-3">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

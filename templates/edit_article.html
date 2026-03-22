@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-title wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <h2><i class="fa fa-edit bg-green"></i> Edit Article</h2>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Edit Article</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                <div class="page-wrapper">
+                    <div class="blog-content" style="padding: 20px; background: #fff; border: 1px solid #eee;">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            
+                            <div class="form-group">
+                                {{ form.as_p }}
+                            </div>
+                            
+                            <hr>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Update Article</button>
+                            <a href="{% url 'single_post' post.slug %}" class="btn btn-secondary">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                <div class="sidebar">
+                    <div class="widget">
+                        <h2 class="widget-title">Recent Posts</h2>
+                        <div class="blog-list-widget">
+                            <div class="list-group">
+                                {% for recent in recent_posts %}
+                                    <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <div class="w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ recent.title|truncatechars:40 }}</h5>
+                                            <small>{{ recent.created_at|date:"d M, Y" }}</small>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <h2 class="widget-title">Categories</h2>
+                        <div class="link-widget">
+                            <ul>
+                                {% for cat in categories_list %}
+                                    <li><a href="{% url 'category' cat.category_slug%}">{{cat.category_title }} <span>({{cat.post_count}})</span></a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* CKEditor কে রেসপন্সিভ করার জন্য */
+    .django_ckeditor_5 {
+        width: 100% !important;
+    }
+    .ck-editor__editable {
+        min-height: 400px;
+    }
+</style>
+{% endblock content %}
