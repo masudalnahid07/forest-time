@@ -1,29 +1,33 @@
-from random import choice
-from tarfile import NUL
-from turtle import title
 from django.db import models
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field as RichTextField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
 
-# Create your models here.
-
 User = get_user_model()
+
 class Author(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = RichTextField(config_name='extends')
-    profile_image = models.ImageField(upload_to="profiles/%Y/%m/%d/", null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
+    bio = RichTextField(config_name="extends")
+    profile_image = models.ImageField(
+        upload_to="profiles/%Y/%m/%d/", null=True, blank=True
+    )
 
     def __str__(self):
         return self.user.username
 
+
 class BlogMeta(models.Model):
     blog_title = models.CharField(max_length=250)
-    blog_details=models.TextField()
+    blog_details = models.TextField()
+
+    class Meta:
+        verbose_name = "Blog Meta"
+        verbose_name_plural = "Blog Meta"
 
     def __str__(self):
         return self.blog_title
+
 
 class Category(models.Model):
     category_title = models.CharField(max_length=250, unique=True)
@@ -32,92 +36,131 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
-        ordering = ['category_title']
+        ordering = ["category_title"]
 
     def __str__(self):
         return self.category_title
 
     def save(self, *args, **kwargs):
-
-        # Title কে title case করে নাও
         if self.category_title:
             self.category_title = self.category_title.title()
-
-        # যদি slug ফিল্ড blank থাকে → title থেকে নিবে
+        
+        # Determine base slug
         if not self.category_slug:
             self.category_slug = slugify(self.category_title)
         else:
-            # যদি slug ফিল্ডে কিছু লেখা থাকে → clean করবে
             self.category_slug = slugify(self.category_slug)
 
-        base_slug = self.category_slug
-        slug = base_slug
+        # Unique slug logic
+        original_slug = self.category_slug
+        queryset = Category.objects.all().exclude(pk=self.pk)
         counter = 1
-
-        # Duplicate check (নিজের instance বাদ দিয়ে)
-        while Category.objects.filter(category_slug=slug).exclude(pk=self.pk).exists():
-            slug = f"{base_slug}-{counter}"
+        while queryset.filter(category_slug=self.category_slug).exists():
+            self.category_slug = f"{original_slug}-{counter}"
             counter += 1
-
-        self.category_slug = slug
 
         super().save(*args, **kwargs)
 
-class BlogPost(models.Model):
 
+class BlogPost(models.Model):
     STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('published', 'Published'),
+        ("draft", "Draft"),
+        ("published", "Published"),
     ]
+    
+    # পোস্টের ধরন নির্ধারণের জন্য (Schema-র জন্য গুরুত্বপূর্ণ)
+    POST_TYPE_CHOICES = [
+        ('info', 'Informative (BlogPosting)'),
+        ('review', 'Product Review (Review)'),
+    ]
+
     title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    category = models.ForeignKey('Category',on_delete=models.SET_NULL,null=True,related_name='posts')
-    feature_img = models.ImageField(upload_to='images/%Y/%m/%d/',null=True,blank=True)
+    
+    # স্কিমা এবং ক্যাটাগরি ডাটা
+    post_type = models.CharField(max_length=10, choices=POST_TYPE_CHOICES, default='info')
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, related_name="posts"
+    )
+    
+    # ইমেজ ও এসইও ফিল্ড
+    feature_img = models.ImageField(upload_to="images/%Y/%m/%d/", null=True, blank=True)
+    focus_keyword = models.CharField(max_length=500, blank=True, null=True)
     meta_keywords = models.CharField(max_length=500, blank=True)
-    meta_description = models.CharField(max_length=500, blank=True,unique=True)
-    post_details = RichTextField(config_name='extends')
-    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='draft')
-    author = models.ForeignKey('Author',on_delete=models.SET_NULL,null=True,related_name='posts')
+    meta_description = models.TextField(max_length=500, blank=True)
+    
+    # রিভিউ পোস্টের জন্য অতিরিক্ত ফিল্ড (Product Schema)
+    product_name = models.CharField(max_length=250, blank=True, null=True, help_text="রিভিউ পোস্ট হলে প্রোডাক্টের নাম দিন")
+    product_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="প্রোডাক্টের দাম (USD)")
+    product_url = models.URLField(blank=True, null=True, help_text="অ্যাফিলিয়েট বা প্রোডাক্ট লিংক")
+    rating_value = models.FloatField(default=4.5, blank=True, null=True, help_text="রেটিং (১ থেকে ৫ এর মধ্যে)")
+
+    # কন্টেন্ট ও অন্যান্য
+    post_details = RichTextField(config_name="extends")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
+    author = models.ForeignKey(
+        Author, on_delete=models.SET_NULL, null=True, related_name="posts"
+    )
     tags = TaggableManager(blank=True)
+    
+    # ট্র্যাকিং ও সময়
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
-    views_count = models.IntegerField(default=0)
+    views_count = models.PositiveIntegerField(default=0)
+
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        # Title কে Title Case বানানো
+        # টাইটেল ফরমেটিং
         if self.title:
             self.title = self.title.title()
-        # যদি slug ফাঁকা থাকে → title থেকে auto slug বানাবে
+            
+        # অটো স্লাগ জেনারেশন ও ডুপ্লিকেট চেক
         if not self.slug:
-            base_slug = slugify(self.title)
+            self.slug = slugify(self.title)
         else:
-            # যদি slug দেওয়া থাকে → clean করবে
-            base_slug = slugify(self.slug)
-        slug = base_slug
+            self.slug = slugify(self.slug)
+
+        original_slug = self.slug
+        queryset = BlogPost.objects.all().exclude(pk=self.pk)
         counter = 1
-        # Duplicate check (নিজের instance বাদ দিয়ে)
-        while BlogPost.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-            slug = f"{base_slug}-{counter}"
+        while queryset.filter(slug=self.slug).exists():
+            self.slug = f"{original_slug}-{counter}"
             counter += 1
-        self.slug = slug
+
         super().save(*args, **kwargs)
 
+
 class Comment(models.Model):
-    user = models.ForeignKey(User, related_name="User_comments", on_delete=models.CASCADE)
-    post = models.ForeignKey(BlogPost,related_name="post_comments", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="user_comments", on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(
+        BlogPost, related_name="comments", on_delete=models.CASCADE
+    )
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return self.text
+        return f"Comment by {self.user.username} on {self.post.title}"
+
 
 class Reply(models.Model):
-    user = models.ForeignKey(User, related_name="User_Replies", on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment,related_name="Comment_Reply", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="user_replies", on_delete=models.CASCADE
+    )
+    comment = models.ForeignKey(
+        Comment, related_name="replies", on_delete=models.CASCADE
+    )
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Replies"
+
     def __str__(self):
-        return self.text
+        return f"Reply by {self.user.username}"

@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Forest Time</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet"> 
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #0d1261;
+            font-family: 'Droid Sans', sans-serif;
+        }
+
+        .error-wrapper {
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a1f7a 0%, #0d1261 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* গোলাপি সার্কেলগুলো */
+        .pink-circle {
+            position: absolute;
+            background-color: #ff2d81;
+            border-radius: 50%;
+            box-shadow: 0 10px 40px rgba(255, 45, 129, 0.4);
+            z-index: 1;
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        /* সার্কেলের পজিশন ও সাইজ (Responsive) */
+        .c1 { width: clamp(100px, 15vw, 160px); height: clamp(100px, 15vw, 160px); top: 10%; left: 8%; animation-delay: 0s; }
+        .c2 { width: clamp(60px, 10vw, 90px); height: clamp(60px, 10vw, 90px); top: 15%; right: 12%; animation-delay: 1s; }
+        .c3 { width: 45px; height: 45px; top: 45%; left: 25%; animation-delay: 2s; }
+        .c4 { width: clamp(120px, 20vw, 190px); height: clamp(120px, 20vw, 190px); bottom: 10%; right: 8%; animation-delay: 0.5s; }
+        .c5 { width: 70px; height: 70px; bottom: 15%; left: 15%; animation-delay: 1.5s; }
+        .c6 { width: 35px; height: 35px; top: 35%; right: 35%; animation-delay: 2.5s; }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .display-404 {
+            font-size: calc(5rem + 6vw);
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+        }
+
+        .lead {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .trouble-text {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        /* কাস্টম পিঙ্ক বাটন */
+        .btn-pink {
+            background-color: #ff2d81;
+            color: white !important;
+            padding: 12px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 45, 129, 0.4);
+        }
+
+        .btn-pink:hover {
+            background-color: #e62873;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 45, 129, 0.5);
+        }
+
+        @keyframes float {
+            from { transform: translateY(0) rotate(0deg); }
+            to { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* মোবাইল স্ক্রিনের জন্য */
+        @media (max-width: 576px) {
+            .display-404 { font-size: 6rem; }
+            .pink-circle { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-wrapper">
+        <div class="pink-circle c1"></div>
+        <div class="pink-circle c2"></div>
+        <div class="pink-circle c3"></div>
+        <div class="pink-circle c4"></div>
+        <div class="pink-circle c5"></div>
+        <div class="pink-circle c6"></div>
+
+        <div class="content container">
+            <h1 class="display-404">404</h1>
+            <p class="lead">It looks like you're lost...</p>
+            <p class="trouble-text">That's a trouble?</p>
+            <a href="{% url 'home' %}" class="btn btn-pink">GO BACK HOME</a>
+        </div>
+    </div>
+
+</body>
+</html>

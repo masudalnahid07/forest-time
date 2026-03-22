@@ -1,0 +1,17 @@
+<div class="pp">
+    {{ post.post_details|safe }}
+</div>
+
+{% if request.user.is_authenticated %}
+    {% if request.user.id == post.author.user.id or request.user.is_superuser %}
+    <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">
+        <a style="cursor: pointer; color: #fff;" 
+           class="btn btn-warning" 
+           hx-get="{% url 'htmx_edit_article' post.slug %}" 
+           hx-target="#article-content-wrapper" 
+           hx-swap="innerHTML">
+            <i class="fa fa-edit"></i> Click To Edit
+        </a>
+    </div>
+    {% endif %}
+{% endif %}
