@@ -19,9 +19,22 @@
     <link href="{% static 'css/version/garden.css' %}" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
+    <style>
+        /* ড্রপডাউন হোভার ইফেক্ট */
+        @media (min-width: 992px) {
+            .nav-item.dropdown:hover .dropdown-menu {
+                display: block;
+                margin-top: 0;
+            }
+        }
+        .dropdown-item:hover {
+            background-color: #74a044 !important;
+            color: #fff !important;
+        }
+    </style>
+
 {% block extra_head %}
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
-
     <meta name="description" content="{% if post.meta_description %}{{ post.meta_description }}{% else %}{{ post.post_details|striptags|truncatewords:20 }}{% endif %}">
     
     {% if post.meta_keywords or post.focus_keyword %}
@@ -80,26 +93,23 @@
                     <div class="col-lg-4 hidden-md-down text-center">
                         <div class="topsearch" style="display: inline-block; padding-top: 10px;">
                             {% if request.user.is_authenticated %}
-                                
                                 {% if request.user.is_superuser %}
                                     <a href="{% url 'admin:index' %}" style="margin-right: 15px;"><i class="fa fa-dashboard"></i> Dashboard</a>
                                 {% else %}
-                                    <a href="{% url 'profile' %}" style="margin-right: 15px;"><i class="fa fa-user"></i> My Profile</a>
+                                    <a href="#" style="margin-right: 15px;"><i class="fa fa-user"></i> My Profile</a>
                                 {% endif %}
 
-                                {% if article %}
-                                    {% if request.user == article.author or request.user.is_superuser %}
-                                        <a href="{% url 'edit_article' article.slug %}" style="color: #ffeb3b; font-weight: bold;"><i class="fa fa-edit"></i> Click To Edit</a>
+                                {% if post %}
+                                    {% if request.user == post.author.user or request.user.is_superuser %}
+                                        <a href="{% url 'edit_article' post.slug %}" style="color: #ffeb3b; font-weight: bold;"><i class="fa fa-edit"></i> Click To Edit</a>
                                     {% endif %}
                                 {% endif %}
-                                
                             {% endif %}
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                         <div class="topsearch text-right">
                             <a data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-search"></i> Search</a>
-                            
                             <a id="darkModeToggle" title="Toggle Dark Mode" style="cursor: pointer;">
                                 <i class="fa fa-moon-o"></i>
                             </a>
@@ -132,13 +142,30 @@
                             <li class="nav-item">
                                 <a class="nav-link color-green-hover" href="{% url 'home' %}">Home</a>
                             </li>
-                            {% for categores in all_categories %}
-                            <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="{% url 'category' categores.category_slug %}">{{categores.category_title}}</a>
-                            </li>
+
+                            {# Context Processor থেকে আসা categories_list ব্যবহার করা হয়েছে #}
+                            {% for categores in categories_list %}
+                                {% if categores.children.all %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle color-green-hover" href="#" id="cat-{{ categores.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{ categores.category_title }}
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="cat-{{ categores.id }}">
+                                            <a class="dropdown-item" href="{% url 'category' categores.category_slug %}">All in {{ categores.category_title }}</a>
+                                            {% for subcat in categores.children.all %}
+                                                <a class="dropdown-item" href="{% url 'category' subcat.category_slug %}">{{ subcat.category_title }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <li class="nav-item">
+                                        <a class="nav-link color-green-hover" href="{% url 'category' categores.category_slug %}">{{ categores.category_title }}</a>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
+
                             <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="garden-contact.html">Contact</a>
+                                <a class="nav-link color-green-hover" href="#">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -149,14 +176,17 @@
         {% block content %}{% endblock content %}
 
         {% include 'footer.html' %}
-        {% include 'scripts.html' %}
+        
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/tether.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
 
         <script>
             const toggleBtn = document.getElementById('darkModeToggle');
             const body = document.body;
             const icon = toggleBtn.querySelector('i');
 
-            // Check for saved theme in localStorage
             if (localStorage.getItem('theme') === 'dark') {
                 body.classList.add('dark-mode');
                 icon.classList.replace('fa-moon-o', 'fa-sun-o');
@@ -164,7 +194,6 @@
 
             toggleBtn.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
-                
                 if (body.classList.contains('dark-mode')) {
                     localStorage.setItem('theme', 'dark');
                     icon.classList.replace('fa-moon-o', 'fa-sun-o');

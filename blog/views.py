@@ -27,9 +27,11 @@ from .models import BlogPost, Category, Author, Comment, Reply
 
 
 # Helper function to avoid repeating code
+
+# 1. Single Post View
 def get_sidebar_data():
     return {
-        "categories_list": Category.objects.annotate(post_count=Count("posts")),
+        # "categories_list" এখান থেকে সরিয়ে ফেলা হয়েছে কারণ এটি এখন global_categories (Context Processor) থেকে আসে।
         "recent_posts": BlogPost.objects.filter(status="published").order_by("-created_at")[:5]
     }
 
@@ -251,7 +253,7 @@ def toggle_status(request, pk): # request.POST.get('pk') এর বদলে URL
     # JSON এর বদলে HTML বাটন রিটার্ন করা হচ্ছে যেন HTMX ঠিকমতো কাজ করে
     new_button_html = f'''
         <button style="background-color: {bg_color}; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;" 
-        hx-post="/toggle-status/{post.id}/" hx-swap="outerHTML">{btn_text}</button>
+        hx-post="/toggle-status/{post.pk}/" hx-swap="outerHTML">{btn_text}</button>
     '''
     return HttpResponse(new_button_html)
 
