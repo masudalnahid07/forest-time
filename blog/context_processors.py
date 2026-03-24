@@ -1,7 +1,9 @@
-from .models import Category
+# blog/context_processors.py
 
-def category_context(request):
-    # এটি আপনার ডাটাবেস থেকে সব ক্যাটাগরি নিয়ে আসবে
+from .models import Category
+from django.db.models import Count
+
+def global_categories(request): # এই নাম এবং স্পেলিং চেক করুন
     return {
-        'all_categories': Category.objects.all()
+        "categories_list": Category.objects.filter(parent=None).annotate(post_count=Count("posts")),
     }

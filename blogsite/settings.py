@@ -67,7 +67,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 # আপনার প্রসেসরটি এখানে যোগ করুন
-                "blog.context_processors.category_context",
+                'blog.context_processors.global_categories',
             ],
         },
     },

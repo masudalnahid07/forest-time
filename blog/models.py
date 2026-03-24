@@ -1,8 +1,10 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field as RichTextField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -28,10 +30,25 @@ class BlogMeta(models.Model):
     def __str__(self):
         return self.blog_title
 
+def global_categories(request):
+    # এটি শুধু মেইন ক্যাটাগরিগুলো (যাদের parent নেই) এবং তাদের পোস্ট কাউন্ট নিয়ে আসবে
+    return {
+        "categories_list": Category.objects.filter(parent=None).annotate(post_count=Count("posts")),
+    }
+
 
 class Category(models.Model):
     category_title = models.CharField(max_length=250, unique=True)
     category_slug = models.SlugField(max_length=250, unique=True, blank=True)
+    
+    # সাব-ক্যাটাগরির জন্য নিচের ফিল্ডটি যুক্ত করা হয়েছে
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name='children'
+    )
 
     class Meta:
         verbose_name = "Category"
@@ -39,19 +56,20 @@ class Category(models.Model):
         ordering = ["category_title"]
 
     def __str__(self):
+        # যদি এটি সাব-ক্যাটাগরি হয় তবে "Main > Sub" ফরম্যাটে দেখাবে
+        if self.parent:
+            return f"{self.parent.category_title} → {self.category_title}"
         return self.category_title
 
     def save(self, *args, **kwargs):
         if self.category_title:
             self.category_title = self.category_title.title()
         
-        # Determine base slug
         if not self.category_slug:
             self.category_slug = slugify(self.category_title)
         else:
             self.category_slug = slugify(self.category_slug)
 
-        # Unique slug logic
         original_slug = self.category_slug
         queryset = Category.objects.all().exclude(pk=self.pk)
         counter = 1
@@ -80,7 +98,7 @@ class BlogPost(models.Model):
     # স্কিমা এবং ক্যাটাগরি ডাটা
     post_type = models.CharField(max_length=10, choices=POST_TYPE_CHOICES, default='info')
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, related_name="posts"
+        'Category', on_delete=models.SET_NULL, null=True, related_name="posts"
     )
     
     # ইমেজ ও এসইও ফিল্ড
@@ -92,18 +110,18 @@ class BlogPost(models.Model):
     # রিভিউ পোস্টের জন্য অতিরিক্ত ফিল্ড (Product Schema)
     product_name = models.CharField(max_length=250, blank=True, null=True, help_text="রিভিউ পোস্ট হলে প্রোডাক্টের নাম দিন")
     product_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="প্রোডাক্টের দাম (USD)")
-    product_url = models.URLField(blank=True, null=True, help_text="অ্যাফিলিয়েট বা প্রোডাক্ট লিংক")
+    product_url = models.URLField(blank=True, null=True, help_text="অ্যাফিলিয়েট বা প্রোডাক্ট লিংক")
     rating_value = models.FloatField(default=4.5, blank=True, null=True, help_text="রেটিং (১ থেকে ৫ এর মধ্যে)")
 
     # কন্টেন্ট ও অন্যান্য
     post_details = RichTextField(config_name="extends")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
     author = models.ForeignKey(
-        Author, on_delete=models.SET_NULL, null=True, related_name="posts"
+        'Author', on_delete=models.SET_NULL, null=True, related_name="posts"
     )
     tags = TaggableManager(blank=True)
     
-    # ট্র্যাকিং ও সময়
+    # ট্র্যাকিং ও সময়
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     views_count = models.PositiveIntegerField(default=0)
@@ -113,6 +131,10 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+
+    # ওয়ার্ডপ্রেসের মতো "View Post" বাটন বা লিংক পাওয়ার জন্য এটি যুক্ত করা হয়েছে
+    def get_absolute_url(self):
+        return reverse("single_post", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         # টাইটেল ফরমেটিং
@@ -133,7 +155,6 @@ class BlogPost(models.Model):
             counter += 1
 
         super().save(*args, **kwargs)
-
 
 class Comment(models.Model):
     user = models.ForeignKey(

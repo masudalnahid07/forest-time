@@ -6,13 +6,22 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                <h2><i class="fa fa-leaf bg-green"></i> Category by: {{category.category_title}}</h2>
+                <h2><i class="fa fa-leaf bg-green"></i> Category: {{ category.category_title }}</h2>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Blog</a></li>
-                    <li class="breadcrumb-item active">{{category.category_title}}</li>
+                    
+                    {# যদি এটি সাব-ক্যাটাগরি হয়, তবে মেইন ক্যাটাগরির লিংক দেখাবে #}
+                    {% if category.parent %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'category' category.parent.category_slug %}">{{ category.parent.category_title }}</a>
+                        </li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="#">Blog</a></li>
+                    {% endif %}
+                    
+                    <li class="breadcrumb-item active">{{ category.category_title }}</li>
                 </ol>
             </div>                    
         </div>
@@ -23,6 +32,19 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                {# সাব-ক্যাটাগরি থাকলে সেগুলোর একটা ছোট লিস্ট এখানে দেখানো যেতে পারে (ঐচ্ছিক) #}
+                {% if category.children.all %}
+                <div class="subcategory-list mb-4">
+                    <p><strong>Sub-categories:</strong></p>
+                    {% for sub in category.children.all %}
+                        <a href="{% url 'category' sub.category_slug %}" class="btn btn-outline-success btn-sm" style="margin-right: 5px;">
+                            {{ sub.category_title }}
+                        </a>
+                    {% endfor %}
+                    <hr>
+                </div>
+                {% endif %}
+
                 <div id="live-search-results">
                     <div class="page-wrapper">
                         {% include 'partials/category_list_partial.html' %}
