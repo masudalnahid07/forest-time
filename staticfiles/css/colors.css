@@ -1,0 +1,146 @@
+/**************************************
+    File Name: colors.css
+    Template Name: Forest Time
+    Accessibility Version: Color Blind Friendly
+**************************************/
+
+/* 1. PRIMARY COLORS - মেইন থিম কালার (ডিপ গ্রিন)
+**************************************/
+.authorbox p a,
+.pp a,
+.sitemap-wrapper small,
+.fa-user-circle-o,
+.footer h5:hover,
+a:hover,
+a:focus,
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus,
+.navbar-inverse .navbar-nav .active > .nav-link,
+.navbar-inverse .navbar-nav .nav-link.active,
+.navbar-inverse .navbar-nav .nav-link.open,
+.navbar-inverse .navbar-nav .open > .nav-link {
+    /* কালার ব্লাইন্ডদের জন্য এই সবুজটি স্পষ্ট এবং সাধারণের জন্য আরামদায়ক */
+    color: #1b5e20 !important; 
+}
+
+.dmtop,
+.search-form .btn:hover,
+.search-form .btn:focus,
+.search-form .btn {
+    color: #ffffff !important;
+    background-color: #1b5e20 !important;
+}
+
+.tag-cloud-single span,
+.page-title i,
+.btn:hover,
+.sitemap-wrapper .year,
+.btn:focus,
+.navbar-inverse .navbar-toggler {
+    color: #ffffff !important;
+    background-color: #1b5e20;
+}
+
+.blockquote {
+    border-left-color: #1b5e20;
+    background-color: #f9fbf9; /* বোরডারের সাথে হালকা ব্যাকগ্রাউন্ড */
+}
+
+.footer .widget-title {
+    border-color: #1b5e20;
+}
+
+
+/* 2. CATEGORY COLORS - ক্যাটাগরি কালার ফিক্স
+**************************************/
+
+/* Green Category (মেইন থিম) */
+.navbar-nav .nav-link.active.color-green-hover,
+.navbar-nav .nav-link.color-green-hover:hover,
+.navbar-nav .nav-link.color-green-hover:focus {
+    color: #2e7d32 !important;
+}
+.page-title .bg-green,
+.masonry-box:hover .blog-meta span.bg-green,
+.color-green a {
+    background-color: #2e7d32 !important;
+}
+
+/* Aqua Category (নীল-সবুজ মিশ্রণ - এটি কালার ব্লাইন্ডদের জন্য স্পষ্ট) */
+.navbar-nav .nav-link.active.color-aqua-hover,
+.navbar-nav .nav-link.color-aqua-hover:hover,
+.navbar-nav .nav-link.color-aqua-hover:focus {
+    color: #00838f !important;
+}
+.page-title .bg-aqua,
+.masonry-box:hover .blog-meta span.bg-aqua,
+.color-aqua a {
+    background-color: #00838f !important;
+}
+
+/* Red Category (কালার ব্লাইন্ড ফ্রেন্ডলি রেড) */
+.navbar-nav .nav-link.active.color-red-hover,
+.navbar-nav .nav-link.color-red-hover:hover,
+.navbar-nav .nav-link.color-red-hover:focus {
+    color: #c62828 !important;
+}
+.page-title .bg-red,
+.masonry-box:hover .blog-meta span.bg-red,
+.color-red a {
+    background-color: #c62828 !important;
+}
+
+/* Yellow Category (অন্ধকার ও আলো উভয় স্থানেই স্পষ্ট) */
+.navbar-nav .nav-link.active.color-yellow-hover,
+.navbar-nav .nav-link.color-yellow-hover:hover,
+.navbar-nav .nav-link.color-yellow-hover:focus {
+    color: #f57c00 !important; /* উজ্জ্বল হলুদের বদলে কমলা-হলুদ যা বেশি স্পষ্ট */
+}
+.page-title .bg-yellow,
+.masonry-box:hover .blog-meta span.bg-yellow,
+.color-yellow a {
+    background-color: #f57c00 !important;
+}
+
+/* Pink/Purple Category */
+.navbar-nav .nav-link.active.color-pink-hover,
+.navbar-nav .nav-link.color-pink-hover:hover,
+.navbar-nav .nav-link.color-pink-hover:focus {
+    color: #ad1457 !important;
+}
+.page-title .bg-pink,
+.portfolio .blog-meta span.bg-pink,
+.masonry-box:hover .blog-meta span.bg-pink,
+.color-pink a {
+    background-color: #ad1457 !important;
+}
+
+
+/* 3. SOCIAL MEDIA COLORS - অরিজিনাল ব্র্যান্ড কালার কিন্তু হাই কন্ট্রাস্ট
+**************************************/
+
+.fa-star, .fa-star-o { color: #f9a825; } /* রেটিং স্টার */
+
+.topsocial .fa.fa-facebook { color: #1565c0; }
+.topsocial .fa.fa-twitter { color: #0277bd; }
+.topsocial .fa.fa-youtube { color: #b71c1c; }
+.topsocial .fa.fa-instagram { color: #880e4f; }
+.topsocial .fa.fa-pinterest { color: #c62828; }
+
+.footer.wb .btn {
+    color: #ffffff !important;
+    background-color: #1b5e20 !important;
+}
+
+/* colors.css */
+
+/* সব জায়গার মেইন টাইটেল কালার */
+h1, h2, h3, h4, h5, h6 {
+    color: #050303 !important; /* পিওর ডার্ক ব্লাক */
+}
+
+/* পোস্টের মেটা ডাটা (তারিখ, অথর) - এটি ছাই রঙ থাকতে পারে */
+.post-meta, .post-meta small {
+    color: #110909 !important;
+    font-size: 14px;
+}

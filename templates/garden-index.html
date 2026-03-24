@@ -2,28 +2,52 @@
 {% load static %}
 
 {% block content %}
+
 <section class="section first-section">
-    <div class="container-fluid">
-        <div class="masonry-blog clearfix">
+    <div class="container">
+        <div class="row">
             {% for blog in blogs %}
-            <div class="center-side">
+            <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="masonry-box post-media">
+                    
                     {% if blog.feature_img %}
                         <img src="{{ blog.feature_img.url }}" class="img-fluid" alt="">
                     {% else %}
-                        <img src="{% static 'upload/garden_cat_01.jpg' %}" class="img-fluid" alt="Default Image">
+                        <img src="{% static 'upload/garden_cat_01.jpg' %}" class="img-fluid" alt="">
                     {% endif %}
                     
                     <div class="shadoweffect">
                         <div class="shadow-desc">
                             <div class="blog-meta">
-                                <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
-                                <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
-                                <small><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.created_at }}</a></small>
-                                <small><a href="#" title="">Posted_By {{ blog.author }}</a></small>
+                                <span class="bg-aqua">
+                                    <a href="{% url 'category' blog.category.category_slug %}">
+                                        {{ blog.category.category_title }}
+                                    </a>
+                                </span>
+                                <h4>
+                                    <a href="{% url 'single_post' blog.slug %}">
+                                        {{ blog.title }}
+                                    </a>
+                                </h4>
+
+                                {# --- Edit Button Fix Start --- #}
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user == blog.author.user or request.user.is_superuser %}
+                                        <div class="edit-button-wrapper" style="margin-bottom: 5px;">
+                                            <a href="{% url 'edit_article' blog.slug %}" style="color: #ffeb3b; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                {# --- Edit Button Fix End --- #}
+
+                                <small>{{ blog.created_at }}</small>
+                                <small>Posted_By {{ blog.author }}</small>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
             {% endfor %}
@@ -36,6 +60,7 @@
         <div class="row">
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
                 <div id="live-search-results">
+                    {# এখানে আপনার ব্লগ লিস্ট পারশিয়াল লোড হচ্ছে #}
                     {% include 'partials/blog_list_partial.html' %}
                 </div>
             </div> 
@@ -46,4 +71,5 @@
         </div> 
     </div>
 </section>
+
 {% endblock content %}
