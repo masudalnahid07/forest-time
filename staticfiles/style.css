@@ -1,147 +1,184 @@
 /**************************************
     File Name: style.css
-    Template Name: Forest Time
-    Created By: HTML.Design
-    Updated For: 534x468 Hero Images
+    Template Name: Forest Time (Accessibility Optimized)
 **************************************/
 
-/* 1. BASIC 
-**************************************/
+/* 1. BASIC - সাধারণ মানুষের চোখের আরামের জন্য ফিক্স */
 body {
-    font-size: 15px;
-    line-height: 26px;
+    font-size: 16px; /* সামান্য বাড়ানো হয়েছে পড়ার সুবিধার জন্য */
+    line-height: 1.7; /* স্ট্যান্ডার্ড রিডিবিলিটি */
     background-color: #ffffff;
     font-family: 'Roboto', sans-serif;
-    color: #5e5e5e;
+    color: #333333; /* গাঢ় ধূসর যা সাদার ওপর বেশি স্পষ্ট */
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
-    line-height: 1.4;
-    color: #111111;
-    margin-bottom: 15px;
+    line-height: 1.3;
+    color: #1a1a1a; /* টাইটেলকে আরও স্পষ্ট করা হয়েছে */
+    margin-bottom: 18px;
 }
 
-a { color: #111111; text-decoration: none !important; transition: 0.3s; }
-p { margin-bottom: 26px; }
+/* লিঙ্ক কালার - কালার ব্লাইন্ড ফ্রেন্ডলি ব্লু-গ্রিন মিক্স */
+a { 
+    color: #1b5e20; 
+    text-decoration: none !important; 
+    transition: 0.3s; 
+}
+a:hover { color: #000000; }
 
-/* 2. HEADER 
-**************************************/
-.header { padding: 0.4rem 0; background-color: #ffffff; }
+p { margin-bottom: 24px; color: #444444; }
+
+/* 2. HEADER */
+.header { padding: 0.5rem 0; background-color: #ffffff; }
 .topbar-section { padding: 1rem 2rem; border-bottom: 1px dashed #e2e2e2; font-size: 14px; }
-.logo img { max-width: 324px; display: block; margin: auto; }
+.logo img { max-width: 280px; display: block; margin: auto; }
 
 .navbar-nav .nav-link {
     font-size: 15px;
-    font-weight: 500;
-    padding: 0.9rem 0.8rem;
-    color: #121212;
+    font-weight: 600;
+    padding: 0.9rem 1rem;
+    color: #1a1a1a;
 }
 
-/* 3. HERO SECTION (THE FIX)
-**************************************/
-/* --- The Ultimate Hero Fix --- */
+/* 3. HERO SECTION - Accessibility Fix */
 .hero-card {
     position: relative;
     overflow: hidden;
-    border-radius: 6px;
+    border-radius: 8px; /* সামান্য গোল বর্ডার */
+    background-color: #000; /* ছবি লোড হওয়ার আগে কালো দেখাবে */
 }
 
 .hero-img {
-    width: 200%;
-    height: 468px; /* চাইলে 468px করতে পারো */
+    width: 100%;
+    height: 468px; /* আপনার ডিফল্ট হাইট */
     object-fit: cover;
+    display: block;
 }
 
+/* --- স্মার্ট ওভারলে ফিক্স --- */
 .overlay {
     position: absolute;
     bottom: 0;
+    left: 0;
     width: 100%;
-    padding: 20px;
-    color: white;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 60px 25px 25px; /* উপরের দিকে প্যাডিং বাড়ানো হয়েছে গ্রেডিয়েন্টের জন্য */
+    color: #ffffff; /* সব টেক্সট ডিফল্ট সাদা */
+    
+    /* শক্তিশালী ডার্ক গ্রেডিয়েন্ট: নিচ থেকে উপরে কালো থেকে স্বচ্ছ হবে */
+    background: linear-gradient(to top, 
+        rgba(0, 0, 0, 0.95) 0%,   /* একদম নিচে প্রায় পুরোপুরি কালো */
+        rgba(0, 0, 0, 0.7) 40%,    /* মাঝখানে একটু ঝাপসা কালো */
+        rgba(0, 0, 0, 0) 100%     /* উপরে পুরোপুরি স্বচ্ছ */
+    );
+    
+    z-index: 2; /* টেক্সট ছবির উপরে থাকবে */
 }
 
+/* হিরো সেকশনের টাইটেল */
 .overlay h4 a {
-    color: #fff;
+    color: #ffffff !important; /* টাইটেল অবশ্যই সাদা হবে */
     text-decoration: none;
+    font-size: 22px; /* পড়ার সুবিধার জন্য সামান্য বড় */
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* বাড়তি স্পষ্টতার জন্য টেক্সট শ্যাডো */
 }
 
+/* হ’রো সেকশনের নিচের মেটা ডাটা (ডেট, অথর নেম) */
+.overlay .post-meta, 
+.overlay .post-meta a, 
+.overlay small {
+    color: #e0e0e0 !important; /* পুরোপুরি সাদা নয়, হালকা অফ-হোয়াইট যা চোখে লাগে না */
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* হিরো সেকশনের ক্যাটাগরি ব্যাজ */
 .category a {
-    background: green;
-    padding: 3px 8px;
-    font-size: 12px;
-    color: #fff;
+    background: #2e7d32; /* কালার ব্লাইন্ড ফ্রেন্ডলি গভীর সবুজ */
+    padding: 4px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #ffffff !important;
 }
 
 
-.post-media:hover img,
-.masonry-box:hover img {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
+/* style.css */
+
+.blog-title-area {
+    text-align: left !important; /* টাইটেল বামে থাকবে */
+    padding: 20px 0;
+    border-bottom: 1px solid #f2f2f2; /* সামান্য বর্ডার যা টাইটেলকে আলাদা করবে */
+    margin-bottom: 30px;
 }
 
-.shadoweffect {
-    background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 30%);
-    opacity: 1;
+.blog-title-area h1, 
+.blog-title-area h3 {
+    text-align: left !important;
+    color: #0f0e0e !important; /* আপনার চাওয়া ডার্ক ব্ল্যাক */
+    font-size: 32px; /* বড় এবং স্পষ্ট */
+    font-weight: 800;
+    margin-bottom: 10px;
 }
 
-.section {
-    padding: 4rem 0;
+/* মেটা ডাটা (তারিখ, লেখক, ভিউস) বামে রাখা */
+.blog-title-area .post-meta {
+    text-align: left !important;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+    color: #0e0d0d;
 }
 
-/* 4. BLOG & POSTS
-**************************************/
+/* ক্যাটাগরি ব্যাজ - কালার ব্লাইন্ড ফ্রেন্ডলি গ্রিন */
+.category a {
+    background: #2e7d32 !important; /* ডিপ গ্রিন */
+    padding: 4px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #fff !important;
+}
+
+/* 4. BLOG & POSTS */
 .section { padding: 4rem 0; }
-.post-media { position: relative; overflow: hidden; height: 270px; }
+.post-media { position: relative; overflow: hidden; height: 270px; border-radius: 5px; }
 .post-media img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Single Post Content Images */
-.pp img, .blog-content img {
+/* ব্লগ কন্টেন্ট ইমেজেস */
+.blog-content img {
     max-width: 100%;
     height: auto !important;
-    margin: 20px auto;
+    margin: 30px auto;
     display: block;
-    border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-/* 5. SEARCH BAR FIX
-**************************************/
-.search-form { display: flex; align-items: center; width: 100%; }
+/* 5. SEARCH BAR */
 .search-form .form-control {
     border-radius: 25px 0 0 25px !important;
-    border: 1px solid #edeff2;
-    padding-left: 15px;
-    height: 45px;
+    border: 2px solid #edeff2; /* বর্ডার একটু মোটা করা হয়েছে */
 }
 .search-form .btn {
     border-radius: 0 25px 25px 0 !important;
-    background-color: #edeff2 !important;
-    height: 45px;
-    width: 50px;
+    background-color: #2e7d32 !important; /* সার্চ বাটনকে হাইলাইট করা হয়েছে */
+    color: white !important;
 }
 
-/* 6. FOOTER
-**************************************/
-.footer { padding: 4rem 0; background: #edeff2; }
-.dmtop {
-    width: 40px; height: 40px;
-    background: #111;
-    position: fixed; bottom: 25px; right: 25px;
-    cursor: pointer; display: none;
+/* 6. DARK MODE (কালার ব্লাইন্ড ফ্রেন্ডলি) */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
 }
-
-/* 7. PRELOADER
-**************************************/
-#preloader { position: fixed; width: 100%; height: 100%; background: #fff; z-index: 99999; }
-
-
-/* 8. Dropdown Menu
-**************************************/
-@media (min-width: 992px) {
-    .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0;
-    }
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+    color: #ffffff;
+}
+body.dark-mode .page-title.wb, body.dark-mode .section.wb {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
 }

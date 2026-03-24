@@ -21,7 +21,20 @@
         </div>
         <div class="blog-meta big-meta col-md-8">
             <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
-            <h4><a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a></h4>
+            
+            <h4>
+                <a href="{% url 'single_post' blog.slug %}" title="">{{ blog.title }}</a>
+                
+                {# --- Edit Button Start --- #}
+                {% if request.user.is_authenticated %}
+                    {% if request.user == blog.author.user or request.user.is_superuser %}
+                        <a href="{% url 'edit_article' blog.slug %}" class="btn btn-outline-danger btn-sm" style="font-size: 10px; padding: 2px 8px; margin-left: 10px; border-radius: 4px; vertical-align: middle;">
+                            <i class="fa fa-edit"></i> Edit
+                        </a>
+                    {% endif %}
+                {% endif %}
+                {# --- Edit Button End --- #}
+            </h4>
             
             <div id="inline-post-{{ blog.slug }}">
                 <p>{{ blog.post_details|truncatewords_html:30|safe }}
@@ -31,7 +44,7 @@
                    hx-get="{% url 'single_post' blog.slug %}"
                    hx-target="#inline-post-{{ blog.slug }}"
                    hx-swap="outerHTML">
-                   Read More <i class="fa fa-angle-down"></i>
+                    Read More <i class="fa fa-angle-down"></i>
                 </a>
                 </p>
             </div>
