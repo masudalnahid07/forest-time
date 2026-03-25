@@ -133,3 +133,6 @@ sftp-config.json
 
 # History
 .history
+
+__pycache__/
+*.pyc
