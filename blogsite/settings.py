@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "blog",
     "django_ckeditor_5",
     "taggit",
+    'django_social_share',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # আপনার প্রসেসরটি এখানে যোগ করুন
                 'blog.context_processors.global_categories',
+                'django.template.context_processors.request',
             ],
         },
     },

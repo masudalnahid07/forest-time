@@ -11,9 +11,15 @@
                 <div class="masonry-box post-media">
                     
                     {% if blog.feature_img %}
-                        <img src="{{ blog.feature_img.url }}" class="img-fluid" alt="">
+                        <img src="{{ blog.feature_img.url }}" 
+                             class="img-fluid" 
+                             alt="{{blog.focus_keyword}}" 
+                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% else %}
-                        <img src="{% static 'upload/garden_cat_01.jpg' %}" class="img-fluid" alt="">
+                        <img src="{% static 'upload/garden_cat_01.jpg' %}" 
+                             class="img-fluid" 
+                             alt="{{blog.focus_keyword}}" 
+                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% endif %}
                     
                     <div class="shadoweffect">
@@ -60,7 +66,7 @@
         <div class="row">
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
                 <div id="live-search-results">
-                    {# এখানে আপনার ব্লগ লিস্ট পারশিয়াল লোড হচ্ছে #}
+                    {# এখানে আপনার ব্লগ লিস্ট পারশিয়াল লোড হচ্ছে #}
                     {% include 'partials/blog_list_partial.html' %}
                 </div>
             </div> 

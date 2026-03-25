@@ -6,27 +6,95 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8 col-sm-12">
-                <div class="custombox clearfix">
-                    <h4 class="small-title">Create an Account</h4>
-                    
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-info">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
+                <div class="page-wrapper">
+                    <div class="custombox clearfix" style="padding: 30px; border: 1px solid #eee;">
+                        <h4 class="small-title" style="color: inherit; border-bottom: 2px solid #28a745; display: inline-block; margin-bottom: 25px;">Create an Account</h4>
+                        
+                        {# মেসেজ বা এলার্ট হ্যান্ডেলিং #}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
 
-                    <form method="POST" class="form-wrapper">
-                        {% csrf_token %}
+                        {# রেজিস্ট্রেশন ফর্ম #}
+                        <form method="POST" class="form-wrapper registration-form">
+                            {% csrf_token %}
+                            
+                            <div class="form-group custom-reg-fields">
+                                {# এখানে জ্যাঙ্গো ডিফল্ট পাসওয়ার্ড হেল্পার টেক্সটগুলোও স্টাইল করা হয়েছে #}
+                                {{ form.as_p }}
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block" style="border-radius: 50px; padding: 10px; font-weight: bold;">
+                                <i class="fa fa-user-plus"></i> Register Now
+                            </button>
+                        </form>
                         
-                        {{ form.as_p }}
-                        
-                        <button type="submit" class="btn btn-primary mt-3">Register</button>
-                    </form>
-                    
-                    <p class="mt-3">Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+                        <div class="mt-4 text-center">
+                            <p style="color: inherit; opacity: 0.8;">Already have an account? 
+                                <a href="{% url 'login' %}" style="color: #28a745; font-weight: bold;">Log in here</a>
+                            </p>
+                            <p><a href="{% url 'home' %}" class="text-muted" style="font-size: 13px;"><i class="fa fa-angle-left"></i> Back to Home</a></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    /* ডার্ক মোড এবং রেজিস্ট্রেশন ফিল্ড অপ্টিমাইজেশন */
+    .custom-reg-fields p {
+        margin-bottom: 20px;
+        color: inherit;
+    }
+
+    /* পাসওয়ার্ড রিকোয়ারমেন্টস (Help Text) ছোট এবং ক্লিন করার জন্য */
+    .custom-reg-fields .helptext {
+        display: block;
+        font-size: 11px;
+        color: #888;
+        margin-top: 5px;
+        line-height: 1.4;
+    }
+
+    .custom-reg-fields input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: transparent;
+        color: inherit;
+        transition: 0.3s;
+    }
+
+    .custom-reg-fields input:focus {
+        border-color: #28a745;
+        outline: none;
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.2);
+    }
+
+    /* ডার্ক মোড ব্যাকগ্রাউন্ড ফিক্স */
+    body.dark-mode .custombox {
+        background: #1a1a1a !important;
+        border-color: #333 !important;
+    }
+
+    /* এরর লিস্ট স্টাইলিং */
+    .errorlist {
+        color: #ff4d4d;
+        list-style: none;
+        padding: 0;
+        font-size: 12px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+</style>
 {% endblock content %}

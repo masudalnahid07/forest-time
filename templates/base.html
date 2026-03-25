@@ -19,21 +19,7 @@
     <link href="{% static 'css/version/garden.css' %}" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
-    <style>
-        /* ড্রপডাউন হোভার ইফেক্ট */
-        @media (min-width: 992px) {
-            .nav-item.dropdown:hover .dropdown-menu {
-                display: block;
-                margin-top: 0;
-            }
-        }
-        .dropdown-item:hover {
-            background-color: #74a044 !important;
-            color: #fff !important;
-        }
-    </style>
-
-{% block extra_head %}
+{% block canonical %}
     <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <meta name="description" content="{% if post.meta_description %}{{ post.meta_description }}{% else %}{{ post.post_details|striptags|truncatewords:20 }}{% endif %}">
     
@@ -58,7 +44,7 @@
     {% if post.feature_img %}
         <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.feature_img.url }}">
     {% endif %}
-{% endblock extra_head %}
+{% endblock canonical %}
 
 </head>
 <body>
@@ -124,7 +110,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="logo">
-                            <a href="{% url 'home' %}"><img src="{% static 'images/version/garden-logo.png' %}" alt=""></a>
+                            <a href="{% url 'home' %}"><img src="{% static 'images/version/garden-logo.png' %}" alt="Forest Time Logo" fetchpriority="high"></a>
                         </div>
                     </div>
                 </div>
@@ -143,7 +129,6 @@
                                 <a class="nav-link color-green-hover" href="{% url 'home' %}">Home</a>
                             </li>
 
-                            {# Context Processor থেকে আসা categories_list ব্যবহার করা হয়েছে #}
                             {% for categores in categories_list %}
                                 {% if categores.children.all %}
                                     <li class="nav-item dropdown">

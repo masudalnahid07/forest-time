@@ -1988,3 +1988,222 @@ body.dark-mode .header {
     z-index: 11;
 }
 
+/* ড্রপডাউন হোভার ইফেক্ট */
+@media (min-width: 992px) {
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;}}
+.dropdown-item:hover {
+background-color: #74a044 !important;
+color: #fff !important;
+}
+
+
+/* ১. CKEditor Blockquote Global Style */
+.blog-content blockquote, 
+.pp blockquote {
+    padding: 25px 30px !important;
+    margin: 35px 0 !important;
+    border-left: 8px solid #28a745 !important; /* আপনার সিগনেচার গ্রিন */
+    background-color: rgba(40, 167, 69, 0.05) !important;
+    position: relative;
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+    display: block; /* ডুপ্লিকেট কন্টেন্ট ইনজেকশন রোধ করতে */
+}
+
+/* ২. কোট আইকন (FontAwesome) */
+.blog-content blockquote::before,
+.pp blockquote::before {
+    content: "\f10d";
+    font-family: 'FontAwesome';
+    position: absolute;
+    left: 12px;
+    top: 5px;
+    color: #28a745;
+    opacity: 0.15;
+    font-size: 22px;
+}
+
+/* ৩. ব্লককোটের ভেতরের টেক্সট ফিক্স */
+.blog-content blockquote p,
+.pp blockquote p {
+    font-size: 19px !important;
+    line-height: 1.7 !important;
+    margin-bottom: 0 !important;
+    color: inherit !important;
+    font-weight: 500;
+}
+
+/* ৪. ডার্ক মোড সাপোর্ট */
+body.dark-mode .blog-content blockquote,
+body.dark-mode .pp blockquote {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-left-color: #28a745 !important;
+    color: #fff !important;
+}
+
+/* ১. সিঙ্গেল পেজ ইমেজ (৮০০ x ৪৬০) */
+.single-post-media img {
+    width: 100% !important;
+    max-width: 800px !important;
+    height: 460px !important;
+    object-fit: cover !important;
+    border-radius: 20px;
+    display: block;
+    margin: 5px auto !important;
+}
+
+/**************************************
+২. হোমপেজ হিরো সেকশন (গ্যাপ ও অ্যালাইনমেন্ট ফিক্স)
+**************************************/
+
+/* কন্টেইনার রো-তে নেগেটিভ মার্জিন দিয়ে পাশের ফাঁকা জায়গা কমানো */
+.hero-section .row, .first-section .row {
+    margin-left: -10px !important;  /* আগের -15px থেকে কমিয়ে -10px করা হয়েছে */
+    margin-right: -10px !important; /* আগের -15px থেকে কমিয়ে -10px করা হয়েছে */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* কন্টেন্টগুলোকে মাঝখানে এলাইন করতে */
+}
+
+/* প্রতিটি কলামে প্যাডিং দিয়ে মাঝখানে গ্যাপ তৈরি করা */
+.hero-section [class*="col-"], 
+.first-section [class*="col-"] {
+    padding-left: 10px !important;  /* আগের 15px থেকে কমিয়ে 10px করা হয়েছে */
+    padding-right: 10px !important; /* আগের 15px থেকে কমিয়ে 10px করা হয়েছে */
+    margin-bottom: 20px; /* নিচের দিকেও গ্যাপ রাখার জন্য */
+}
+
+/* ইমেজ কন্টেইনার স্টাইল - কোট ইমেজের মতো ক্লিন লুক */
+.hero-section .post-media, 
+.masonry-box {
+    height: 368px !important; /* আপনার আগের হাইট বজায় রাখা হলো */
+    width: 105% !important; /* কলামের ভেতর ১০০% উইডথ থাকবে, ফিক্সড ৫৩৪px নয় */
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px; /* কোট ইমেজের মতো বর্ডার রেডিয়াস */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* হালকা শ্যাডো */
+}
+
+/* মেইন ইমেজ স্টাইল */
+.hero-section .post-media img, 
+.masonry-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* রেশিও নষ্ট হবে না */
+    display: block;
+    transition: transform 0.3s ease-in-out; /* হোভার ইফেক্টের জন্য */
+}
+
+/* হোভার ইফেক্ট - যা কোট ইমেজেও ছিল */
+.masonry-box:hover img, .post-media:hover img {
+    transform: scale(1.05); /* হালকা জুম */
+}
+
+/**************************************
+   ৩. You May Also Like - Overlay (Fixed Title)
+**************************************/
+
+/* মেইন কন্টেইনার - কোট ইমেজের মতো ক্লিন বর্ডার রেডিয়াস */
+.related-post-container { 
+    position: relative; 
+    border-radius: 10px; /* কোট ইমেজের মতো */
+    overflow: hidden; 
+    margin-bottom: 30px; 
+    height: 220px; /* উচ্চতা বজায় রাখা হলো */
+    z-index: 1; /* এলিমেন্টগুলোকে সঠিক স্তরে রাখার জন্য */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* হালকা শ্যাডো */
+}
+
+/* ইমেজ স্টাইল */
+.related-post-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ওভারলে কন্টেইনার - যা টাইটেলকে দৃশ্যমান করবে */
+.related-overlay {
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    padding: 60px 15px 15px; /* নিচের দিকে কন্টেন্ট রাখার জন্য প্যাডিং */
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%); /* কালো গ্রাডিয়েন্ট ওভারলে */
+    z-index: 2; /* ইমেজের উপরে রাখার জন্য */
+}
+
+/* টাইটেল স্টাইল - কোট ইমেজের মতো প্রফেশনাল ফন্ট */
+.related-overlay h4 { 
+    margin: 0 !important; 
+}
+
+.related-overlay h4 a { 
+    color: #ffffff !important; /* লেখা একদম সাদা থাকবে */
+    text-decoration: none !important; 
+    font-size: 16px !important; 
+    font-weight: 700 !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5) !important; /* হালকা শ্যাডো যাতে ইমেজের উপর পড়া যায় */
+    display: block !important;
+}
+
+.related-overlay h4 a:hover {
+    color: #f1f1f1 !important; /* হোভার কালার */
+}
+
+/* তারিখ, সময় এবং লেখকের নাম (মেটা ডেটা) */
+.related-overlay small {
+    color: #eeeeee !important; /* হালকা সাদা কালার */
+    font-size: 12px !important; 
+    display: block !important;
+    margin-top: 5px !important;
+}
+
+/* ১. সোশ্যাল শেয়ার কন্টেইনার দৃশ্যমান করা */
+.post-sharing, 
+.post-share {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 30px 0 !important;
+    clear: both !important;
+    z-index: 99;
+    position: relative;
+}
+
+/* ২. শেয়ার বাটনের লিস্ট স্টাইল */
+.post-sharing ul, 
+.post-share ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    gap: 10px;
+}
+
+/* ৩. বাটনের কালার এবং হোভার ইফেক্ট */
+.post-sharing ul li a, 
+.post-share ul li a {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff !important;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+/* ৪. ডার্ক মোডে বাটনগুলো স্পষ্ট রাখা */
+body.dark-mode .post-sharing ul li a {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* লিঙ্কডইন বাটন ডিজাইন ফিক্স */
+.post-sharing ul li a[href*="linkedin"] {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #0077b5; /* LinkedIn Color */
+    color: #fff !important;
+    border-radius: 5px;
+}

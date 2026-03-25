@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load social_share %}
+
 
 {% block title %}
     <title>{{ post.title }} - Forest Time</title>
@@ -22,6 +24,31 @@
                                 <small>by {{ post.author }}</small>
                                 <small><i class="fa fa-eye"></i> {{ post.views_count }} Views</small>
                             </div>
+
+                            <div class="post-sharing clearfix" style="margin-top: 20px;">
+    <ul class="list-inline">
+        <li>
+            {% post_to_facebook object_or_url '<i class="fa fa-facebook"></i> <span class="down-mobile">Share on Facebook</span>' "fb-button btn btn-primary" %}
+        </li>
+        
+        <li>
+            {% post_to_twitter "Check out: {{post.title}}" object_or_url '<i class="fa fa-twitter"></i> <span class="down-mobile">Tweet on Twitter</span>' "tw-button btn btn-primary" %}
+        </li>
+        
+        <li>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
+            target="_blank" 
+            class="gp-button btn btn-primary" 
+            style="background-color: #0077b5 !important; border: none;">
+            <i class="fa fa-linkedin"></i>
+            </a>
+        </li>
+
+        <li>
+            {% post_to_whatsapp object_or_url '<i class="fa fa-whatsapp"></i>' "wa-button btn btn-success" %}
+        </li>
+    </ul>
+</div>
                         </div>
 
                         {% if post.post_type == 'review' and post.product_name %}
@@ -29,7 +56,7 @@
                             <div class="row align-items-center">
                                 <div class="col-md-5 text-center">
                                     {% if post.feature_img %}
-                                        <img src="{{ post.feature_img.url }}" alt="{{ post.product_name }}" class="img-fluid" style="border-radius: 8px;">
+                                        <img src="{{ post.feature_img.url }}" alt="{{ post.product_name }}" class="img-fluid" style="border-radius: 8px;" fetchpriority="high">
                                     {% endif %}
                                 </div>
                                 <div class="col-md-7">
@@ -61,7 +88,7 @@
                                     <div class="col-lg-6">
                                         <div class="related-post-container">
                                             <a href="{% url 'single_post' related.slug %}">
-                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/garden_sq_01.jpg' %}{% endif %}" alt="{{ related.title }}">
+                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/garden_sq_01.jpg' %}{% endif %}" alt="{{ related.title }}" loading="lazy">
                                                 <div class="related-overlay">
                                                     <h4 style="color: #fff !important;">{{ related.title|truncatechars:45 }}</h4>
                                                     <small style="color: #eee !important;">{{ related.created_at|date:"d M, Y" }}</small>
@@ -72,7 +99,9 @@
                                 {% endfor %}
                             </div>
                         </div>
-                    </div> </div> </div> 
+                    </div> 
+                </div> 
+            </div> 
 
             <div class="col-lg-4 col-md-12 sidebar-column">
                 <div class="sidebar sidebar-sticky">
@@ -83,68 +112,4 @@
         </div> 
     </div> 
 </section>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const postBody = document.querySelector('.blog-content'); 
-    if (!postBody) return;
-    const headers = postBody.querySelectorAll('h2, h3');
-    
-    // ১. Table of Contents (TOC) অটোমেশন
-    if (headers.length >= 2) {
-        // ডার্ক মোড ফ্রেন্ডলি কালার ব্যবহার করা হয়েছে
-        let tocHTML = `
-            <div id="dynamic-toc" class="widget" style="border: 1px solid #e1e1e1; padding: 20px; border-radius: 8px; margin: 30px 0;">
-                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" id="toc-header">
-                    <span style="font-weight: bold; font-size: 1.2em; color: inherit;">Table of Contents</span>
-                    <span id="toc-toggle-icon" style="color: #28a745;">[+] Show</span>
-                </div>
-                <div id="toc-list-container" style="display: none; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                    <ul id="toc-links" style="padding-left: 20px; line-height: 1.8; list-style-type: decimal; color: inherit;"></ul>
-                </div>
-            </div>
-        `;
-        
-        const firstP = postBody.querySelector('p');
-        if (firstP) { firstP.insertAdjacentHTML('afterend', tocHTML); }
-        
-        const tocLinks = document.getElementById('toc-links');
-        headers.forEach((h, i) => {
-            const id = 'section-' + i;
-            h.setAttribute('id', id);
-            const li = document.createElement('li');
-            if(h.tagName === 'H3') li.style.marginLeft = "20px";
-            // কালার ইনহেরিট করা হয়েছে যেন ডার্ক মোডে সমস্যা না হয়
-            li.innerHTML = `<a href="#${id}" style="color: #28a745; text-decoration: none; font-weight: 500;">${h.textContent}</a>`;
-            tocLinks.appendChild(li);
-        });
-
-        document.getElementById('toc-header').onclick = function() {
-            const list = document.getElementById('toc-list-container');
-            const icon = document.getElementById('toc-toggle-icon');
-            const isHidden = list.style.display === "none";
-            list.style.display = isHidden ? "block" : "none";
-            icon.innerText = isHidden ? "[-] Hide" : "[+] Show";
-        };
-    }
-
-    // ২. Amazon লিংকে অটোমেটিক 'nofollow sponsored' যোগ করা
-    const links = postBody.querySelectorAll('a');
-    links.forEach(link => {
-        if (link.href.includes('amazon.com') || link.href.includes('amzn.to')) {
-            link.setAttribute('rel', 'nofollow sponsored');
-            link.setAttribute('target', '_blank');
-        }
-    });
-
-    // ৩. বডি ইমেজের চারপাশে শ্যাডো এবং বর্ডার (CSS ক্লাস ব্যবহার করা ভালো, তাও স্ক্রিপ্টে ফিক্স করা হলো)
-    const bodyImages = postBody.querySelectorAll('img');
-    bodyImages.forEach(img => {
-        img.style.maxWidth = "100%";
-        img.style.height = "auto";
-        img.style.borderRadius = "8px";
-        img.style.margin = "20px 0";
-    });
-});
-</script>
 {% endblock content %}
