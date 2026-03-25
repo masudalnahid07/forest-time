@@ -12,35 +12,35 @@ from django.db.models import Count
 
 User = get_user_model()
 
-# ইমেজ প্রসেসিং এর জন্য একটি হেল্পার ফাংশন (কোড ক্লিন রাখার জন্য)
+# --- ইমেজ প্রসেসিং হেল্পার ফাংশন ---
 def compress_and_convert_to_webp(image_field):
     if not image_field:
         return image_field
         
     img = Image.open(image_field)
     
-    # ইমেজ কনভার্ট করার আগে RGB মোডে নেওয়া (PNG বা RGBA হলে সমস্যা এড়াতে)
+    # RGBA বা P মোড থাকলে RGB তে কনভার্ট (WebP এর জন্য নিরাপদ)
     if img.mode in ("RGBA", "P"):
         img = img.convert("RGB")
     
     output = BytesIO()
     
-    # আপনার রিকোয়ারমেন্ট অনুযায়ী সর্বোচ্চ উইডথ ৮০০-১০০০ পিক্সেল রাখা নিরাপদ
-    # এতে ৮০০x৮০০ বা ৮০০x৪৬০ কোনোটিই ফেটে যাবে না
+    # আপনার হোমপেজ ও সিঙ্গেল পেজের সাইজ অনুযায়ী ১০০০px সেফ উইডথ
     max_width = 1000 
     
     if img.width > max_width:
         output_size = (max_width, int((max_width / img.width) * img.height))
         img = img.resize(output_size, Image.LANCZOS)
     
-    # WebP ফরম্যাটে সেভ করা
+    # WebP ফরম্যাটে সেভ (৮৫% কোয়ালিটি সাইট ফাস্ট রাখবে)
     img.save(output, format='WEBP', quality=85)
     output.seek(0)
     
-    # ফাইলের এক্সটেনশন পরিবর্তন করা
     name = os.path.splitext(image_field.name)[0] + '.webp'
     return ContentFile(output.read(), name=name)
 
+
+# --- অথর প্রোফাইল মডেল ---
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
     bio = RichTextField(config_name="extends")
@@ -50,11 +50,12 @@ class Author(models.Model):
         return self.user.username
 
     def save(self, *args, **kwargs):
-        # প্রোফাইল ইমেজ WebP কনভার্ট
         if self.profile_image:
             self.profile_image = compress_and_convert_to_webp(self.profile_image)
         super().save(*args, **kwargs)
 
+
+# --- ব্লগ মেটা মডেল ---
 class BlogMeta(models.Model):
     blog_title = models.CharField(max_length=250)
     blog_details = models.TextField()
@@ -66,6 +67,8 @@ class BlogMeta(models.Model):
     def __str__(self):
         return self.blog_title
 
+
+# --- ক্যাটাগরি মডেল (Sitemap এরর ফিক্স সহ) ---
 class Category(models.Model):
     category_title = models.CharField(max_length=250, unique=True)
     category_slug = models.SlugField(max_length=250, unique=True, blank=True)
@@ -75,6 +78,10 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
         ordering = ["category_title"]
+
+    def get_absolute_url(self):
+            # 'category_slug' এর বদলে শুধু 'slug' ব্যবহার করুন
+            return reverse("category", kwargs={"slug": self.category_slug})
 
     def __str__(self):
         if self.parent:
@@ -87,7 +94,7 @@ class Category(models.Model):
         if not self.category_slug:
             self.category_slug = slugify(self.category_title)
         
-        # ইউনিক স্লাগ চেক
+        # ইউনিক স্লাগ চেক লজিক
         original_slug = self.category_slug
         counter = 1
         while Category.objects.filter(category_slug=self.category_slug).exclude(pk=self.pk).exists():
@@ -95,6 +102,8 @@ class Category(models.Model):
             counter += 1
         super().save(*args, **kwargs)
 
+
+# --- মেইন ব্লগ পোস্ট মডেল ---
 class BlogPost(models.Model):
     STATUS_CHOICES = [("draft", "Draft"), ("published", "Published")]
     POST_TYPE_CHOICES = [('info', 'Informative (BlogPosting)'), ('review', 'Product Review (Review)')]
@@ -128,6 +137,9 @@ class BlogPost(models.Model):
     def get_absolute_url(self):
         return reverse("single_post", kwargs={"slug": self.slug})
 
+    def __str__(self):
+        return self.title
+
     def save(self, *args, **kwargs):
         if self.title:
             self.title = self.title.title()
@@ -141,22 +153,22 @@ class BlogPost(models.Model):
             self.slug = f"{original_slug}-{counter}"
             counter += 1
         
-        # ফিচার ইমেজ WebP কনভার্ট ও রিসাইজ
+        # ইমেজ অপ্টিমাইজেশন (শুধু নতুন ইমেজ বা ইমেজ পরিবর্তন হলে কনভার্ট হবে)
         if self.feature_img:
-            self.feature_img = compress_and_convert_to_webp(self.feature_img)
+            try:
+                this = BlogPost.objects.get(pk=self.pk)
+                if this.feature_img != self.feature_img:
+                    self.feature_img = compress_and_convert_to_webp(self.feature_img)
+            except BlogPost.DoesNotExist:
+                self.feature_img = compress_and_convert_to_webp(self.feature_img)
             
         super().save(*args, **kwargs)
 
 
-# Comment এবং Reply মডেল 
-
+# --- কমেন্ট ও রিপ্লাই মডেল ---
 class Comment(models.Model):
-    user = models.ForeignKey(
-        User, related_name="user_comments", on_delete=models.CASCADE
-    )
-    post = models.ForeignKey(
-        BlogPost, related_name="comments", on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, related_name="user_comments", on_delete=models.CASCADE)
+    post = models.ForeignKey(BlogPost, related_name="comments", on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -165,12 +177,8 @@ class Comment(models.Model):
 
 
 class Reply(models.Model):
-    user = models.ForeignKey(
-        User, related_name="user_replies", on_delete=models.CASCADE
-    )
-    comment = models.ForeignKey(
-        Comment, related_name="replies", on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, related_name="user_replies", on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, related_name="replies", on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
