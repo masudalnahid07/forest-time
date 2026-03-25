@@ -26,7 +26,7 @@
         <h2 class="widget-title">Advertising</h2>
         <div class="banner-spot clearfix">
             <div class="banner-img">
-                <img src="{% static 'upload/banner_04.jpg' %}" alt="Promotion" class="img-fluid">
+                <img src="{% static 'upload/banner_04.jpg' %}" alt="Promotion" class="img-fluid" loading="lazy">
             </div>
         </div>
     </div>
@@ -39,9 +39,9 @@
                 <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action flex-column align-items-start" style="padding: 10px 0; border: none; border-bottom: 1px solid #eee; background: transparent;">
                     <div class="w-100 justify-content-between">
                         {% if recent.feature_img %}
-                            <img src="{{ recent.feature_img.url }}" alt="" class="img-fluid float-left" style="width: 55px; height: 55px; object-fit: cover; margin-right: 15px; border-radius: 4px;">
+                            <img src="{{ recent.feature_img.url }}" alt="{{ recent.title }}" class="img-fluid float-left" style="width: 55px; height: 55px; object-fit: cover; margin-right: 15px; border-radius: 4px;" loading="lazy">
                         {% else %}
-                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="" class="img-fluid float-left" style="width: 55px; margin-right: 15px;">
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default" class="img-fluid float-left" style="width: 55px; margin-right: 15px;" loading="lazy">
                         {% endif %}
                         <h5 class="mb-1" style="font-size: 14px; font-weight: bold; line-height: 1.4; color: inherit;">{{ recent.title|truncatechars:35 }}</h5>
                         <small style="color: #999;">{{ recent.created_at|date:"d M, Y" }}</small>

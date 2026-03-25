@@ -18,14 +18,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from blog.sitemaps import PostSitemap, CategorySitemap
 
 
 # ১. handler404 ইম্পোর্ট করার প্রয়োজন নেই, সরাসরি ভেরিয়েবল হিসেবে লিখলেই হয়
 # তবে ভিউটি ইম্পোর্ট করে রাখা ভালো অথবা স্ট্রিং হিসেবে পাথ দেওয়া যায়।
 
+sitemaps = {
+    'posts': PostSitemap,
+    'categories': CategorySitemap,
+}
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')), # আপনার ব্লগের সব ইউআরএল এখানে
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # ২. কাস্টম ৪-০-৪ হ্যান্ডলার সেট করা (অ্যাপের নাম 'blog' হলে)

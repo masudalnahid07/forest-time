@@ -39,9 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "blog",
-    "django_ckeditor_5",
-    "taggit",
+    "django_ckeditor_5", #CKEditor
+    "taggit", #Tagging
+    'django_social_share', #Social Share
+    "django.contrib.sitemaps",  # Dynamic XML Sitemap
+    "django.contrib.sites", # Dynamic XML Sitemap
 ]
+
+SITE_ID = 1 # Dynamic XML Sitemap
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -68,6 +73,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # আপনার প্রসেসরটি এখানে যোগ করুন
                 'blog.context_processors.global_categories',
+                'django.template.context_processors.request',
             ],
         },
     },

@@ -11,15 +11,15 @@ admin.site.register(Reply)
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    # list_display তে 'view_post_link' কলামটি যোগ করা হয়েছে সরাসরি ওয়েবসাইট থেকে দেখার জন্য
-    list_display = ["title", "category", "status_button", "view_post_link", "created_at"]
+    # list_display তে 'created_at' এর পরিবর্তে 'formatted_date' ব্যবহার করা হয়েছে
+    list_display = ["title", "category", "status_button", "view_post_link", "formatted_date"]
     list_filter = ["status", "category", "author", "created_at"]
     search_fields = ["title", "focus_keyword", "category__category_title"]
     
     # টাইটেল লিখলে অটো স্ল্যাগ জেনারেট হবে (Wordpress এর মতো সুবিধা)
     prepopulated_fields = {"slug": ("title",)}
     
-    # এডিট পেজে ফিল্ডগুলোকে সুন্দরভাবে সেকশন অনুযায়ী সাজানো (Fieldsets)
+    # এডিট পেজে ফিল্ডগুলোকে সুন্দরভাবে সেকশন অনুযায়ী সাজানো (Fieldsets)
     fieldsets = (
         ("Basic Information", {
             "fields": ("title", "slug", "category", "post_type", "author", "feature_img")
@@ -39,12 +39,20 @@ class BlogPostAdmin(admin.ModelAdmin):
         }),
     )
 
-    # ভিউ কাউন্ট এবং এসইও এনালাইজারকে শুধু দেখার জন্য (Read Only) রাখা হয়েছে
+    # ভিউ কাউন্ট এবং এসইও এনালাইজারকে শুধু দেখার জন্য (Read Only) রাখা হয়েছে
     readonly_fields = ['seo_analyzer', 'views_count']
 
-    # --- ওয়ার্ডপ্রেস স্টাইল: সরাসরি ওয়েবসাইট থেকে পোস্ট দেখার বাটন ---
+    # --- কাস্টম তারিখ ফরম্যাট (DD/MM/YYYY) ---
+    def formatted_date(self, obj):
+        if obj.created_at:
+            # এখানে দিন/মাস/বছর এবং সময় (১২ ঘণ্টার ফরম্যাটে) সেট করা হয়েছে
+            return obj.created_at.strftime("%d/%m/%Y, %I:%M %p")
+        return "-"
+    formatted_date.short_description = "Created at"
+    formatted_date.admin_order_field = 'created_at'
+
+    # --- ওয়ার্ডপ্রেস স্টাইল: সরাসরি ওয়েবসাইট থেকে পোস্ট দেখার বাটন ---
     def view_post_link(self, obj):
-        # মডেলে get_absolute_url থাকলে এটি কাজ করবে
         return format_html(
             '<a href="{}" target="_blank" '
             'style="background-color: #007bff; color: white; padding: 5px 12px; '
@@ -74,21 +82,17 @@ class BlogPostAdmin(admin.ModelAdmin):
             </button>
             
             <script>
-                // বাটন ক্লিক করলে এডিটরের ডাটা সিঙ্ক হবে
                 document.getElementById('seo-check-btn').addEventListener('click', function() {
-                    // CKEditor 5 বা CKEditor 4 সিঙ্ক
                     if (typeof CKEDITOR !== 'undefined') {
                         for (var instance in CKEDITOR.instances) {
                             CKEDITOR.instances[instance].updateElement();
                         }
                     }
-                    // TinyMCE যদি থাকে
                     if (typeof tinymce !== 'undefined') {
                         tinymce.triggerSave();
                     }
                 });
 
-                // HTMX রিকোয়েস্ট পাঠানোর আগে ডাটা রিফ্রেশ করা
                 document.body.addEventListener('htmx:configRequest', function(evt) {
                     if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances['id_post_details']) {
                         CKEDITOR.instances['id_post_details'].updateElement();
@@ -121,5 +125,5 @@ class BlogPostAdmin(admin.ModelAdmin):
     class Media:
         js = (
         'https://unpkg.com/htmx.org@1.9.10',
-        'js/keyword_counter.js', # আপনার কাস্টম জাভাস্ক্রিপ্ট ফাইল
+        'js/keyword_counter.js', 
         )
