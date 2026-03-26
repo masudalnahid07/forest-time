@@ -2,18 +2,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-
-# Import the blog views explicitly
 from . import views
-
-# Assuming custom_upload_function is in your current directory's views.
-# Explicit imports prevent NameErrors and shadowing.
 from .views import custom_upload_function
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    # ১. স্ট্যাটিক এবং স্পেসিফিক পাথ (সবার আগে)
+    # হোমপেজ ১ মিনিটের জন্য ক্যাশ
+    path("", vary_on_cookie(cache_page(60 * 1)(views.home)), name="home"),
     
-    # 1. Specific/Static paths should go FIRST
     path("upload/", custom_upload_function, name="custom_upload_file"),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("search/", views.search, name="search"),
@@ -25,15 +23,19 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("activate/<uidb64>/<token>/", views.activate, name="activate"),
     
-    # 2. Dynamic paths with prefixes go NEXT
+    # ২. ডাইনামিক পাথ (প্রিফিক্স সহ)
     path("category/<slug:slug>/", views.category, name="category"),
+    
+    # --- ট্যাগ এরর ফিক্স করার জন্য এই লাইনটি যোগ করা হয়েছে ---
+    path("tag/<slug:slug>/", views.tag_posts, name="tag"), 
+    
     path("toggle-status/<int:pk>/", views.toggle_status, name="toggle_status"),
     path('article/edit/<slug:slug>/', views.edit_article, name='edit_article'),
     path('404/', views.custom_404_view, name='error_404'),
     path('live-seo-checker/', views.live_seo_checker, name='live_seo_checker'),
 
-    # 3. Catch-all dynamic paths go LAST
-    path("<slug:slug>/", views.single_post, name="single_post"),
+    # ৩. সিংগেল পোস্ট (ক্যাশ সহ) - এটি সবার শেষে থাকা উচিত
+    path('<slug:slug>/', vary_on_cookie(cache_page(60 * 1)(views.single_post)), name='single_post'),
 ]
 
 # Development media serve

@@ -80,8 +80,8 @@ class Category(models.Model):
         ordering = ["category_title"]
 
     def get_absolute_url(self):
-            # 'category_slug' এর বদলে শুধু 'slug' ব্যবহার করুন
-            return reverse("category", kwargs={"slug": self.category_slug})
+        # 'category_slug' এর বদলে শুধু 'slug' ব্যবহার করুন
+        return reverse("category", kwargs={"slug": self.category_slug})
 
     def __str__(self):
         if self.parent:
@@ -134,6 +134,11 @@ class BlogPost(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+    # ১. অবজেক্ট লোড হওয়ার সময় মেমোরিতে ইমেজ কপি রাখা (ডাটাবেজ হিট বাঁচাবে)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_feature_img = self.feature_img
+
     def get_absolute_url(self):
         return reverse("single_post", kwargs={"slug": self.slug})
 
@@ -141,29 +146,28 @@ class BlogPost(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        # টাইটেল কেস কনভার্ট
         if self.title:
             self.title = self.title.title()
+        
+        # অটো স্লাগ জেনারেট
         if not self.slug:
             self.slug = slugify(self.title)
         
-        # ইউনিক স্লাগ চেক
+        # ইউনিক স্লাগ চেক (লুপের মাধ্যমে নিশ্চিত করা)
         original_slug = self.slug
         counter = 1
         while BlogPost.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
             self.slug = f"{original_slug}-{counter}"
             counter += 1
         
-        # ইমেজ অপ্টিমাইজেশন (শুধু নতুন ইমেজ বা ইমেজ পরিবর্তন হলে কনভার্ট হবে)
+        # ২. অপ্টিমাইজড ইমেজ প্রসেসিং (শুধু পরিবর্তন হলেই WebP হবে)
         if self.feature_img:
-            try:
-                this = BlogPost.objects.get(pk=self.pk)
-                if this.feature_img != self.feature_img:
-                    self.feature_img = compress_and_convert_to_webp(self.feature_img)
-            except BlogPost.DoesNotExist:
+            # যদি নতুন পোস্ট হয় অথবা বিদ্যমান ইমেজের সাথে অমিল থাকে
+            if not self.pk or self.feature_img != self.__original_feature_img:
                 self.feature_img = compress_and_convert_to_webp(self.feature_img)
             
         super().save(*args, **kwargs)
-
 
 # --- কমেন্ট ও রিপ্লাই মডেল ---
 class Comment(models.Model):
