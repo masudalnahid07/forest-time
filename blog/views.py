@@ -408,3 +408,21 @@ def live_seo_checker(request):
     
     html = render_to_string('partials/seo_checker_result.html', context)
     return HttpResponse(html)
+
+def tag_posts(request, slug):
+    # ট্যাগ অনুযায়ী পোস্ট ফিল্টার করা হচ্ছে
+    # TaggableManager এর জন্য tags__slug ব্যবহার করতে হয়
+    post_list = BlogPost.objects.filter(tags__slug=slug, status='published').order_by("-created_at")
+    
+    paginator = Paginator(post_list, 6)
+    page_number = request.GET.get("page")
+    posts = paginator.get_page(page_number)
+
+    context = {
+        "posts": posts,
+        "tag_slug": slug,
+        "recent_posts": BlogPost.objects.filter(status="published").order_by("-created_at")[:5]
+    }
+
+    # আপনার ক্যাটাগরি বা ট্যাগ লিস্ট টেমপ্লেটটি এখানে ব্যবহার করুন
+    return render(request, "garden-category.html", context)
