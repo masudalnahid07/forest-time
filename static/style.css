@@ -2207,3 +2207,14 @@ body.dark-mode .post-sharing ul li a {
     color: #fff !important;
     border-radius: 5px;
 }
+
+/* ড্রপডাউন আইটেমগুলোর স্টাইল ক্লিন করার জন্য */
+.dropdown-menu .dropdown-item a {
+    color: inherit !important;
+    text-decoration: none !important;
+    display: block;
+    width: 100%;
+}
+.dropdown-menu li:hover {
+    background-color: #f8f9fa;
+}
