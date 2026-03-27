@@ -5,15 +5,30 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block title %}<title>Forest Time - Stylish Magazine Blog Template</title>{% endblock title %}
+    
+    <title>{% block title %}Forest Time - Stylish Magazine Blog{% endblock title %}</title>
+
+    {% block seo %}
+    <meta name="description" content="Forest Time - A stylish magazine and garden blog for nature lovers. Explore the beauty of nature.">
+    <meta name="keywords" content="garden, blog, magazine, forest, lifestyle, nature">
+    <meta name="author" content="Forest Time Team">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Forest Time - Stylish Magazine Blog">
+    <meta property="og:description" content="Explore the best garden and nature-related blogs.">
+    <meta property="og:image" content="{% static 'images/version/garden-logo.png' %}">
+    {% endblock seo %}
+
+    {% block canonical %}{% endblock canonical %}
+
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
     <link href="{% static 'style.css' %}" rel="stylesheet">
     <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
     <link href="{% static 'css/colors.css' %}" rel="stylesheet">
     <link href="{% static 'css/version/garden.css' %}" rel="stylesheet">
+
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    {% block canonical %}{% endblock canonical %}
 </head>
 <body>
 
@@ -47,12 +62,19 @@
                     <div class="col-lg-4 hidden-md-down text-center">
                         <div class="topsearch" style="display: inline-block; padding-top: 10px;">
                             {% if request.user.is_authenticated %}
-                                <a href="{% url 'profile' %}" style="margin-right: 15px;"><i class="fa fa-user"></i> {{ user.username }}</a>
-                                
+                                <a href="{% url 'profile' %}" style="margin-right: 15px;">
+                                    <i class="fa fa-user"></i> {{ user.username }}
+                                    {% if user.is_staff and pending_email_request %} 
+                                    <a href="{% url 'admin_dashboard' %}" title="View Pending Requests">
+                                        <span style="color: #ff5e5e; font-size: 12px; cursor: pointer;">🔴 (Pending)</span>
+                                        </a>
+                                    {% endif %}
+                                </a>
+
                                 {% if request.user.is_superuser %}
                                     <a href="{% url 'admin:index' %}" style="margin-right: 15px;"><i class="fa fa-dashboard"></i> Dashboard</a>
                                 {% endif %}
-
+                                
                                 <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();" style="margin-left: 10px; color: #ff5e5e;">
                                     <i class="fa fa-sign-out"></i> Logout
                                 </a>
@@ -62,6 +84,7 @@
                             {% endif %}
                         </div>
                     </div>
+
                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                         <div class="topsearch text-right">
                             <a data-toggle="collapse" href="#collapseExample"><i class="fa fa-search"></i> Search</a>
@@ -77,7 +100,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="logo">
-                            <a href="{% url 'home' %}"><img src="{% static 'images/version/garden-logo.png' %}" alt="Logo"></a>
+                            <a href="{% url 'home' %}"><img src="{% static 'images/version/garden-logo.png' %}" alt="Forest Time Logo"></a>
                         </div>
                     </div>
                 </div>
@@ -92,27 +115,15 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-md-center" id="ForestTimemenu">
                         <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="{% url 'home' %}">Home</a>
-                            </li>
-
+                            <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'home' %}">Home</a></li>
                             {% for categores in categories_list %}
-                                <li class="nav-item">
-                                    <a class="nav-link color-green-hover" href="{% url 'category' categores.category_slug %}">{{ categores.category_title }}</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'category' categores.category_slug %}">{{ categores.category_title }}</a></li>
                             {% endfor %}
-
+                            
                             {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="{% url 'profile' %}">My Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();">Logout</a>
-                            </li>
+                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'profile' %}">My Profile</a></li>
                             {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link color-green-hover" href="{% url 'login' %}">Login</a>
-                            </li>
+                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'login' %}">Login</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -128,6 +139,21 @@
         <script src="{% static 'js/tether.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/custom.js' %}"></script>
-        </div>
+
+        <script>
+            // HTMX Global CSRF Configuration: এটি সব HTMX রিকোয়েস্টের সাথে CSRF টোকেন পাঠাবে
+            document.body.addEventListener('htmx:configRequest', (event) => {
+                event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            });
+
+            // Dark Mode Logic
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-version');
+                });
+            }
+        </script>
+    </div>
 </body>
 </html>

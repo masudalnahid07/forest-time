@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .models import EmailChangeRequest
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from .models import *
@@ -127,3 +128,20 @@ class BlogPostAdmin(admin.ModelAdmin):
         'https://unpkg.com/htmx.org@1.9.10',
         'js/keyword_counter.js', 
         )
+
+@admin.register(EmailChangeRequest)
+class EmailChangeRequestAdmin(admin.ModelAdmin):
+    list_display = ['user', 'new_email', 'is_approved', 'created_at']
+    actions = ['approve_email_change']
+
+    def approve_email_change(self, request, queryset):
+        for req in queryset:
+            if not req.is_approved:
+                user = req.user
+                user.email = req.new_email
+                user.save()
+                req.is_approved = True
+                req.save()
+        self.message_user(request, "Selected email changes have been approved and updated!")
+    
+    approve_email_change.short_description = "Approve selected email changes"

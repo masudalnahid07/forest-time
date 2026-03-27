@@ -12,14 +12,14 @@
                     
                     {% if blog.feature_img %}
                         <img src="{{ blog.feature_img.url }}" 
-                             class="img-fluid" 
-                             alt="{{blog.focus_keyword}}" 
-                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
+                            class="img-fluid" 
+                            alt="{{ blog.clean_alt_text }}" 
+                            {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% else %}
-                        <img src="{% static 'upload/garden_cat_02.jpg' %}" 
-                             class="img-fluid" 
-                             alt="{{blog.focus_keyword}}" 
-                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
+                        <img src="{% static 'media/images/defult_image/defult_hero_image.jpg' %}" 
+                            class="img-fluid" 
+                            alt="{{ blog.clean_alt_text }}" 
+                            {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% endif %}
                     
                     <div class="shadoweffect">

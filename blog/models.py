@@ -43,20 +43,58 @@ def compress_and_convert_to_webp(image_field):
     return ContentFile(output.read(), name=name)
 
 
+
+# --- অথর প্রোফাইল মডেল (সুপারইউজার ও অথরদের জন্য) ---
 # --- অথর প্রোফাইল মডেল ---
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
-    bio = RichTextField(config_name="extends")
-    profile_image = models.ImageField(upload_to="profiles/%Y/%m/%d/", null=True, blank=True)
+    full_name = models.CharField(max_length=100, blank=True, help_text="Type your full name")
+    profile_image = models.ImageField(
+        upload_to="profiles/%Y/%m/%d/", 
+        null=True, 
+        blank=True, 
+        default='profiles/default_user.png' # পাথটি ফোল্ডারসহ দিন
+    )
+    bio = RichTextField(config_name="extends", blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.full_name if self.full_name else self.user.username
 
     def save(self, *args, **kwargs):
-        if self.profile_image:
-            self.profile_image = compress_and_convert_to_webp(self.profile_image)
+        # ইমেজ প্রসেসিং এর সময় ফাইল না পাওয়া গেলে যাতে এরর না দেয়
+        if self.profile_image and self.profile_image != 'default_user.png':
+            try:
+                # নতুন অবজেক্ট তৈরির সময়
+                if not self.pk:
+                    self.profile_image = compress_and_convert_to_webp(self.profile_image)
+                else:
+                    # পুরনো অবজেক্ট এডিট করার সময় ইমেজ পরিবর্তন হয়েছে কি না চেক করা
+                    old_instance = Author.objects.get(pk=self.pk)
+                    if old_instance.profile_image != self.profile_image:
+                        self.profile_image = compress_and_convert_to_webp(self.profile_image)
+            except (Author.DoesNotExist, FileNotFoundError, Exception):
+                # ফাইল না পাওয়া গেলে প্রসেসিং স্কিপ করবে
+                pass
+        
         super().save(*args, **kwargs)
 
+# --- সিগন্যাল (সহজ ও নিরাপদ পদ্ধতি) ---
+@receiver(post_save, sender=User)
+def create_or_update_author_profile(sender, instance, created, **kwargs):
+    if created:
+        Author.objects.get_or_create(user=instance)
+    else:
+        # প্রোফাইল না থাকলে তৈরি করবে, থাকলে সেভ করবে
+        # এখানে আলাদা করে ইমেজ প্রসেসিং করার দরকার নেই, মডেলের save() সেটা করবে
+        if not hasattr(instance, 'author_profile'):
+            Author.objects.create(user=instance)
+        else:
+            try:
+                instance.author_profile.save()
+            except Exception:
+                pass
+
+            
 
 # --- ব্লগ মেটা মডেল ---
 class BlogMeta(models.Model):
@@ -140,6 +178,17 @@ class BlogPost(models.Model):
     def get_absolute_url(self):
         return reverse("single_post", kwargs={"slug": self.slug})
 
+    @property
+    def alt_text_from_slug(self):
+        return self.slug.replace('-', ' ').title()
+    
+    @property
+    def clean_alt_text(self):
+        if self.focus_keyword:
+            return self.focus_keyword
+        # স্লাগ থেকে ড্যাশ সরিয়ে টাইটেল কেস করা
+        return self.slug.replace('-', ' ').title()
+
     def __str__(self):
         return self.title
 
@@ -209,5 +258,25 @@ def create_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+def create_or_update_author_profile(sender, instance, created, **kwargs):
+    if created:
+        # নতুন ইউজার তৈরি হলে অথর প্রোফাইল তৈরি করবে
+        Author.objects.get_or_create(user=instance)
+    else:
+        # লগইন বা আপডেটের সময় 'author_profile' চেক করে সেভ করবে
+        if hasattr(instance, 'author_profile'):
+            instance.author_profile.save()
+        else:
+            # যদি প্রোফাইল না থাকে তবে তৈরি করে নেবে
+            Author.objects.create(user=instance)
+
+
+class EmailChangeRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    new_email = models.EmailField()
+    is_approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        # 'user' এর আগে 'self.' যোগ করতে হবে
+        return f"{self.user.username} wants to change email to {self.new_email}"

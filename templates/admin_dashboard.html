@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="custombox" style="background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: 700;">
+                        <i class="fa fa-shield"></i> Admin Request Dashboard
+                    </h2>
+                    <hr>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover" style="vertical-align: middle;">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>User</th>
+                                    <th>Current Email</th>
+                                    <th>Requested New Email</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in pending_requests %}
+                                <tr id="request-row-{{ req.id }}">
+                                    <td><strong>{{ req.user.username }}</strong></td>
+                                    <td>{{ req.user.email }}</td>
+                                    <td class="text-primary font-weight-bold">{{ req.new_email }}</td>
+                                    <td>{{ req.created_at|date:"d M, Y" }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-success btn-sm" 
+                                                hx-post="{% url 'approve_email_request' req.id %}" 
+                                                hx-target="#request-row-{{ req.id }}" 
+                                                hx-swap="outerHTML"
+                                                hx-confirm="Are you sure to APPROVE this email change?">
+                                            <i class="fa fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn btn-danger btn-sm ml-2" 
+                                                hx-post="{% url 'reject_email_request' req.id %}" 
+                                                hx-target="#request-row-{{ req.id }}" 
+                                                hx-swap="outerHTML"
+                                                hx-confirm="Reject this request?">
+                                            <i class="fa fa-trash"></i> Reject
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <h4 class="text-muted">No pending requests at the moment! 🎉</h4>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

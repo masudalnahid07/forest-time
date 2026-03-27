@@ -33,7 +33,19 @@ urlpatterns = [
     path("tag/<slug:slug>/", views.tag_posts, name="tag"),
     path("reply/<int:comment_id>/", views.post_reply, name="post_reply"),
 
-    # ৫. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
+
+    # ৫. এডমিন ড্যাশবোর্ড
+    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('dashboard/approve/<int:request_id>/', views.approve_email_request,name='approve_email_request'),
+    
+    # এই নিচের লাইনটি আপনার কোডে নেই, এটি যোগ করুন:
+    path('dashboard/reject/<int:request_id>/', views.reject_email_request, name='reject_email_request'),
+    
+    path('profile/cancel-email-request/', views.cancel_email_request, name='cancel_email_request'),
+
+
+
+    # ৬. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
     path("<slug:slug>/", views.single_post, name="single_post"),
 ]
 

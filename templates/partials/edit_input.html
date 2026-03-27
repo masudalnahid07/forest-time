@@ -1,46 +1,31 @@
-<div id="{{ field_name }}-row" class="list-group-item py-3" style="background-color: #fdfdfd; border-radius: 10px;">
-    <form hx-post="{% url 'edit_field' field_name %}" 
-          hx-target="#{{ field_name }}-row" 
-          hx-swap="outerHTML"
-          {% if field_name == 'profile_image' %}hx-encoding="multipart/form-data"{% endif %}
-          hx-indicator="#indicator-{{ field_name }}">
+<div id="{{ field_name }}-row" class="list-group-item py-3" style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
+    <form hx-post="{% url 'edit_field' field_name %}" hx-target="#{{ field_name }}-row" hx-swap="outerHTML" hx-encoding="multipart/form-data">
         {% csrf_token %}
-        
-        <div class="row align-items-center">
-            <div class="col-lg-7 col-md-6 col-sm-12 mb-2 mb-md-0">
+        <div class="d-flex align-items-center justify-content-between">
+            <div style="flex-grow: 1; margin-right: 15px;">
                 {% if field_name == 'profile_image' %}
-                    <div class="d-flex align-items-center" style="gap: 12px;">
-                        <img id="preview-{{ field_name }}" src="{{ user.profile.image.url }}" 
-                             style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
-                        
-                        <input type="file" name="{{ field_name }}" class="form-control" 
-                               accept="image/*" required
-                               style="border-radius: 20px; padding: 6px 15px; border: 1px solid #ddd;"
-                               onchange="document.getElementById('preview-{{ field_name }}').src = window.URL.createObjectURL(this.files[0])">
-                    </div>
+                    <input type="file" name="profile_image" class="form-control-file">
+                {% elif field_name == 'bio' %}
+                    <textarea name="bio" class="form-control" rows="2">{{ author_profile.bio }}</textarea>
+                {% elif field_name == 'email' %}
+                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                    <small class="text-danger" style="font-size: 11px;">
+                        <i class="fa fa-info-circle"></i> Note: Changing email requires Admin approval.
+                    </small>
                 {% else %}
                     <input type="text" name="{{ field_name }}" class="form-control" 
-                           value="{% if field_name == 'username' %}{{ user.username }}{% elif field_name == 'email' %}{{ user.email }}{% else %}{{ user.profile.full_name }}{% endif %}" 
-                           style="border-radius: 20px; padding: 10px 20px; border: 1px solid #ddd;" autofocus>
+                        value="{% if field_name == 'username' %}{{ user.username }}{% else %}{{ author_profile.full_name }}{% endif %}">
                 {% endif %}
             </div>
-            
-            <div class="col-lg-5 col-md-6 col-sm-12 d-flex align-items-center justify-content-md-end justify-content-start" style="gap: 8px;">
-                <button type="submit" class="btn btn-success d-flex align-items-center" 
-                        style="border-radius: 25px; padding: 6px 14px; font-weight: 600; font-size: 13px; border: none; white-space: nowrap;">
-                    <span id="indicator-{{ field_name }}" class="htmx-indicator mr-1">
-                        <i class="fa fa-spinner fa-spin"></i>
-                    </span>
-                    <i class="fa fa-check mr-1"></i> Save
-                </button>
 
-                <button type="button" 
-                        hx-get="{% url 'edit_field' field_name %}" 
-                        hx-target="#{{ field_name }}-row" 
-                        hx-swap="outerHTML"
-                        class="btn btn-danger d-flex align-items-center" 
-                        style="border-radius: 25px; padding: 6px 14px; font-weight: 600; font-size: 13px; border: none; white-space: nowrap;">
-                    <i class="fa fa-times mr-1"></i> Cancel
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success btn-sm" style="border-radius: 20px; padding: 5px 15px; font-weight: bold;">
+                    <i class="fa fa-check"></i> Save
+                </button>
+                <button type="button" class="btn btn-light btn-sm ml-2" 
+                        hx-get="{% url 'profile' %}" hx-target="body" 
+                        style="border-radius: 20px; padding: 5px 15px; border: 1px solid #ddd;">
+                    <i class="fa fa-times"></i> Cancel
                 </button>
             </div>
         </div>

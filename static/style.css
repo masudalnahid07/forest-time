@@ -2254,3 +2254,15 @@ body.dark-mode .post-sharing ul li a {
     background-color: #218838 !important;
     transition: 0.3s;
 }
+
+
+/* মাউসের  কার্সর*/
+button, 
+.btn, 
+.btn-sm, 
+[hx-get], 
+[hx-post] {
+    cursor: pointer !important;
+}
+
+

@@ -94,7 +94,7 @@ def single_post(request, slug):
     if request.method == "POST":
         # ২. লগইন চেক (সুরক্ষার জন্য)
         if not request.user.is_authenticated:
-            messages.warning(request, "কমেন্ট করতে হলে আপনাকে অবশ্যই লগইন করতে হবে।")
+            messages.warning(request, "To post a comment, you must be logged in.")
             return redirect("login")
 
         # ৩. ডাটা রিসিভ করা (গুরুত্বপূর্ণ: এখানে 'text' ব্যবহার করুন কারণ টেমপ্লেটে name="text")
@@ -106,10 +106,10 @@ def single_post(request, slug):
                 user=request.user, 
                 text=comment_text # আপনার মডেলের ফিল্ড 'text'
             )
-            messages.success(request, "আপনার কমেন্টটি সফলভাবে যোগ করা হয়েছে!")
+            messages.success(request, "Your comment has been successfully added!")
         else:
             # যদি comment_text খালি থাকে তবে এই এররটি আসবে (যা আপনি স্ক্রিনশটে দেখেছিলেন)
-            messages.error(request, "কমেন্ট খালি রাখা যাবে না।")
+            messages.error(request, "The comment cannot be left empty.")
             
         return redirect("single_post", slug=post.slug)
 
@@ -493,65 +493,138 @@ def post_reply(request, comment_id):
 # ১০. ইউজারের প্রোফাইল
 @login_required
 def user_profile(request):
-    # প্রোফাইল না থাকলে তৈরি করে নেবে (get_or_create)
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    # ১. ইউজার অনুযায়ী অথর প্রোফাইল খুঁজে বের করা বা তৈরি করা
+    author_obj, created = Author.objects.get_or_create(user=request.user)
     
+    # ২. ইমেইল পরিবর্তনের কোনো রিকোয়েস্ট পেন্ডিং আছে কি না চেক করা
+    is_pending = EmailChangeRequest.objects.filter(
+        user=request.user, 
+        is_approved=False
+    ).exists()
+    
+    # ৩. ডাটা কনটেক্সটে পাঠানো
     context = {
         'user': request.user,
-        'profile': profile,
+        'author_profile': author_obj,
+        'pending_email_request': is_pending,
         'comments_count': Comment.objects.filter(user=request.user).count(),
+        **get_sidebar_data(), # আপনার সাইডবার ডাটা (Recent Posts ইত্যাদি)
     }
+    
     return render(request, 'profile.html', context)
 
+
 @login_required
+@csrf_protect
 def edit_field(request, field_name):
-    profile = request.user.profile
+    author_profile = request.user.author_profile 
     display_value = ""
     message = ""
     
     if request.method == 'POST':
-        # ১. ইমেইল এডিট ব্লক করা (সিকিউরিটি চেক)
+        # ১. ইমেইল এডিট লজিক (Admin Approval Required)
         if field_name == 'email':
-            return HttpResponse("Changing email is not allowed.", status=403)
+            new_email = request.POST.get(field_name)
+            
+            if new_email == request.user.email:
+                return HttpResponse("This is already your current email.", status=400)
+            
+            # চেক করা হচ্ছে অলরেডি কোনো রিকোয়েস্ট পেন্ডিং আছে কি না
+            from .models import EmailChangeRequest # মডেলটি ইম্পোর্ট করুন
+            pending_request = EmailChangeRequest.objects.filter(user=request.user, is_approved=False).exists()
+            
+            if pending_request:
+                message = "A request is already pending approval!"
+            else:
+                EmailChangeRequest.objects.create(user=request.user, new_email=new_email)
+                message = "Request sent to Admin for approval!"
+            
+            display_value = request.user.email # ইমেইল পরিবর্তন না করে বর্তমানটাই দেখানো হবে
 
-        # ২. ইমেজ হ্যান্ডেলিং
-        if field_name == 'profile_image':
-            new_image = request.FILES.get(field_name)
-            if new_image:
-                profile.image = new_image
-                profile.save()
-                message = "Your image is saved!"
-            display_value = profile.image.url # টেমপ্লেটে ইমেজের পাথ পাঠাবে
-        
-        # ৩. ইউজারনেম হ্যান্ডেলিং (সরাসরি User মডেলে)
+        # ২. ইউজারনেম আপডেট
         elif field_name == 'username':
             new_value = request.POST.get(field_name)
             if new_value:
                 request.user.username = new_value
                 request.user.save()
                 message = "Username updated!"
-            display_value = request.user.username
+                display_value = request.user.username
+        
+        # ৩. ইমেজ আপডেট
+        elif field_name == 'profile_image':
+            new_image = request.FILES.get('profile_image')
+            if new_image:
+                author_profile.profile_image = new_image
+                author_profile.save()
+                message = "Image saved!"
+                display_value = author_profile.profile_image.url
 
-        # ৪. প্রোফাইলের অন্যান্য ফিল্ড (full_name, bio)
+        # ৪. অন্যান্য ফিল্ড (full_name, bio)
         else:
             new_value = request.POST.get(field_name)
-            if hasattr(profile, field_name):
-                setattr(profile, field_name, new_value)
-                profile.save()
-                message = f"{field_name.replace('_', ' ').title()} updated!"
-            display_value = new_value
+            if hasattr(author_profile, field_name):
+                setattr(author_profile, field_name, new_value)
+                author_profile.save()
+                message = "Saved successfully!"
+                display_value = new_value
 
-        # সেভ হওয়ার পর আগের রো-তে মেসেজসহ ফিরে যাবে
-        return render(request, 'partials/profile_row.html', {
+        return render(request, 'partials/profile_row_updated.html', {
             'field_name': field_name, 
             'value': display_value, 
-            'user': request.user,
             'success_msg': message 
         })
 
-    # GET রিকোয়েস্টে এডিট ইনপুট ফিল্ড দেখাবে
+    # GET রিকোয়েস্টে ইনপুট ফিল্ড দেখাবে
     return render(request, 'partials/edit_input.html', {
         'field_name': field_name, 
-        'profile': profile, 
-        'user': request.user
+        'user': request.user,
+        'author_profile': author_profile
+    })
+
+
+# ড্যাশবোর্ড মেইন ভিউ
+@staff_member_required
+def admin_dashboard(request):
+    pending_requests = EmailChangeRequest.objects.filter(is_approved=False).order_by('-created_at')
+    return render(request, 'admin_dashboard.html', {'pending_requests': pending_requests})
+
+# রিকোয়েস্ট এপ্রুভ করার লজিক (HTMX)
+@staff_member_required
+@require_POST
+def approve_email_request(request, request_id):
+    email_req = get_object_or_404(EmailChangeRequest, id=request_id)
+    
+    # মূল ইউজারের ইমেইল আপডেট
+    user = email_req.user
+    user.email = email_req.new_email
+    user.save()
+    
+    # রিকোয়েস্টটি এপ্রুভড হিসেবে মার্ক করা
+    email_req.is_approved = True
+    email_req.save()
+    
+    # এপ্রুভ হওয়ার পর ওই রো-টি রিমুভ করে দেওয়ার জন্য খালি রেসপন্স বা সাকসেস মেসেজ
+    return HttpResponse("") 
+
+# রিকোয়েস্ট রিজেক্ট/ডিলিট করার লজিক (HTMX)
+@staff_member_required
+@require_POST
+def reject_email_request(request, request_id):
+    email_req = get_object_or_404(EmailChangeRequest, id=request_id)
+    email_req.delete()
+    return HttpResponse("")
+
+
+@login_required
+@require_POST
+def cancel_email_request(request):
+    from .models import EmailChangeRequest
+    # ইউজারের পেন্ডিং রিকোয়েস্টটি খুঁজে বের করে ডিলিট করা
+    EmailChangeRequest.objects.filter(user=request.user, is_approved=False).delete()
+    
+    # ডিলিট করার পর ইমেইল রো-টি আবার আগের অবস্থায় (Edit বাটনসহ) ফিরিয়ে আনা
+    return render(request, 'partials/profile_row_updated.html', {
+        'field_name': 'email',
+        'value': request.user.email,
+        'success_msg': 'Request cancelled successfully.'
     })
