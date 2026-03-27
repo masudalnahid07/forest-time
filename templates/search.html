@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-title wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <h2 style="color: inherit;"><i class="fa fa-search bg-green"></i> Search Results</h2>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Search</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-wrapper">
+                    
+                    <div id="live-search-results">
+                        {# আপনার ফিক্স করা search_results.html পারশিয়ালটি এখানে লোড হবে #}
+                        {% include "partials/search_results.html" %}
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* সার্চ পেজের জন্য বিশেষ স্টাইলিং */
+    body.dark-mode .page-title.wb {
+        background-color: #1a1a1a !important;
+        border-bottom: 1px solid #333 !important;
+    }
+    
+    /* রেজাল্ট না থাকলে এলার্ট বক্সের ডার্ক মোড সাপোর্ট */
+    body.dark-mode .alert-info {
+        background-color: #2c3e50;
+        border-color: #34495e;
+        color: #ecf0f1;
+    }
+</style>
+{% endblock content %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="page-title wb">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <h2 style="color: inherit;"><i class="fa fa-envelope-o bg-green"></i> Contact Us</h2>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item active">Contact</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="map" style="height: 400px; width: 100%; border-bottom: 1px solid #eee;"></div>
+
+    <section class="section wb">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1">
+                    <div class="page-wrapper">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h4 style="color: inherit;">Who we are</h4>
+                                <p style="color: inherit; opacity: 0.8;">Forest Time is a personal blog for handcrafted photography content, gardening tips, and lifestyle stories from independent creatives around the world.</p>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <h4 style="color: inherit;">How we help?</h4>
+                                <p style="color: inherit; opacity: 0.8;">We provide practical gardening guides and indoor plant care tips to help you transform your living space into a green sanctuary.</p>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <h4 style="color: inherit;">Get in Touch</h4>
+                                <p style="color: inherit; opacity: 0.8;">Have a question or a collaboration idea? Feel free to drop us a message. We usually respond within 24 hours.</p>
+                            </div>
+                        </div>
+
+                        <hr class="invis">
+
+                        <div class="row">
+                            <div class="col-lg-8 offset-lg-2">
+                                <form class="form-wrapper" method="POST" action="">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Your name" required style="background: transparent; color: inherit;">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Email address" required style="background: transparent; color: inherit;">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Phone (Optional)" style="background: transparent; color: inherit;">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Subject" required style="background: transparent; color: inherit;">
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control" placeholder="Your message" required style="background: transparent; color: inherit; min-height: 150px;"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block">Send Message <i class="fa fa-envelope-open-o"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_ACTUAL_API_KEY&libraries=places"></script>
+    <script src="{% static 'js/garden-map.js' %}"></script>
+{% endblock extra_js %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <div class="page-wrapper">
+                    
+                    <div id="profile-card-container">
+                        {% include 'partials/profile_card.html' %}
+                    </div>
+
+                    <hr class="invis">
+
+                    <div class="text-center" style="margin-bottom: 20px;">
+                        <button class="btn btn-outline-success" 
+                                type="button" 
+                                data-toggle="collapse" 
+                                data-target="#editProfileSection" 
+                                aria-expanded="false" 
+                                style="border-radius: 30px; padding: 10px 30px; font-weight: 700;">
+                            <i class="fa fa-edit"></i> Edit Profile Information
+                        </button>
+                    </div>
+
+                    <div class="collapse" id="editProfileSection">
+                        <div class="custombox clearfix" style="background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                            <h4 class="small-title">Update Your Info</h4>
+                            
+                            <div class="list-group list-group-flush">
+                                
+                                <div id="username-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div><strong>Username:</strong> {{ user.username }}</div>
+                                    <button hx-get="{% url 'edit_field' 'username' %}" hx-target="#username-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                </div>
+
+                                <div id="fullname-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div><strong>Full Name:</strong> {{ profile.full_name|default:"Not set" }}</div>
+                                    <button hx-get="{% url 'edit_field' 'full_name' %}" hx-target="#fullname-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                </div>
+
+                                <div id="bio-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div><strong>Bio:</strong> {{ profile.bio|truncatechars:30|default:"No bio added" }}</div>
+                                    <button hx-get="{% url 'edit_field' 'bio' %}" hx-target="#bio-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                </div>
+
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3" style="background: #fdfdfd;">
+                                    <div><strong>Email:</strong> {{ user.email }}</div>
+                                    <span class="badge badge-secondary">Permanent</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12">
+                {% include "partials/sidebar.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

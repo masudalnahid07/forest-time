@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-title wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <h2 style="color: inherit;"><i class="fa fa-leaf bg-green"></i> Category: {{ category.category_title }}</h2>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    
+                    {# প্যারেন্ট ক্যাটাগরি থাকলে ব্রেডক্রাম্বে সেটি দেখানো #}
+                    {% if category.parent %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'category' category.parent.category_slug %}">{{ category.parent.category_title }}</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="breadcrumb-item active">{{ category.category_title }}</li>
+                </ol>
+            </div>                    
+        </div>
+    </div>
+</div>
+
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                
+                {# সাব-ক্যাটাগরি লিস্ট সেকশন - ডিজাইন ইমপ্রুভমেন্ট #}
+                {% if category.children.all %}
+                <div class="subcategory-list mb-4 p-3" style="background: rgba(40, 167, 69, 0.05); border-radius: 8px; border: 1px dashed #28a745;">
+                    <p style="margin-bottom: 10px; color: inherit;"><strong>Explore Sub-categories:</strong></p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for sub in category.children.all %}
+                            <a href="{% url 'category' sub.category_slug %}" class="btn btn-outline-success btn-sm" style="border-radius: 20px; font-weight: 500;">
+                                <i class="fa fa-tag"></i> {{ sub.category_title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div id="live-search-results">
+                    <div class="page-wrapper">
+                        {# আপনার ফিক্স করা পারশিয়াল ফাইলটি এখানে লোড হচ্ছে #}
+                        {% include 'partials/category_list_partial.html' %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                {# আপনার ফিক্স করা সাইডবার ফাইল #}
+                {% include "partials/sidebar.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* ডার্ক মোডে ব্রেডক্রাম্ব কালার ফিক্স */
+    body.dark-mode .breadcrumb-item.active {
+        color: #aaa;
+    }
+    body.dark-mode .page-title.wb {
+        background-color: #1a1a1a !important;
+        border-bottom: 1px solid #333 !important;
+    }
+</style>
+{% endblock content %}

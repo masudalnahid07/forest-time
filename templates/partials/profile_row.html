@@ -1,0 +1,26 @@
+{% load custom_filters %}
+
+<div id="{{ field_name }}-row" class="list-group-item d-flex justify-content-between align-items-center py-3" style="transition: all 0.4s ease;">
+    <div>
+        <strong class="text-dark">{{ field_name|title|replace_underscore }}:</strong> 
+        <span class="text-muted ml-2">
+            {% if field_name == 'image' %}
+                <i class="fa fa-image"></i> Image Uploaded
+            {% else %}
+                {{ value|default:"Not set" }}
+            {% endif %}
+        </span>
+    </div>
+
+    <button hx-get="{% url 'edit_field' field_name %}" 
+            hx-target="#{{ field_name }}-row" 
+            hx-swap="outerHTML" 
+            class="btn btn-sm btn-light text-primary"
+            style="border-radius: 20px; border: 1px solid #eee;">
+        <i class="fa fa-pencil"></i> Edit
+    </button>
+
+    {% if field_name == 'image' %}
+        <div hx-get="{% url 'profile' %}" hx-target="#profile-card-container" hx-select="#profile-card-container" hx-trigger="load"></div>
+    {% endif %}
+</div>

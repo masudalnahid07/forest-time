@@ -1,0 +1,138 @@
+# --- Python & Django .gitignore পরিষ্কার ভার্সন ---
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+env/
+venv/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+bin/
+lib/
+lib64/
+include/
+
+# Django files
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+static/collected/
+media/
+
+# Secrets / config
+.env
+local_settings.py
+
+# Logs
+*.log
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# PyCharm specific
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/misc.xml
+.idea/jsLibraryMappings.xml
+
+# Build / Distribution
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+*.whl
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing / coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# pyenv
+.python-version
+
+# celery
+celerybeat-schedule.*
+
+# mypy
+.mypy_cache/
+
+# Documentation
+/site
+
+# Backup
+*.bak
+
+# Misc
+*.pot
+*.iws
+out/
+atlassian-ide-plugin.xml
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# sftp
+sftp-config.json
+
+# VS Code specific allow কিছু ফাইল
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# History
+.history
+
+__pycache__/
+*.pyc

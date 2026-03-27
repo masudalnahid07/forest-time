@@ -1,0 +1,54 @@
+{% load static %}
+
+<div class="page-wrapper">
+    <div class="blog-list clearfix">
+        {% if query %}
+            <div class="alert alert-success mb-4" role="alert" style="background-color: #28a745; color: white; border: none; border-radius: 8px;">
+                <i class="fa fa-search"></i> Search Results for: <strong>"{{ query }}"</strong>
+            </div>
+        {% endif %}
+
+        {% for blog in results %}
+        <div class="blog-box row">
+            <div class="col-md-4">
+                <div class="post-media">
+                    <a href="{% url 'single_post' blog.slug %}" title="{{ blog.title }}">
+                        {% if blog.feature_img %}
+                            <img src="{{ blog.feature_img.url }}" alt="{{ blog.focus_keyword|default:blog.title }}" class="img-fluid" loading="lazy">
+                        {% else %}
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default Image" class="img-fluid" loading="lazy">
+                        {% endif %}
+                        <div class="hovereffect"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="blog-meta big-meta col-md-8">
+                <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
+                
+                <h4 style="color: inherit;"><a href="{% url 'single_post' blog.slug %}" title="" style="color: inherit;">{{ blog.title }}</a></h4>
+                
+                <div style="color: inherit;">
+                    <p>{{ blog.post_details|striptags|truncatewords:30 }}
+                        <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px; color: white;">Read More</a>
+                    </p>
+                </div>
+                
+                <small style="color: #999;"><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
+                <small style="color: #999;"> Posted Time: {{ blog.created_at|date:"d M, Y"}}</small>
+                <small><a href="#" title="" style="color: #28a745;">by {{ blog.author }}</a></small>
+            </div>
+        </div>
+        <hr class="invis">
+        
+        {% empty %}
+        <div class="row">
+            <div class="col-md-12 text-center mt-5 mb-5">
+                <i class="fa fa-frown-o fa-4x mb-3" style="color: #ccc;"></i>
+                <h4 class="text-muted">Sorry, no matching posts found for "{{ query }}".</h4>
+                <p>Try searching with different keywords or explore our categories.</p>
+                <a href="{% url 'home' %}" class="btn btn-outline-success mt-3" style="border-radius: 50px;">Go Back Home</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

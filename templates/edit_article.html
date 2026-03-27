@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-title wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <h2><i class="fa fa-edit bg-green"></i> Edit Article</h2>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Edit Article</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section wb">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                <div class="page-wrapper">
+                    <div class="blog-content" style="padding: 20px; border: 1px solid #eee; color: inherit;">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            
+                            <div class="form-group custom-form">
+                                {{ form.as_p }}
+                            </div>
+                            
+                            <hr>
+                            <div class="btn-group-action">
+                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Update Article</button>
+                                <a href="{% url 'single_post' post.slug %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                {% include "partials/sidebar.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* ডার্ক মোডে ফর্মের টেক্সট কালার ফিক্স */
+    .custom-form p {
+        color: inherit !important;
+    }
+    
+    .custom-form input, .custom-form select, .custom-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+    }
+
+    /* CKEditor কে রেসপন্সিভ করার জন্য */
+    .django_ckeditor_5 {
+        width: 100% !important;
+    }
+    .ck-editor__editable {
+        min-height: 400px;
+        color: #333 !important; /* এডিটরের ভেতরের টেক্সট সবসময় ডার্ক রাখা ভালো */
+    }
+
+    body.dark-mode .blog-content {
+        background: #1a1a1a !important;
+        border-color: #333 !important;
+    }
+</style>
+{% endblock content %}

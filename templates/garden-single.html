@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% load static %}
+{% load social_share %}
+{% load cache %}
+
+{% block title %}
+    <title>{{ post.title }} - Forest Time</title>
+    <meta name="description" content="{{ post.meta_description }}">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      {% if post.post_type == 'review' %}
+      "@type": "Review",
+      "itemReviewed": {
+        "@type": "Product",
+        "name": "{{ post.product_name|escapejs }}"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ post.rating_value }}",
+        "bestRating": "5"
+      },
+      {% else %}
+      "@type": "BlogPosting",
+      {% endif %}
+      "headline": "{{ post.title|escapejs }}",
+      "image": "{% if post.feature_img %}{{ request.scheme }}://{{ request.get_host }}{{ post.feature_img.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'upload/garden_single_01.jpg' %}{% endif %}",
+      "author": {
+        "@type": "Person",
+        "name": "{{ post.author.user.username|escapejs }}"
+      },
+      "datePublished": "{{ post.created_at|date:'Y-m-d' }}",
+      "description": "{{ post.meta_description|escapejs }}"
+    }
+    </script>
+{% endblock title %}
+
+{% block content %}
+<section class="section wb">
+    <div class="container">
+        <div class="row gx-lg-5">
+            
+            <div class="col-lg-8 col-md-12 content-column">
+                <div id="live-search-results"> 
+                    <div class="page-wrapper">
+                        
+                        <div class="blog-title-area">
+                            <span class="color-green"><a href="{% url 'category' post.category.category_slug %}" title="">{{post.category.category_title}}</a></span>
+                            <h1 style="font-weight: 900; font-size: 38px; margin-top: 10px; margin-bottom: 15px; color: inherit; line-height: 1.3;">{{post.title}}</h1>
+                            
+                            <div class="blog-meta big-meta" style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                                <small style="color: #999; margin-right: 15px;">{{ post.created_at|date:"d M, Y"}}</small>
+                                <small style="color: #999; margin-right: 15px;">by {{ post.author }}</small>
+                                <small style="color: #999;"><i class="fa fa-eye"></i> {{ post.views_count }} Views</small>
+                            </div>
+
+                            <div style="margin-bottom: 25px;">
+                                {% include "partials/social_share_custom.html" %}
+                            </div>
+                        </div>
+
+                        <div class="single-post-media" style="margin-bottom: 25px;">
+                            <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/garden_single_01.jpg' %}{% endif %}" 
+                                alt="{{ post.title }}" class="img-fluid" style="width: 100%; height: auto; border-radius: 4px;">
+                        </div>
+
+                        <div class="blog-content" style="line-height: 1.9; font-size: 17px; color: #333;">
+                            <div class="pp" style="color: inherit; margin-bottom: 30px;">
+                                {{ post.post_details|safe }}
+                            </div>
+
+                            <div class="post-tags" style="margin-bottom: 30px; display: flex; align-items: center; flex-wrap: wrap;">
+                                <span style="background: #28a745; color: #fff; padding: 5px 22px; border-radius: 25px; font-weight: 700; margin-right: 15px; font-size: 14px;">Tag</span>
+                                {% for tag in post.tags.all %}
+                                    <a href="{% url 'tag' tag.slug %}" 
+                                    style="display: inline-block; background: #f8f9fa; color: #555; padding: 6px 18px; margin:5px; font-size: 13px; font-weight: 500; text-decoration: none; border-radius: 30px; border: 1px solid #ddd; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                    {{ tag.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            <div class="post-share" style="margin-bottom: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                                {% include "partials/social_share_custom.html" %}
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-bottom: 40px;">
+                            <div class="col-lg-12">
+                                <div class="banner-spot clearfix">
+                                    <div class="banner-img">
+                                        <img src="{% static 'upload/banner_01.jpg' %}" alt="Ads" class="img-fluid" style="width: 100%; border-radius: 4px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custombox authorbox clearfix" style="background: #f9f9f9; padding: 30px; border-radius: 4px; border: 1px solid #eee; margin-bottom: 40px;">
+                            <h4 class="small-title" style="margin-bottom: 20px; font-weight: 700; background: #28a745; color: #fff; display: inline-block; padding: 3px 15px; border-radius: 4px;">About Author</h4>
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2">
+                                    <img src="{% if post.author.profile_pic %}{{ post.author.profile_pic.url }}{% else %}{% static 'images/user-icon.png' %}{% endif %}" alt="" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                                <div class="col-lg-10 col-md-10">
+                                    <h4 style="font-weight: 700; margin-bottom: 10px;">{{ post.author.user.username }}</h4>
+                                    <p style="font-size: 15px; color: #666;">{{ post.author.bio|default:"No bio available." }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custombox clearfix" style="margin-bottom: 40px;">
+                            <h4 class="small-title" style="margin-bottom: 25px; font-weight: 700; text-transform: uppercase; font-size: 18px; border-bottom: 2px solid #f1f1f1; display: inline-block; padding-bottom: 5px; color: #fff; background: #28a745; padding: 5px 15px;">You May Also Like</h4>
+                            <div class="row">
+                                {% for related in related_posts %}
+                                    <div class="col-lg-6 col-md-6">
+                                        <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
+                                            <a href="{% url 'single_post' related.slug %}">
+                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/garden_single_03.jpg' %}{% endif %}" alt="{{ related.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+<div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
+    <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ related.title|truncatechars:45 }}</h4>
+    
+    <small style="font-size: 11px;">
+        <a href="{% url 'category' related.category.category_slug %}" style="color: #28a745; font-weight: 600; text-decoration: none;">
+            <i class="fa fa-folder-open"></i> {{ related.category.category_title }}
+        </a>
+        | <i class="fa fa-calendar"></i> {{ related.created_at|date:"d F, Y" }}
+    </small>
+</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <hr class="invis">
+
+                        <div class="custombox clearfix" id="comments-section">
+                            <h4 class="small-title" style="margin-bottom: 25px; font-weight: 700; text-transform: uppercase; font-size: 18px; border-bottom: 2px solid #28a745; display: inline-block; padding-bottom: 5px; color: #fff; background: #28a745; padding: 5px 15px;">{{ post.comments.count }} Comments</h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="comments-list">
+                                        {% for comment in comments %}
+                                        <div class="media" style="margin-bottom: 25px; display: flex; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">
+                                            <img src="{% static 'images/user-icon.png' %}" alt="" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 15px;">
+                                            <div class="media-body">
+                                                <h4 class="media-heading user_name" style="font-size: 15px; font-weight: 700; margin-bottom: 5px;">{{ comment.user.username }} <small style="color: #aaa; margin-left: 10px;">{{ comment.created_at|date:"d M, Y" }}</small></h4>
+                                                <p style="font-size: 15px; color: #555;">{{ comment.text }}</p>
+                                                
+                                                <div class="replies" style="margin-left: 40px; border-left: 2px solid #eee; padding-left: 15px;">
+                                                    {% for reply in comment.replies.all %}
+                                                        <div style="margin-bottom: 10px;">
+                                                            <h6 style="font-size: 13px; font-weight: 700;">{{ reply.user.username }} <small>{{ reply.created_at|date:"d M, Y" }}</small></h6>
+                                                            <p style="font-size: 14px; color: #666;">{{ reply.text }}</p>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                                
+                                                {% if user.is_authenticated %}
+                                                <form action="{% url 'post_reply' comment.id %}" method="POST" style="margin-top: 10px;">
+                                                    {% csrf_token %}
+                                                    <div class="input-group">
+                                                        <input type="text" name="text" class="form-control" placeholder="Reply..." required style="height: 30px; font-size: 12px;">
+                                                        <button class="btn btn-success btn-sm" type="submit">Reply</button>
+                                                    </div>
+                                                </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custombox prevnextpost clearfix" style="background: #f9f9f9; padding: 30px; border-radius: 4px; border: 1px solid #eee;">
+                            <h4 class="small-title" style="margin-bottom: 25px; font-weight: 700; text-transform: uppercase; font-size: 18px; color: #fff; background: #28a745; padding: 5px 15px; display: inline-block;">Leave a Reply</h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if user.is_authenticated %}
+                                        <form class="form-wrapper" method="POST">
+                                            {% csrf_token %}
+                                            <p>Logged in as: <span style="font-weight: 700; color: #28a745;">{{ user.username }}</span></p>
+                                            <textarea class="form-control" name="text" placeholder="Your comment..." required style="margin-bottom: 15px; height: 120px;"></textarea>
+                                            <button type="submit" class="btn btn-primary" style="background: #28a745; border: none; padding: 10px 30px; font-weight: 700;">Submit</button>
+                                        </form>
+                                    {% else %}
+                                        <div style="padding: 20px; border: 2px dashed #ffc107; text-align: center;">
+                                            <h5 style="color: #856404;">Login Required!</h5>
+                                            <a href="{% url 'login' %}" class="btn btn-warning btn-sm">Login to Comment</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> </div> 
+            </div> 
+
+            <div class="col-lg-4 col-md-12 sidebar-column">
+                <div class="sidebar sidebar-sticky" style="padding-top: 10px;">
+                    {% include "partials/sidebar.html" %}
+                </div>
+            </div> 
+
+        </div> 
+    </div> 
+</section>
+{% endblock content %}

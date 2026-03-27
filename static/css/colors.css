@@ -1,0 +1,65 @@
+/**************************************
+    File Name: colors.css
+    Updated for: Forest Time Green Theme
+**************************************/
+
+/* --- মেইন থিম কালার (সবুজ) --- */
+.authorbox p a,
+.pp a,
+.sitemap-wrapper small,
+.fa-user-circle-o,
+.footer h5:hover,
+a:hover,
+a:focus,
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus,
+.navbar-inverse .navbar-nav .active > .nav-link {
+    color: #34bf49 !important; /* Blue থেকে Green করা হলো */
+}
+
+.dmtop,
+.search-form .btn:hover,
+.search-form .btn:focus,
+.search-form .btn,
+.round-btn, /* আপনার নতুন সার্চ বাটন */
+.round-text-btn {
+    color: #ffffff !important;
+    background-color: #34bf49 !important;
+}
+
+.tag-cloud-single span,
+.page-title i,
+.btn:hover,
+.btn:focus,
+.navbar-inverse .navbar-toggler {
+    color: #ffffff !important;
+    background-color: #34bf49;
+}
+
+/* --- ব্লককোট ও ফুটার বর্ডার --- */
+.blockquote { border-left-color: #34bf49; }
+.footer .widget-title { border-color: #34bf49; }
+
+/* --- ফিক্স: You May Also Like টাইটেল কালার --- */
+/* যাতে এখানে ব্ল্যাক বা নীল না হয়ে সবসময় সাদা থাকে */
+.related-overlay h4 a {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.related-overlay h4 a:hover {
+    color: #eeeeee !important;
+}
+
+/* --- স্টারের কালার --- */
+.fa-star-o,
+.fa-star {
+    color: #fbb034;
+}
+
+/* --- সোশ্যাল মিডিয়া কালার (আগের মতোই থাকবে) --- */
+.topsocial .fa.fa-facebook { color: #4b6ea9; }
+.topsocial .fa.fa-twitter { color: #1ab2f5; }
+.topsocial .fa.fa-youtube { color: #d44638; }
+.topsocial .fa.fa-instagram { color: #405de6; }
+.topsocial .fa.fa-pinterest { color: #d73533; }
