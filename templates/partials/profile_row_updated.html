@@ -1,20 +1,26 @@
 {% load static %}
 
-
-<div id="{{ field_name }}-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+<div id="{{ field_name }}-row" class="list-group-item d-flex justify-content-between align-items-center py-3" style="animation: fadeIn 0.5s;">
     <div>
-        <strong>{{ field_name|title }}:</strong> 
+        <strong style="text-transform: capitalize;">
+            {# replace ফিল্টার এরর এড়াতে এই লজিকটি দেওয়া হলো #}
+            {% if field_name == 'author_image' %}Profile Image
+            {% elif field_name == 'full_name' %}Full Name
+            {% else %}{{ field_name }}{% endif %}:
+        </strong> 
+
         <span class="ml-2 text-dark">
-            {% if field_name == 'profile_image' %}
-                <img src="{{ value }}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+            {% if field_name == 'author_image' %}
+                {# ইমেজের ক্ষেত্রে value যদি সঠিক URL হয় তবে এটি দেখাবে #}
+                <img src="{{ value }}" alt="profile" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #28a745;">
             {% else %}
                 {{ value }}
             {% endif %}
         </span>
         
-        {% if field_name == 'email' %}
-            <span class="badge badge-warning ml-2" style="font-size: 10px; animation: fadeIn 0.5s;">
-                <i class="fa fa-hourglass-half"></i> Request Sent (Pending Approval)
+        {% if field_name == 'email' and success_msg == "Request sent to Admin for approval!" %}
+            <span class="badge badge-warning ml-2" style="font-size: 10px; padding: 4px 8px;">
+                <i class="fa fa-hourglass-half"></i> Pending Approval
             </span>
             
             <button hx-post="{% url 'cancel_email_request' %}" 
@@ -22,22 +28,60 @@
                     hx-swap="outerHTML"
                     hx-confirm="Are you sure you want to cancel this request?"
                     class="btn btn-sm btn-link text-danger ml-1" 
-                    style="font-size: 11px; text-decoration: none;">
+                    style="font-size: 11px; text-decoration: none; padding: 0;">
                 Cancel
             </button>
-        {% else %}
-            <span class="badge badge-success ml-2" style="font-size: 11px; animation: fadeOut 3s forwards;">
-                ✅ {{ success_msg }}
+        {% elif success_msg %}
+            {# সাকসেস মেসেজ অ্যানিমেশন সহ #}
+            <span class="badge badge-success ml-2 py-1 px-2" id="temp-msg-{{ field_name }}" style="font-size: 11px; animation: fadeOut 4s forwards;">
+                <i class="fa fa-check"></i> {{ success_msg }}
             </span>
         {% endif %}
     </div>
 
-    <button hx-get="{% url 'edit_field' field_name %}" hx-target="#{{ field_name }}-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary">
+    {# প্রোফাইল পিকচার অটো আপডেট স্ক্রিপ্ট #}
+    {% if field_name == 'author_image' %}
+        <script>
+            (function() {
+                // ১. প্রোফাইল কার্ডের বড় ইমেজ আপডেট
+                var mainCardImg = document.querySelector('#profile-card-container img');
+                if(mainCardImg) mainCardImg.src = "{{ value }}";
+
+                // ২. টপবারের ছোট অ্যাভাটার ইমেজ আপডেট (যদি থাকে)
+                var topbarImg = document.querySelector('.topsearch img');
+                if(topbarImg) topbarImg.src = "{{ value }}";
+            })();
+        </script>
+    {% endif %}
+
+    <button hx-get="{% url 'edit_field' field_name %}" 
+            hx-target="#{{ field_name }}-row" 
+            hx-swap="outerHTML" 
+            class="btn btn-sm btn-light text-primary" 
+            style="border-radius: 20px; border: 1px solid #eee; padding: 5px 15px;">
         <i class="fa fa-pencil"></i> Edit
     </button>
 </div>
 
 <style>
-@keyframes fadeOut { 0% {opacity: 1;} 70% {opacity: 1;} 100% {opacity: 0; visibility: hidden;} }
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+/* মেসেজটি ৪ সেকেন্ড পর উপরের দিকে ভ্যানিশ হয়ে যাবে */
+@keyframes fadeOut { 
+    0% {opacity: 1; transform: translateY(0);} 
+    80% {opacity: 1; transform: translateY(0);} 
+    100% {opacity: 0; transform: translateY(-15px); visibility: hidden;} 
+}
+/* নতুন রো আসার সময় হালকা জুম-ইন ইফেক্ট */
+@keyframes fadeIn { 
+    from {opacity: 0; transform: scale(0.98);} 
+    to {opacity: 1; transform: scale(1);} 
+}
+
+/* ডার্ক মোড সাপোর্ট */
+body.dark-mode .list-group-item {
+    background-color: #1a1a1a !important;
+    border-color: #333 !important;
+}
+body.dark-mode .text-dark {
+    color: #ffffff !important;
+}
 </style>

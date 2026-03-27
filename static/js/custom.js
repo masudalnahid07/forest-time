@@ -131,3 +131,17 @@ document.addEventListener("DOMContentLoaded", function() {
         img.style.margin = "20px 0";
     });
 });
+
+
+// Dark Mode Logic
+const darkModeToggle = document.getElementById('darkModeToggle');
+if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', () => {
+        // ক্লাসটি অবশ্যই 'dark-mode' হতে হবে (যা আমরা CSS-এ লিখেছি)
+        document.body.classList.toggle('dark-mode');
+        
+        // ডার্ক মোড সেভ করে রাখার জন্য (অপশনাল কিন্তু ভালো)
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+    });
+}

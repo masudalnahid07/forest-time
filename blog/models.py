@@ -22,20 +22,16 @@ def compress_and_convert_to_webp(image_field):
         
     img = Image.open(image_field)
     
-    # RGBA বা P মোড থাকলে RGB তে কনভার্ট (WebP এর জন্য নিরাপদ)
     if img.mode in ("RGBA", "P"):
         img = img.convert("RGB")
     
     output = BytesIO()
-    
-    # আপনার হোমপেজ ও সিঙ্গেল পেজের সাইজ অনুযায়ী ১০০০px সেফ উইডথ
     max_width = 1000 
     
     if img.width > max_width:
         output_size = (max_width, int((max_width / img.width) * img.height))
         img = img.resize(output_size, Image.LANCZOS)
     
-    # WebP ফরম্যাটে সেভ (৮৫% কোয়ালিটি সাইট ফাস্ট রাখবে)
     img.save(output, format='WEBP', quality=85)
     output.seek(0)
     
@@ -43,58 +39,36 @@ def compress_and_convert_to_webp(image_field):
     return ContentFile(output.read(), name=name)
 
 
-
-# --- অথর প্রোফাইল মডেল (সুপারইউজার ও অথরদের জন্য) ---
 # --- অথর প্রোফাইল মডেল ---
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
     full_name = models.CharField(max_length=100, blank=True, help_text="Type your full name")
-    profile_image = models.ImageField(
-        upload_to="profiles/%Y/%m/%d/", 
-        null=True, 
-        blank=True, 
-        default='uploads/default_user.png' # পাথটি ফোল্ডারসহ দিন
-    )
+    author_image = models.ImageField(
+    upload_to="profiles/%Y/%m/%d/",
+    null=True,
+    blank=True,
+    default='upload/user_defult.jpeg',  # তাহলে MEDIA_ROOT/upload/user_defult.jpeg এ ফাইল দরকার
+)
     bio = RichTextField(config_name="extends", blank=True, null=True)
 
     def __str__(self):
         return self.full_name if self.full_name else self.user.username
 
     def save(self, *args, **kwargs):
-        # ইমেজ প্রসেসিং এর সময় ফাইল না পাওয়া গেলে যাতে এরর না দেয়
-        if self.profile_image and self.profile_image != 'default_user.png':
+        # ইমেজ ফিল্ডের নাম 'author_image' অনুযায়ী লজিক ফিক্স করা হয়েছে
+        if self.author_image and 'user_defult.jpeg' not in self.author_image.name:
             try:
-                # নতুন অবজেক্ট তৈরির সময়
                 if not self.pk:
-                    self.profile_image = compress_and_convert_to_webp(self.profile_image)
+                    self.author_image = compress_and_convert_to_webp(self.author_image)
                 else:
-                    # পুরনো অবজেক্ট এডিট করার সময় ইমেজ পরিবর্তন হয়েছে কি না চেক করা
                     old_instance = Author.objects.get(pk=self.pk)
-                    if old_instance.profile_image != self.profile_image:
-                        self.profile_image = compress_and_convert_to_webp(self.profile_image)
-            except (Author.DoesNotExist, FileNotFoundError, Exception):
-                # ফাইল না পাওয়া গেলে প্রসেসিং স্কিপ করবে
+                    if old_instance.author_image != self.author_image:
+                        self.author_image = compress_and_convert_to_webp(self.author_image)
+            except Exception:
                 pass
         
         super().save(*args, **kwargs)
 
-# --- সিগন্যাল (সহজ ও নিরাপদ পদ্ধতি) ---
-@receiver(post_save, sender=User)
-def create_or_update_author_profile(sender, instance, created, **kwargs):
-    if created:
-        Author.objects.get_or_create(user=instance)
-    else:
-        # প্রোফাইল না থাকলে তৈরি করবে, থাকলে সেভ করবে
-        # এখানে আলাদা করে ইমেজ প্রসেসিং করার দরকার নেই, মডেলের save() সেটা করবে
-        if not hasattr(instance, 'author_profile'):
-            Author.objects.create(user=instance)
-        else:
-            try:
-                instance.author_profile.save()
-            except Exception:
-                pass
-
-            
 
 # --- ব্লগ মেটা মডেল ---
 class BlogMeta(models.Model):
@@ -109,7 +83,7 @@ class BlogMeta(models.Model):
         return self.blog_title
 
 
-# --- ক্যাটাগরি মডেল (Sitemap এরর ফিক্স সহ) ---
+# --- ক্যাটাগরি মডেল ---
 class Category(models.Model):
     category_title = models.CharField(max_length=250, unique=True)
     category_slug = models.SlugField(max_length=250, unique=True, blank=True)
@@ -121,8 +95,7 @@ class Category(models.Model):
         ordering = ["category_title"]
 
     def get_absolute_url(self):
-            # 'category_slug' এর বদলে শুধু 'slug' ব্যবহার করুন
-            return reverse("category", kwargs={"slug": self.category_slug})
+        return reverse("category", kwargs={"slug": self.category_slug})
 
     def __str__(self):
         if self.parent:
@@ -135,7 +108,6 @@ class Category(models.Model):
         if not self.category_slug:
             self.category_slug = slugify(self.category_title)
         
-        # ইউনিক স্লাগ চেক লজিক
         original_slug = self.category_slug
         counter = 1
         while Category.objects.filter(category_slug=self.category_slug).exclude(pk=self.pk).exists():
@@ -155,7 +127,6 @@ class BlogPost(models.Model):
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, related_name="posts")
     feature_img = models.ImageField(upload_to="images/%Y/%m/%d/", null=True, blank=True)
     
-    # SEO & Review Fields
     focus_keyword = models.CharField(max_length=500, blank=True, null=True)
     meta_keywords = models.CharField(max_length=500, blank=True)
     meta_description = models.TextField(max_length=500, blank=True)
@@ -186,7 +157,6 @@ class BlogPost(models.Model):
     def clean_alt_text(self):
         if self.focus_keyword:
             return self.focus_keyword
-        # স্লাগ থেকে ড্যাশ সরিয়ে টাইটেল কেস করা
         return self.slug.replace('-', ' ').title()
 
     def __str__(self):
@@ -198,14 +168,12 @@ class BlogPost(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         
-        # ইউনিক স্লাগ চেক
         original_slug = self.slug
         counter = 1
         while BlogPost.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
             self.slug = f"{original_slug}-{counter}"
             counter += 1
         
-        # ইমেজ অপ্টিমাইজেশন (শুধু নতুন ইমেজ বা ইমেজ পরিবর্তন হলে কনভার্ট হবে)
         if self.feature_img:
             try:
                 this = BlogPost.objects.get(pk=self.pk)
@@ -239,36 +207,30 @@ class Reply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.user.username}"
-    
 
-# ১. প্রোফাইল মডেল (ইউজারের অতিরিক্ত তথ্যের জন্য)
+
+# --- প্রোফাইল মডেল ---
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    image = models.ImageField(upload_to='profile_pics', default='default_user.png', blank=True)
+    image = models.ImageField(upload_to='profile_pics', null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
     full_name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
 
-# ২. সিগন্যাল (নতুন ইউজার তৈরি হলে অটোমেটিক প্রোফাইল তৈরি করার জন্য)
+
+# --- সিগন্যালস ---
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_or_update_user_profiles(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def create_or_update_author_profile(sender, instance, created, **kwargs):
-    if created:
-        # নতুন ইউজার তৈরি হলে অথর প্রোফাইল তৈরি করবে
-        Author.objects.get_or_create(user=instance)
+        Author.objects.create(user=instance)
     else:
-        # লগইন বা আপডেটের সময় 'author_profile' চেক করে সেভ করবে
+        if hasattr(instance, 'profile'):
+            instance.profile.save()
         if hasattr(instance, 'author_profile'):
             instance.author_profile.save()
-        else:
-            # যদি প্রোফাইল না থাকে তবে তৈরি করে নেবে
-            Author.objects.create(user=instance)
 
 
 class EmailChangeRequest(models.Model):
@@ -278,5 +240,4 @@ class EmailChangeRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        # 'user' এর আগে 'self.' যোগ করতে হবে
         return f"{self.user.username} wants to change email to {self.new_email}"

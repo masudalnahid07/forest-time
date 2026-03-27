@@ -1,30 +1,34 @@
 {% load static %}
 
-<div id="profile-card-container" class="custombox authorbox clearfix" style="background: #f9f9f9; padding: 40px; border-radius: 12px; border: 1px solid #eee;">
+<div id="profile-card-container"
+    class="custombox authorbox clearfix"
+    style="background: #f9f9f9; padding: 40px; border-radius: 12px; border: 1px solid #eee;">
     <div class="row align-items-center">
         <div class="col-md-3 text-center">
-            <img src="{% if user.profile.image %}{{ user.profile.image.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&background=28a745&color=fff&size=128{% endif %}" 
-                 class="img-fluid rounded-circle" alt="Avatar" 
-                 style="width: 140px; height: 140px; object-fit: cover; border: 5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <img src="{% if user.author_profile.author_image %}{{ user.author_profile.author_image.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&background=28a745&color=fff&size=128{% endif %}" 
+                class="img-fluid rounded-circle" alt="Avatar"
+                style="width: 140px; height: 140px; object-fit: cover; border: 5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
         </div>
         
         <div class="col-md-9">
             <h2 style="font-weight: 900; margin-bottom: 5px; color: #333;">
-                {{ user.profile.full_name|default:user.username }}
+                {{ user.author_profile.full_name|default:user.username }}
             </h2>
             <p style="color: #28a745; font-weight: 600; margin-bottom: 8px;">@{{ user.username }}</p>
             
             <p style="color: #666; font-size: 15px; line-height: 1.6;">
-                {{ user.profile.bio|default:"No bio added yet." }}
+                {{ user.author_profile.bio|default:"No bio added yet." }}
             </p>
             
             <hr style="margin: 15px 0;">
             
             <div class="user-stats d-flex align-items-center flex-wrap" style="gap: 10px;">
-                <span class="badge bg-success" style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
+                <span class="badge bg-success"
+                    style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
                     <i class="fa fa-comments"></i> Total Comments: {{ comments_count }}
                 </span>
-                <span class="badge bg-info" style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
+                <span class="badge bg-info"
+                    style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
                     <i class="fa fa-calendar"></i> Joined: {{ user.date_joined|date:"M Y" }}
                 </span>
             </div>
@@ -34,7 +38,8 @@
     {% if messages %}
         <div id="msg-container" hx-get="{% url 'profile' %}" hx-trigger="load delay:3s" hx-swap="none">
             {% for message in messages %}
-                <div class="alert alert-success mt-3" style="border-radius: 8px; border: none; background: #d4edda; color: #155724; font-size: 14px;">
+                <div class="alert alert-success mt-3"
+                    style="border-radius: 8px; border: none; background: #d4edda; color: #155724; font-size: 14px;">
                     <i class="fa fa-check-circle"></i> {{ message }}
                 </div>
             {% endfor %}

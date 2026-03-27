@@ -145,11 +145,16 @@
                                 {% for comment in comments %}
                                 <div class="media" style="margin-bottom: 25px; display: flex; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">
                                     
-                                    {% if comment.user.userprofile.profile_image %}
-                                        <img src="{{ comment.user.userprofile.profile_image.url }}" alt="user" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 15px; object-fit: cover;">
-                                    {% else %}
-                                        <img src="{% static 'upload/user_defult.jpeg' %}" alt="user" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 15px; object-fit: cover;">
-                                    {% endif %}
+                                    {% if comment.user.author_profile.author_image %}
+                                            <img src="{{ comment.user.author_profile.author_image.url }}"
+                                                alt="{{ comment.user.username }}"
+                                                class="rounded-circle"
+                                                style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd;">
+                                        {% else %}
+                                            <img src="{% static 'upload/user.jpeg' %}" alt="user"
+                                                class="rounded-circle"
+                                                style="width: 50px; height: 50px; margin-right: 15px; object-fit: cover;">
+                                        {% endif %}
 
                                     <div class="media-body">
                                         <h4 class="media-heading user_name" style="font-size: 15px; font-weight: 700; margin-bottom: 5px;">

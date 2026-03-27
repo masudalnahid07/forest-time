@@ -1,29 +1,70 @@
-<div id="{{ field_name }}-row" class="list-group-item py-3" style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
-    <form hx-post="{% url 'edit_field' field_name %}" hx-target="#{{ field_name }}-row" hx-swap="outerHTML" hx-encoding="multipart/form-data">
+{% load static %}
+
+<div id="{{ field_name }}-row" class="list-group-item py-3"
+     style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
+    <form hx-post="{% url 'edit_field' field_name %}" 
+          hx-target="#{{ field_name }}-row" 
+          hx-swap="outerHTML" 
+          hx-encoding="multipart/form-data">
         {% csrf_token %}
         <div class="d-flex align-items-center justify-content-between">
             <div style="flex-grow: 1; margin-right: 15px;">
-                {% if field_name == 'profile_image' %}
-                    <input type="file" name="profile_image" class="form-control-file">
+
+                {% if field_name == 'author_image' %}
+                    <input type="file"
+                           name="author_image"
+                           class="form-control-file"
+                           accept="image/*"
+                           required>
+
                 {% elif field_name == 'bio' %}
-                    <textarea name="bio" class="form-control" rows="2">{{ author_profile.bio }}</textarea>
+                    <textarea name="bio"
+                              class="form-control"
+                              rows="2">{{ author_profile.bio }}</textarea>
+
                 {% elif field_name == 'email' %}
-                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           value="{{ user.email }}"
+                           required>
                     <small class="text-danger" style="font-size: 11px;">
-                        <i class="fa fa-info-circle"></i> Note: Changing email requires Admin approval.
+                        <i class="fa fa-info-circle"></i>
+                        Note: Changing email requires Admin approval.
                     </small>
+
+                {% elif field_name == 'username' %}
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           value="{{ user.username }}">
+
+                {% elif field_name == 'full_name' %}
+                    <input type="text"
+                           name="full_name"
+                           class="form-control"
+                           value="{{ author_profile.full_name }}">
+
                 {% else %}
-                    <input type="text" name="{{ field_name }}" class="form-control" 
-                        value="{% if field_name == 'username' %}{{ user.username }}{% else %}{{ author_profile.full_name }}{% endif %}">
+                    <input type="text"
+                           name="{{ field_name }}"
+                           class="form-control"
+                           value="">
                 {% endif %}
+
             </div>
 
             <div class="btn-group">
-                <button type="submit" class="btn btn-success btn-sm" style="border-radius: 20px; padding: 5px 15px; font-weight: bold;">
+                <button type="submit"
+                        class="btn btn-success btn-sm"
+                        style="border-radius: 20px; padding: 5px 15px; font-weight: bold;">
                     <i class="fa fa-check"></i> Save
                 </button>
-                <button type="button" class="btn btn-light btn-sm ml-2" 
-                        hx-get="{% url 'profile' %}" hx-target="body" 
+
+                <button type="button"
+                        class="btn btn-light btn-sm ml-2" 
+                        hx-get="{% url 'profile' %}"
+                        hx-target="body"
                         style="border-radius: 20px; padding: 5px 15px; border: 1px solid #ddd;">
                     <i class="fa fa-times"></i> Cancel
                 </button>

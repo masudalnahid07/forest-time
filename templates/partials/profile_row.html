@@ -4,9 +4,9 @@
     <div>
         <strong class="text-dark">{{ field_name|title|replace_underscore }}:</strong> 
         <span class="text-muted ml-2">
-            {% if field_name == 'profile_image' %}
-                <img src="{{ user.profile.image.url }}" 
-                     style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; vertical-align: middle;">
+            {% if field_name == 'author_image' %}
+                <img src="{{ user.author_profile.author_image.url }}" 
+                    style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; vertical-align: middle;">
             {% else %}
                 {{ value|default:"Not set" }}
             {% endif %}
@@ -30,7 +30,7 @@
         <i class="fa fa-pencil mr-1"></i> Edit
     </button>
 
-    {% if field_name == 'profile_image' %}
+    {% if field_name == 'author_image' %}
         <div hx-get="{% url 'profile' %}" hx-target="#profile-card-container" hx-select="#profile-card-container" hx-trigger="load"></div>
     {% endif %}
 </div>
