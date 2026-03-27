@@ -53,7 +53,7 @@ class Author(models.Model):
         upload_to="profiles/%Y/%m/%d/", 
         null=True, 
         blank=True, 
-        default='profiles/default_user.png' # পাথটি ফোল্ডারসহ দিন
+        default='uploads/default_user.png' # পাথটি ফোল্ডারসহ দিন
     )
     bio = RichTextField(config_name="extends", blank=True, null=True)
 
