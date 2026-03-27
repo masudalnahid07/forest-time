@@ -31,24 +31,45 @@
                             
                             <div class="list-group list-group-flush">
                                 
-                                <div id="username-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div><strong>Username:</strong> {{ user.username }}</div>
-                                    <button hx-get="{% url 'edit_field' 'username' %}" hx-target="#username-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                <div id="profile_image-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div>
+                                        <strong>Profile Image:</strong> 
+                                        <img src="{{ user.profile.image.url }}" class="ml-2" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                                    </div>
+                                    <button hx-get="{% url 'edit_field' 'profile_image' %}" hx-target="#profile_image-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary">
+                                        <i class="fa fa-camera"></i> Change
+                                    </button>
                                 </div>
 
-                                <div id="fullname-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div><strong>Full Name:</strong> {{ profile.full_name|default:"Not set" }}</div>
-                                    <button hx-get="{% url 'edit_field' 'full_name' %}" hx-target="#fullname-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                <div id="username-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div><strong>Username:</strong> {{ user.username }}</div>
+                                    <button hx-get="{% url 'edit_field' 'username' %}" hx-target="#username-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </button>
+                                </div>
+
+                                <div id="full_name-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div><strong>Full Name:</strong> {{ user.profile.full_name|default:"Not set" }}</div>
+                                    <button hx-get="{% url 'edit_field' 'full_name' %}" hx-target="#full_name-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </button>
                                 </div>
 
                                 <div id="bio-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div><strong>Bio:</strong> {{ profile.bio|truncatechars:30|default:"No bio added" }}</div>
-                                    <button hx-get="{% url 'edit_field' 'bio' %}" hx-target="#bio-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary"><i class="fa fa-pencil"></i> Edit</button>
+                                    <div><strong>Bio:</strong> {{ user.profile.bio|truncatechars:30|default:"No bio added" }}</div>
+                                    <button hx-get="{% url 'edit_field' 'bio' %}" hx-target="#bio-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </button>
                                 </div>
 
-                                <div class="list-group-item d-flex justify-content-between align-items-center py-3" style="background: #fdfdfd;">
-                                    <div><strong>Email:</strong> {{ user.email }}</div>
-                                    <span class="badge badge-secondary">Permanent</span>
+                                <div id="email-row" class="list-group-item d-flex justify-content-between align-items-center py-3" style="background-color: #f9f9f9;">
+                                    <div>
+                                        <strong>Email:</strong> 
+                                        <span class="text-muted ml-2">{{ user.email }}</span>
+                                    </div>
+                                    <span class="text-muted small">
+                                        <i class="fa fa-lock"></i> Permanent
+                                    </span>
                                 </div>
 
                             </div>

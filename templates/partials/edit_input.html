@@ -2,17 +2,30 @@
     <form hx-post="{% url 'edit_field' field_name %}" 
           hx-target="#{{ field_name }}-row" 
           hx-swap="outerHTML"
+          {% if field_name == 'profile_image' %}hx-encoding="multipart/form-data"{% endif %}
           hx-indicator="#indicator-{{ field_name }}">
         {% csrf_token %}
+        
         <div class="row align-items-center">
             <div class="col-lg-7 col-md-6 col-sm-12 mb-2 mb-md-0">
-                <input type="text" name="{{ field_name }}" class="form-control" 
-                       value="{% if field_name == 'username' %}{{ user.username }}{% else %}{{ user.profile.full_name }}{% endif %}" 
-                       style="border-radius: 20px; padding: 10px 20px; border: 1px solid #ddd;" autofocus>
+                {% if field_name == 'profile_image' %}
+                    <div class="d-flex align-items-center" style="gap: 12px;">
+                        <img id="preview-{{ field_name }}" src="{{ user.profile.image.url }}" 
+                             style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                        
+                        <input type="file" name="{{ field_name }}" class="form-control" 
+                               accept="image/*" required
+                               style="border-radius: 20px; padding: 6px 15px; border: 1px solid #ddd;"
+                               onchange="document.getElementById('preview-{{ field_name }}').src = window.URL.createObjectURL(this.files[0])">
+                    </div>
+                {% else %}
+                    <input type="text" name="{{ field_name }}" class="form-control" 
+                           value="{% if field_name == 'username' %}{{ user.username }}{% elif field_name == 'email' %}{{ user.email }}{% else %}{{ user.profile.full_name }}{% endif %}" 
+                           style="border-radius: 20px; padding: 10px 20px; border: 1px solid #ddd;" autofocus>
+                {% endif %}
             </div>
             
             <div class="col-lg-5 col-md-6 col-sm-12 d-flex align-items-center justify-content-md-end justify-content-start" style="gap: 8px;">
-                
                 <button type="submit" class="btn btn-success d-flex align-items-center" 
                         style="border-radius: 25px; padding: 6px 14px; font-weight: 600; font-size: 13px; border: none; white-space: nowrap;">
                     <span id="indicator-{{ field_name }}" class="htmx-indicator mr-1">
@@ -21,27 +34,15 @@
                     <i class="fa fa-check mr-1"></i> Save
                 </button>
 
-                <button hx-get="{% url 'profile' %}" hx-target="body" class="btn btn-danger d-flex align-items-center" 
-                        style="border-radius: 25px; padding: 6px 14px; font-weight: 600; font-size: 13px; border: none; white-space: nowrap;" title="Cancel">
+                <button type="button" 
+                        hx-get="{% url 'edit_field' field_name %}" 
+                        hx-target="#{{ field_name }}-row" 
+                        hx-swap="outerHTML"
+                        class="btn btn-danger d-flex align-items-center" 
+                        style="border-radius: 25px; padding: 6px 14px; font-weight: 600; font-size: 13px; border: none; white-space: nowrap;">
                     <i class="fa fa-times mr-1"></i> Cancel
                 </button>
             </div>
         </div>
     </form>
 </div>
-
-<style>
-    /* HTMX ইন্ডিকেটর স্টাইল */
-    .htmx-indicator { display: none; }
-    .htmx-request .htmx-indicator { display: inline-block; }
-    .htmx-request { opacity: 0.6; pointer-events: none; }
-    
-    /* বাটনের হোভার ইফেক্ট */
-    .btn {
-        transition: all 0.3s ease;
-    }
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-</style>

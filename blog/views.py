@@ -1,5 +1,7 @@
 import os
 import re
+import json
+from django.http import HttpResponse
 from django.conf import settings
 from taggit.models import Tag
 from django.contrib import messages
@@ -503,42 +505,48 @@ def user_profile(request):
 
 @login_required
 def edit_field(request, field_name):
-    # আপনার Profile মডেলটি অবশ্যই আগে models.py-তে তৈরি থাকতে হবে
-    # এবং OneToOneField হিসেবে User-এর সাথে লিঙ্ক থাকতে হবে
     profile = request.user.profile
+    display_value = ""
+    message = ""
     
     if request.method == 'POST':
-        # HTMX থেকে পাঠানো ডাটা ধরুন (যে ফিল্ড এডিট হচ্ছে তার নাম দিয়ে)
-        new_value = request.POST.get(field_name)
+        # ১. ইমেইল এডিট ব্লক করা (সিকিউরিটি চেক)
+        if field_name == 'email':
+            return HttpResponse("Changing email is not allowed.", status=403)
+
+        # ২. ইমেজ হ্যান্ডেলিং
+        if field_name == 'profile_image':
+            new_image = request.FILES.get(field_name)
+            if new_image:
+                profile.image = new_image
+                profile.save()
+                message = "Your image is saved!"
+            display_value = profile.image.url # টেমপ্লেটে ইমেজের পাথ পাঠাবে
         
-        # ইউজারনেম সেভ করার জন্য
-        if field_name == 'username':
-            if new_value: # খালি না থাকলে সেভ করবে
+        # ৩. ইউজারনেম হ্যান্ডেলিং (সরাসরি User মডেলে)
+        elif field_name == 'username':
+            new_value = request.POST.get(field_name)
+            if new_value:
                 request.user.username = new_value
                 request.user.save()
-                display_value = new_value
-            else:
-                # খালি ডাটা দিলে আগেরটাই রাখবে
-                display_value = request.user.username
-                
-        # অন্যান্য প্রোফাইল ফিল্ড (Full Name, Bio, etc.) সেভ
-        elif hasattr(profile, field_name):
-            if new_value is not None:
-                # ডাইনামিকভাবে ভ্যালু সেট করে সেভ করুন
+                message = "Username updated!"
+            display_value = request.user.username
+
+        # ৪. প্রোফাইলের অন্যান্য ফিল্ড (full_name, bio)
+        else:
+            new_value = request.POST.get(field_name)
+            if hasattr(profile, field_name):
                 setattr(profile, field_name, new_value)
                 profile.save()
-                display_value = new_value
-            else:
-                display_value = "No update"
-        else:
-            display_value = "Invalid field"
-        
-        # সেভ হওয়ার পর আগের সেই রো (Row) ভিউতে ফিরে যাবে
-        # (নিশ্চিত করুন templates/partials/profile_row.html ফাইলটি তৈরি আছে)
+                message = f"{field_name.replace('_', ' ').title()} updated!"
+            display_value = new_value
+
+        # সেভ হওয়ার পর আগের রো-তে মেসেজসহ ফিরে যাবে
         return render(request, 'partials/profile_row.html', {
             'field_name': field_name, 
             'value': display_value, 
-            'user': request.user
+            'user': request.user,
+            'success_msg': message 
         })
 
     # GET রিকোয়েস্টে এডিট ইনপুট ফিল্ড দেখাবে
