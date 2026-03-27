@@ -11,7 +11,7 @@
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ post.title }}">
     <meta property="og:description" content="{{ post.meta_description|default:post.title }}">
-    <meta property="og:image" content="{% if post.feature_img %}{{ request.scheme }}://{{ request.get_host }}{{ post.feature_img.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'upload/garden_single_01.jpg' %}{% endif %}">
+    <meta property="og:image" content="{% if post.feature_img %}{{ request.scheme }}://{{ request.get_host }}{{ post.feature_img.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'upload/single_post_image.jpg' %}{% endif %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
 
     <script type="application/ld+json">
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="single-post-media" style="margin-bottom: 25px;">
-                            <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/garden_single_01.jpg' %}{% endif %}" 
+                            <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
                                 alt="{{ post.title }}" class="img-fluid" style="width: 100%; height: auto; border-radius: 4px;">
                         </div>
 
@@ -96,7 +96,7 @@
                             <div class="col-lg-12">
                                 <div class="banner-spot clearfix">
                                     <div class="banner-img">
-                                        <img src="{% static 'upload/banner_01.jpg' %}" alt="Ads" class="img-fluid" style="width: 100%; border-radius: 4px;">
+                                        <img src="{% static 'banner_after__content.jpg' %}" alt="Ads" class="img-fluid" style="width: 100%; border-radius: 4px;">
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
                             <h4 class="small-title" style="margin-bottom: 20px; font-weight: 700; background: #28a745; color: #fff; display: inline-block; padding: 3px 15px; border-radius: 4px;">About Author</h4>
                             <div class="row">
                                 <div class="col-lg-2 col-md-2">
-                                    <img src="{% if post.author.profile_pic %}{{ post.author.profile_pic.url }}{% else %}{% static 'images/user-icon.png' %}{% endif %}" alt="{{ post.author.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                    <img src="{% if post.author.profile_pic %}{{ post.author.profile_pic.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" alt="{{ post.author.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                                 </div>
                                 <div class="col-lg-10 col-md-10">
                                     <h4 style="font-weight: 700; margin-bottom: 10px;">{{ post.author.user.username }}</h4>
@@ -122,7 +122,7 @@
                                     <div class="col-lg-6 col-md-6">
                                         <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
                                             <a href="{% url 'single_post' related.slug %}">
-                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/garden_single_03.jpg' %}{% endif %}" alt="{{ related.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/related_posts.jpg' %}{% endif %}" alt="{{ related.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                                                 <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
                                                     <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ related.title|truncatechars:45 }}</h4>
                                                     <small style="font-size: 11px;">
