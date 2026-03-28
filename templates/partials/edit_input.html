@@ -1,33 +1,33 @@
 {% load static %}
 
 <div id="{{ field_name }}-row" class="list-group-item py-3"
-     style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
+    style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
     <form hx-post="{% url 'edit_field' field_name %}" 
-          hx-target="#{{ field_name }}-row" 
-          hx-swap="outerHTML" 
-          hx-encoding="multipart/form-data">
+        hx-target="#{{ field_name }}-row" 
+        hx-swap="outerHTML" 
+        hx-encoding="multipart/form-data">
         {% csrf_token %}
         <div class="d-flex align-items-center justify-content-between">
             <div style="flex-grow: 1; margin-right: 15px;">
 
                 {% if field_name == 'author_image' %}
                     <input type="file"
-                           name="author_image"
-                           class="form-control-file"
-                           accept="image/*"
-                           required>
+                        name="author_image"
+                        class="form-control-file"
+                        accept="image/*"
+                        required>
 
                 {% elif field_name == 'bio' %}
                     <textarea name="bio"
-                              class="form-control"
-                              rows="2">{{ author_profile.bio }}</textarea>
+                            class="form-control"
+                            rows="2">{{ author_profile.bio }}</textarea>
 
                 {% elif field_name == 'email' %}
                     <input type="email"
-                           name="email"
-                           class="form-control"
-                           value="{{ user.email }}"
-                           required>
+                        name="email"
+                        class="form-control"
+                        value="{{ user.email }}"
+                        required>
                     <small class="text-danger" style="font-size: 11px;">
                         <i class="fa fa-info-circle"></i>
                         Note: Changing email requires Admin approval.
@@ -35,21 +35,21 @@
 
                 {% elif field_name == 'username' %}
                     <input type="text"
-                           name="username"
-                           class="form-control"
-                           value="{{ user.username }}">
+                        name="username"
+                        class="form-control"
+                        value="{{ user.username }}">
 
                 {% elif field_name == 'full_name' %}
                     <input type="text"
-                           name="full_name"
-                           class="form-control"
-                           value="{{ author_profile.full_name }}">
+                        name="full_name"
+                        class="form-control"
+                        value="{{ author_profile.full_name }}">
 
                 {% else %}
                     <input type="text"
-                           name="{{ field_name }}"
-                           class="form-control"
-                           value="">
+                        name="{{ field_name }}"
+                        class="form-control"
+                        value="">
                 {% endif %}
 
             </div>

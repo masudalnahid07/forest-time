@@ -2202,3 +2202,20 @@ body.dark-mode .header {
     box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     border-bottom: 1px solid #333;
 }
+
+
+
+/* হোমপেজের পোস্ট টাইটেল ও মেটা বক্সের সাদা ব্যাকগ্রাউন্ড সরানোর জন্য */
+.blog-meta, 
+.blog-meta h4, 
+.blog-meta h4 a {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important; /* যদি কোনো বর্ডার থাকে */
+}
+
+/* টেক্সট যাতে ডার্ক মোডে দেখা যায় (সাদা হবে) */
+.blog-meta h4, 
+.blog-meta h4 a {
+    color: #ffffff !important; 
+}
