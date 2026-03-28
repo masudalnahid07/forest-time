@@ -1920,13 +1920,6 @@ color: #fff !important;
     font-weight: 500;
 }
 
-/* ৪. ডার্ক মোড সাপোর্ট */
-body.dark-mode .blog-content blockquote,
-body.dark-mode .pp blockquote {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    border-left-color: #28a745 !important;
-    color: #fff !important;
-}
 
 /* ১. সিঙ্গেল পেজ ইমেজ (৮০০ x ৪৬০) */
 .single-post-media img {
@@ -2079,10 +2072,7 @@ body.dark-mode .pp blockquote {
     transition: 0.3s;
 }
 
-/* ৪. ডার্ক মোডে বাটনগুলো স্পষ্ট রাখা */
-body.dark-mode .post-sharing ul li a {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
+
 
 /* লিঙ্কডইন বাটন ডিজাইন ফিক্স */
 .post-sharing ul li a[href*="linkedin"] {
@@ -2151,15 +2141,15 @@ button,
 }
 
 
-/* --- DARK MODE FIX --- */
-
-/* ১. গ্লোবাল ডার্ক মোড */
+/* ============================================================
+   ১. ডার্ক মোড সেটিংস (DARK MODE - GLOBAL)
+   ============================================================ */
 body.dark-mode {
     background-color: #121212 !important;
     color: #e0e0e0 !important;
 }
 
-/* ২. কন্টেইনার ও কার্ড */
+/* কন্টেইনার, কার্ড, ফুটার ও ড্রপডাউন ডার্ক ফিক্স */
 body.dark-mode #wrapper, 
 body.dark-mode .section, 
 body.dark-mode .header, 
@@ -2176,46 +2166,85 @@ body.dark-mode .page-wrapper {
     border-color: #333 !important;
 }
 
-/* ৩. টেক্সট ও টাইটেল */
+/* ডার্ক মোডে সব টাইটেল, লিংক ও টেক্সট সাদা */
 body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, 
 body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
 body.dark-mode h1 a, body.dark-mode h2 a, body.dark-mode h3 a,
 body.dark-mode h4 a, body.dark-mode h5 a, body.dark-mode h6 a,
-body.dark-mode .navbar-nav .nav-link,
+body.dark-mode .nav-link, 
 body.dark-mode .topbar-section a,
-body.dark-mode .sidebar a,
-body.dark-mode .blog-meta h4,
-body.dark-mode .post-title a {
+body.dark-mode .sidebar a, 
+body.dark-mode .post-title a, 
+body.dark-mode .blog-meta h4 {
     color: #ffffff !important;
+    background: transparent !important; /* আগের সেই সাদা বক্স ইস্যু ফিক্স */
 }
 
-/* ৪. ইনপুট ও ফর্ম */
+/* ইনপুট ফিল্ড ও ফর্ম ডার্ক মোড সাপোর্ট */
 body.dark-mode .form-control {
     background-color: #2c2c2c !important;
     color: #ffffff !important;
     border-color: #444 !important;
 }
 
-/* ৫. স্টিকি হেডার ডার্ক মোড সাপোর্ট */
-body.dark-mode .header {
-    background-color: #1a1a1a !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    border-bottom: 1px solid #333;
+/* ডার্ক মোডে শেয়ারিং বাটন ও ব্লককোট ফিক্স */
+body.dark-mode .post-sharing ul li a {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-
-
-/* হোমপেজের পোস্ট টাইটেল ও মেটা বক্সের সাদা ব্যাকগ্রাউন্ড সরানোর জন্য */
-/* টাইটেলের পেছনের সাদা ব্যাকগ্রাউন্ড সরানোর জন্য */
-.blog-meta, .big-meta {
-    background: transparent !important;
-    background-color: transparent !important;
+body.dark-mode .blog-content blockquote,
+body.dark-mode .pp blockquote {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-left-color: #28a745 !important;
+    color: #ffffff !important;
 }
 
-/* টাইটেল টেক্সট এবং লিঙ্কের জন্য */
-.blog-meta h4, 
-.blog-meta h4 a {
+/* ============================================================
+   ২. হিরো সেকশন ফিক্স (যেকোনো মোডে এটি সাদা থাকবে)
+   ============================================================ */
+.first-section h4, 
+.first-section h4 a, 
+.first-section .blog-meta h4, 
+.first-section .blog-meta h4 a,
+.first-section .post-meta,
+.first-section small,
+.first-section .post-date {
+    color: #ffffff !important; /* ইমেজ ব্যাকগ্রাউন্ডের ওপর সবসময় সাদা */
+    font-weight: 800 !important;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8) !important;
     background: transparent !important;
-    color: inherit !important; /* টেক্সট কালার যাতে অটোমেটিক অ্যাডজাস্ট হয় */
-    text-decoration: none;
+}
+
+/* ============================================================
+   ৩. লাইট মোড কাস্টমাইজেশন (LIGHT MODE ONLY)
+   ============================================================ */
+body:not(.dark-mode) {
+    /* টাইটেলগুলো কুচকুচে কালো ও বোল্ড (হিরো সেকশন বাদে) */
+    h1, h2, 
+    .blog-list h4, .blog-list h4 a,
+    .sidebar h2, .sidebar h4, .sidebar a, 
+    .widget-title, .post-title, .entry-title,
+    .related-posts h4, .related-posts h4 a {
+        color: #000000 !important;
+        font-weight: 800 !important;
+        background: transparent !important;
+        text-decoration: none;
+    }
+
+    /* মেইন বডি টেক্সট (প্যারাগ্রাফ) কালো ও পড়ার যোগ্য করা */
+    .post-content p, .section.wb p, .entry-content p {
+        color: #000000 !important;
+        font-weight: 500 !important;
+        line-height: 1.7;
+    }
+
+    /* পোস্ট কার্ড ডিজাইন ও শ্যাডো (ব্যাকগ্রাউন্ড থেকে আলাদা করার জন্য) */
+    .page-wrapper, .blog-box, .section.wb {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+        border-radius: 8px !important;
+        padding: 25px !important;
+        margin-bottom: 25px !important;
+    }
 }
