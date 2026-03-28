@@ -151,3 +151,74 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+//***********স্ক্রল বাটন শুরু **************
+
+
+const scrollBtn = document.getElementById("smart-scroll-top");
+
+  // স্ক্রলে শো/হাইড
+window.addEventListener("scroll", function () {
+    if (document.documentElement.scrollTop > 200 || document.body.scrollTop > 200) {
+    scrollBtn.style.display = "flex";
+    } else {
+    scrollBtn.style.display = "none";
+    }
+});
+
+  // ক্লিক করলে টপে স্ক্রল
+scrollBtn.addEventListener("click", function () {
+    window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+    });
+});
+
+  // ---------- ড্র্যাগ লজিক ----------
+let isDragging = false;
+let startX, startY, startLeft, startTop;
+
+scrollBtn.addEventListener("mousedown", function (e) {
+    isDragging = true;
+    scrollBtn.style.transition = "none";
+
+    startX = e.clientX;
+    startY = e.clientY;
+
+    // বর্তমান পজিশন (left/right/top/bottom যেটা আছে)
+    const rect = scrollBtn.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    // fixed + exact পজিশন
+    scrollBtn.style.left = startLeft + "px";
+    scrollBtn.style.top = startTop + "px";
+    scrollBtn.style.right = "auto";
+    scrollBtn.style.bottom = "auto";
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+});
+
+function onMouseMove(e) {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    scrollBtn.style.left = startLeft + dx + "px";
+    scrollBtn.style.top = startTop + dy + "px";
+}
+
+function onMouseUp() {
+    if (!isDragging) return;
+    isDragging = false;
+    scrollBtn.style.transition = "transform 0.15s";
+
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+}
+
+
+
+//স্ক্রল বাটন শেষ

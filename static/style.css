@@ -688,27 +688,43 @@ div.tab button:hover {
     margin: 0 0.3rem;
 }
 
-.dmtop {
-    background-color: #111111;
-    background-image: url(images/arrow.png);
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    z-index: 9999;
-    width: 40px;
-    height: 40px;
-    text-indent: -99999px;
-    position: fixed;
-    bottom: -100px;
-    right: 25px;
-    cursor: pointer;
-    -webkit-transition: all .7s ease-in-out;
-    -moz-transition: all .7s ease-in-out;
-    -o-transition: all .7s ease-in-out;
-    -ms-transition: all .7s ease-in-out;
-    transition: all .7s ease-in-out;
-    overflow: auto;
+/* স্ক্রল বাটন শুরু
+**************************************/
+
+#smart-scroll-top {
+    position: fixed !important;
+    bottom: 50px !important;
+    right: 30px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    z-index: 999999 !important;
+    cursor: grab;
+    display: flex;              /* দেখা যাবে + flex centering */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    border: 2px solid #ffffff;
+    font-size: 28px;
+    user-select: none;
+    touch-action: none;
 }
 
+#smart-scroll-top:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+#smart-scroll-top i {
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none;
+}
+
+/* স্ক্রল বাটন শেষ
+**************************************/
 
 /* PAGES 
 **************************************/
