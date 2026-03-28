@@ -1980,7 +1980,7 @@ color: #fff !important;
 }
 
 /**************************************
-   ৩. You May Also Like - Overlay (Fixed Title)
+৩. You May Also Like - Overlay (Fixed Title)
 **************************************/
 
 /* মেইন কন্টেইনার - কোট ইমেজের মতো ক্লিন বর্ডার রেডিয়াস */
@@ -2142,7 +2142,7 @@ button,
 
 
 /* ============================================================
-   ১. ডার্ক মোড সেটিংস (DARK MODE - GLOBAL)
+১. ডার্ক মোড সেটিংস (DARK MODE - GLOBAL)
    ============================================================ */
 body.dark-mode {
     background-color: #121212 !important;
@@ -2200,7 +2200,7 @@ body.dark-mode .pp blockquote {
 }
 
 /* ============================================================
-   ২. হিরো সেকশন ফিক্স (যেকোনো মোডে এটি সাদা থাকবে)
+২. হিরো সেকশন ফিক্স (যেকোনো মোডে এটি সাদা থাকবে)
    ============================================================ */
 .first-section h4, 
 .first-section h4 a, 
@@ -2216,7 +2216,7 @@ body.dark-mode .pp blockquote {
 }
 
 /* ============================================================
-   ৩. লাইট মোড কাস্টমাইজেশন (LIGHT MODE ONLY)
+৩. লাইট মোড কাস্টমাইজেশন (LIGHT MODE ONLY)
    ============================================================ */
 body:not(.dark-mode) {
     /* টাইটেলগুলো কুচকুচে কালো ও বোল্ড (হিরো সেকশন বাদে) */
@@ -2247,4 +2247,57 @@ body:not(.dark-mode) {
         padding: 25px !important;
         margin-bottom: 25px !important;
     }
+}
+
+
+/********মেনুর লেখাগুলোকে আর্টিকেলের বডি থেকে আলাদা এবং প্রফেশনাল দেখানোর জন্য********/
+/* মেনু আইটেমগুলোর কাস্টম স্টাইল */
+.nav-custom-style {
+    font-size: 17px !important; /* লেখার সাইজ বড় করা হলো */
+    font-weight: 700 !important; /* লেখাকে বোল্ড বা মোটা করা হলো */
+    padding-left: 18px !important; /* বামে জায়গা বাড়ানো হলো */
+    padding-right: 18px !important; /* ডানে জায়গা বাড়ানো হলো */
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+}
+
+/* মাউস নিলে যাতে সুন্দর দেখায় */
+.nav-custom-style:hover {
+    transform: translateY(-2px); /* হালকা উপরে উঠবে */
+    color: #28a745 !important; /* আপনার থিমের গ্রিন কালার */
+}
+
+/* মোবাইল ডিভাইসের জন্য অ্যাডজাস্টমেন্ট */
+@media (max-width: 991px) {
+    .nav-custom-style {
+        padding: 12px 0 !important;
+        font-size: 16px !important;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+}
+
+/******সাইটের হোমপেইজের কালার নির্বাচনীয় করা হলো*******/
+/* ১. পুরো সাইটের মূল ব্যাকগ্রাউন্ডকে হালকা ধূসর করা */
+body:not(.dark-mode), 
+body:not(.dark-mode) #wrapper {
+    background-color: #f1f3f2 !important; /* হালকা অফ-হোয়াইট ব্যাকগ্রাউন্ড */
+}
+
+/* ২. পোস্টের মেইন কন্টেইনার বা কার্ডগুলোকে সাদা ও আলাদা করা */
+body:not(.dark-mode) .page-wrapper, 
+body:not(.dark-mode) .blog-box, 
+body:not(.dark-mode) .section.wb,
+body:not(.dark-mode) .sidebar .widget {
+    background-color: #ffffff !important; /* পোস্টের ভেতরটা একদম পিওর সাদা */
+    border: 1px solid #888585 !important; /* হালকা চিকন বর্ডার */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04) !important; /* নিচে হালকা প্রিমিয়াম শ্যাডো */
+    padding: 25px !important;
+    margin-bottom: 25px !important;
+    border-radius: 8px !important; /* কোণাগুলো সামান্য গোল */
+}
+
+/* ৩. সেকশনগুলোর মাঝখানের গ্যাপ ঠিক করা */
+body:not(.dark-mode) .section {
+    background-color: transparent !important;
 }

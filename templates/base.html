@@ -108,28 +108,29 @@
         </div>
 
         <header class="header">
-            <div class="container">
-                <nav class="navbar navbar-inverse navbar-toggleable-md">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ForestTimemenu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-md-center" id="ForestTimemenu">
-                        <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'home' %}">Home</a></li>
-                            {% for categores in categories_list %}
-                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'category' categores.category_slug %}">{{ categores.category_title }}</a></li>
-                            {% endfor %}
-                            
-                            {% if user.is_authenticated %}
-                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'profile' %}">My Profile</a></li>
-                            {% else %}
-                                <li class="nav-item"><a class="nav-link color-green-hover" href="{% url 'login' %}">Login</a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </nav>
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-toggleable-md">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ForestTimemenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-md-center" id="ForestTimemenu">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link color-green-hover nav-custom-style" href="{% url 'home' %}">Home</a>
+                    </li>
+
+                    {% for categores in categories_list %}
+                        <li class="nav-item">
+                            <a class="nav-link color-green-hover nav-custom-style" href="{% url 'category' categores.category_slug %}">
+                                {{ categores.category_title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
-        </header>
+        </nav>
+    </div>
+</header>
 
         {% block content %}{% endblock content %}
 
