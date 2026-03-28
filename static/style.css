@@ -2206,16 +2206,16 @@ body.dark-mode .header {
 
 
 /* হোমপেজের পোস্ট টাইটেল ও মেটা বক্সের সাদা ব্যাকগ্রাউন্ড সরানোর জন্য */
-.blog-meta, 
+/* টাইটেলের পেছনের সাদা ব্যাকগ্রাউন্ড সরানোর জন্য */
+.blog-meta, .big-meta {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* টাইটেল টেক্সট এবং লিঙ্কের জন্য */
 .blog-meta h4, 
 .blog-meta h4 a {
     background: transparent !important;
-    background-color: transparent !important;
-    border: none !important; /* যদি কোনো বর্ডার থাকে */
-}
-
-/* টেক্সট যাতে ডার্ক মোডে দেখা যায় (সাদা হবে) */
-.blog-meta h4, 
-.blog-meta h4 a {
-    color: #ffffff !important; 
+    color: inherit !important; /* টেক্সট কালার যাতে অটোমেটিক অ্যাডজাস্ট হয় */
+    text-decoration: none;
 }
