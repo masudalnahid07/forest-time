@@ -220,5 +220,4 @@ function onMouseUp() {
 }
 
 
-
 //স্ক্রল বাটন শেষ
