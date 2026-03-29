@@ -2317,3 +2317,43 @@ body:not(.dark-mode) .sidebar .widget {
 body:not(.dark-mode) .section {
     background-color: transparent !important;
 }
+
+
+
+/* ৪. Author bio social links start*/    
+
+.author-social-links {
+    margin-top: 10px;
+}
+
+.author-social-links .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 16px;
+    margin-right: 8px;          /* আইকনের মাঝে গ্যাপ */
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* আলাদা আলাদা রং */
+.author-social-links .facebook  { background: #3b5998; }
+.author-social-links .twitter   { background: #1da1f2; }
+.author-social-links .youtube   { background: #ff0000; }
+.author-social-links .linkedin  { background: #0077b5; }
+.author-social-links .reddit    { background: #ff4500; }
+.author-social-links .website   { background: #28a745; }
+
+/* hover effect */
+.author-social-links .social-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    opacity: 0.9;
+}
+
+/* ৪. Author bio social links end*/
+

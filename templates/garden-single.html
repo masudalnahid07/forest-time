@@ -108,7 +108,7 @@
                                 <div class="col-lg-2 col-md-2">
                                     <img src="{% if post.author.author_image %}{{ post.author.author_image.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" alt="{{ post.author.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                                 </div>
-                               <div class="col-lg-10 col-md-10">
+                            <div class="col-lg-10 col-md-10">
                                 <h4 style="font-weight: 700; margin-bottom: 10px;">
                                     {% if post.author.full_name %}
                                         {{ post.author.full_name }}
@@ -120,6 +120,27 @@
                                 <p style="font-size: 15px; color: #666;">
                                     {{ post.author.bio|default:"No bio available."|safe|linebreaks }}
                                 </p>
+<div class="author-social-links">
+    <a href="{{ post.author.facebook }}" target="_blank" class="social-icon facebook">
+        <i class="fa fa-facebook"></i>
+    </a>
+    <a href="{{ post.author.twitter }}" target="_blank" class="social-icon twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+    <a href="{{ post.author.youtube }}" target="_blank" class="social-icon youtube">
+        <i class="fa fa-youtube"></i>
+    </a>
+    <a href="{{ post.author.linkedin }}" target="_blank" class="social-icon linkedin">
+        <i class="fa fa-linkedin"></i>
+    </a>
+    <a href="{{ post.author.reddit }}" target="_blank" class="social-icon reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+    <a href="{{ post.author.website }}" target="_blank" class="social-icon website">
+        <i class="fa fa-globe"></i>
+    </a>
+</div>
+
                             </div>
                             </div>
                         </div>
