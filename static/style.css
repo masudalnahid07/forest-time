@@ -2357,3 +2357,51 @@ body:not(.dark-mode) .section {
 
 /* ৪. Author bio social links end*/
 
+
+/* Global Image Optimization for SEO & Core Web Vitals Start*/
+
+/* ১. সব ইমেজের জন্য ডিফল্ট বিহেভিয়ার সেট করা */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* নিচের বাড়তি গ্যাপ দূর করবে */
+    interpolation-mode: bicubic; /* ইমেজ কোয়ালিটি স্মুথ রাখবে */
+}
+
+/* ২. ইমেজ লোড হওয়ার আগে জায়গা ধরে রাখা (Cumulative Layout Shift বা CLS ফিক্স) */
+/* এটি ব্রাউজারকে বলবে ছবি লোড হওয়ার আগেই তার রেশিও অনুযায়ী জায়গা ব্লক করতে */
+img[width][height] {
+    aspect-ratio: attr(width) / attr(height);
+}
+
+/* ৩. কন্টেন্ট ইমেজের জন্য স্ট্যান্ডার্ড সাইজ গাইড */
+/* ব্লগ পোস্টের ভেতরে বড় ছবিগুলোর জন্য */
+.blog-content img, .single-post-media img {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* আপনার ডেমো ইমেজ ৮০০x৪৬০ এর কাছাকাছি রেশিও */
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: #f0f0f0; /* ছবি লোড হওয়ার আগে হালকা ব্যাকগ্রাউন্ড দেখাবে */
+}
+
+/* ৪. সাইডবার এবং থাম্বনেইল ইমেজের জন্য */
+.blog-list-widget img {
+    width: 55px;
+    height: 55px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+/* ৫. অথর বা প্রোফাইল ছবির জন্য */
+.rounded-circle, .author-wrap img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+/* ৬. পেজ স্পিড বাড়ানোর জন্য (আইফ্রেম বা অ্যাডস এর জন্য জায়গা রাখা) */
+.banner-spot, .banner-img {
+    min-height: 90px; /* আপনার ৭২৮x৯০ অ্যাডস এর জন্য */
+    background: #f9f9f9;
+}
+
+/* Global Image Optimization for SEO & Core Web Vitals End*/
