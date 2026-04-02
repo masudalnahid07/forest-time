@@ -21,19 +21,21 @@ from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, condition
 from taggit.models import Tag
+
 
 from .models import BlogPost, Category, Author, Comment, Reply, EmailChangeRequest
 from .forms import CustomRegistrationForm, PostForm
 
-# --- ১. হেল্পার ফাংশন ---
+# --- ১. হেল্পার ফাংশন শুরু ---
 def get_sidebar_data():
     return {
         "recent_posts": BlogPost.objects.filter(status="published").order_by("-created_at")[:5]
     }
+# --- ১. হেল্পার ফাংশন শেষ---
 
-# --- ২. হোম এবং অথর ভিউ ---
+# --- ২. হোম এবং অথর ভিউ  শুরু ---
 def home(request):
     published_posts = BlogPost.objects.filter(status="published").select_related('author', 'category').order_by("-created_at")
     hero_sections = published_posts[:3]
@@ -53,7 +55,9 @@ def home(request):
     if request.headers.get("HX-Request"):
         return render(request, "partials/blog_list_partial.html", context)
     return render(request, "garden-index.html", context)
+# --- ২. হোম ভিউ শেষ---
 
+# --- ৩. হোম ভিউ শুরু--- 
 def authors(request, username):
     author_obj = get_object_or_404(Author, user__username=username)
     author_posts = BlogPost.objects.filter(author=author_obj, status="published").order_by("-created_at")
@@ -67,7 +71,22 @@ def authors(request, username):
     }
     return render(request, "author.html", context)
 
-# --- ৩. সিঙ্গেল পোস্ট এবং কমেন্ট ---
+# --- ৩. হোম ভিউ শেষ--- 
+
+
+# --- ৪. পোষ্ট মডিফাই করলে ৩০২ না করলে ২০০ শো করার লজিক শুরু -- 
+def post_last_modified(request, slug):
+    try:
+        # এখানে ফিল্টার ব্যবহার করা নিরাপদ
+        post = BlogPost.objects.get(slug=slug, status="published")
+        return post.updated_at
+    except BlogPost.DoesNotExist:
+        return None
+
+# --- ৪. পোষ্ট মডিফাই করলে ৩০২ না করলে ২০০ শো করার লজিক শেষ ---
+
+# --- ৫. সিঙ্গেল পোস্ট এবং কমেন্ট শুরু---
+@condition(last_modified_func=post_last_modified)
 def single_post(request, slug):
     post = get_object_or_404(BlogPost, slug=slug, status="published")
 
@@ -99,9 +118,13 @@ def single_post(request, slug):
         **get_sidebar_data(),
     }
 
+    # --- ৪. রেসপন্স এবং কাস্টম স্ট্যাটাস লজিক ---
     if request.headers.get("HX-Request"):
-        return render(request, "partials/inline_post.html", context)
-    return render(request, "garden-single.html", context)
+        response = render(request, "partials/inline_post.html", context)
+    else:
+        response = render(request, "garden-single.html", context)
+    # --- ৪. রেসপন্স এবং কাস্টম স্ট্যাটাস লজিক ---
+    return response
 
 @csrf_protect
 @require_POST
