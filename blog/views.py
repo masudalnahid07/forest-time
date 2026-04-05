@@ -23,9 +23,10 @@ from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST, condition
 from taggit.models import Tag
+from django_q.tasks import async_task
 
 
-from .models import BlogPost, Category, Author, Comment, Reply, EmailChangeRequest
+from .models import * 
 from .forms import CustomRegistrationForm, PostForm
 
 # --- ১. হেল্পার ফাংশন শুরু ---
@@ -325,30 +326,56 @@ def search(request):
     return render(request, "search.html", context)
 
 # --- ৮. রেজিস্ট্রেশন এবং অ্যাক্টিভেশন ---
+# --- ৮. রেজিস্ট্রেশন এবং অ্যাক্টিভেশন (Fixed Version) ---
 def register(request):
-    if request.user.is_authenticated: return redirect('home')
+    if request.user.is_authenticated: 
+        return redirect('home')
+        
     if request.method == "POST":
         form = CustomRegistrationForm(request.POST)
         if form.is_valid():
+            # ইউজার সেভ করা কিন্তু ইনঅ্যাক্টিভ রাখা
             user = form.save(commit=False)
             user.is_active = False
             user.save()
+            
             try:
                 current_site = get_current_site(request)
                 mail_subject = "Activate your account"
+                
+                # ইমেইল টেমপ্লেট রেন্ডার করা
                 message = render_to_string("account_activation_email.html", {
-                    "user": user, "domain": current_site.domain,
+                    "user": user, 
+                    "domain": current_site.domain,
                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                     "token": default_token_generator.make_token(user),
                 })
-                email = EmailMessage(mail_subject, message, to=[form.cleaned_data.get("email")])
-                email.send()
-                return render(request, "email_verification_sent.html", {"user_email": form.cleaned_data.get("email")})
-            except:
-                user.delete()
-                messages.error(request, "Error sending email. Please try again.")
-    else: form = CustomRegistrationForm()
+                
+                user_email = form.cleaned_data.get("email")
+                
+                # Django-Q ব্যবহার করে ব্যাকগ্রাউন্ডে ইমেইল পাঠানো
+                async_task(
+                    'django.core.mail.send_mail',
+                    mail_subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user_email],
+                    fail_silently=False,
+                    html_message=message # যদি আপনার টেমপ্লেটটি HTML হয়
+                )
+                
+                return render(request, "email_verification_sent.html", {"user_email": user_email})
+                
+            except Exception as e:
+                # আসল এররটি টার্মিনালে দেখার জন্য
+                print(f"Error occurred: {e}")
+                user.delete() # ইমেইল না গেলে ইউজার ডিলিট করে দেওয়া (আপনার লজিক অনুযায়ী)
+                messages.error(request, f"Error sending email: {e}. Please check your connection.")
+    else: 
+        form = CustomRegistrationForm()
+        
     return render(request, "register.html", {"form": form})
+# --- ৮. রেজিস্ট্রেশন এবং অ্যাক্টিভেশন (Fixed Version) শেষ ---
 
 def activate(request, uidb64, token):
     try:
@@ -363,6 +390,47 @@ def activate(request, uidb64, token):
         return redirect("login")
     messages.error(request, "Activation link is invalid!")
     return redirect("register")
+
+# --- ৯. রিসেন্ড অ্যাক্টিভেশন ইমেইল --- শুরু ---
+def resend_activation_email(request):
+    user_email = request.GET.get('email')
+    
+    if not user_email:
+        messages.error(request, "Email address not found.")
+        return redirect('register')
+
+    try:
+        # Find the user if they are currently inactive
+        user = User.objects.get(email=user_email, is_active=False)
+        current_site = get_current_site(request)
+        
+        mail_subject = "Activate your account (Resent)"
+        message = render_to_string("account_activation_email.html", {
+            "user": user, 
+            "domain": current_site.domain,
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": default_token_generator.make_token(user),
+        })
+        
+        # Send in the background using Django-Q
+        async_task(
+            'django.core.mail.send_mail',
+            mail_subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user_email],
+            fail_silently=False,
+            html_message=message
+        )
+        
+        messages.success(request, f"A new activation email has been sent to {user_email}.")
+        return render(request, "email_verification_sent.html", {"user_email": user_email})
+
+    except User.DoesNotExist:
+        messages.error(request, "No inactive user found with this email address.")
+        return redirect('login')
+    
+    ## --- ৯. রিসেন্ড অ্যাক্টিভেশন ইমেইল --- শেষ ---
 
 # --- ৯. SEO লাইভ চেকার (ফুল লজিক সহ) ---
 @staff_member_required
@@ -423,3 +491,9 @@ def tag_posts(request, slug):
         **get_sidebar_data(),
     }
     return render(request, "garden-category.html", context)
+
+#--- ১১. স্ট্যাটিক পেজ ডিটেইল ভিউ শুরু---
+def static_page_detail(request, slug):
+    page = get_object_or_404(StaticPage, slug=slug, is_active=True)
+    return render(request, 'pages/static_page.html', {'page': page})
+# --- ১১. স্ট্যাটিক পেজ ডিটেইল ভিউ শেষ ---

@@ -1,0 +1,21 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load account %}
+
+{% block account_content %}
+<h4 class="text-center mb-3">ইমেইল ভেরিফিকেশন</h4>
+
+{% if confirmation %}
+    <p class="text-center">অনুগ্রহ করে নিচের বাটনে ক্লিক করে <strong>{{ confirmation.email_address.email }}</strong> ইমেইলটি নিশ্চিত করুন।</p>
+    
+    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+        {% csrf_token %}
+        <div class="d-grid">
+            <button class="btn btn-primary" type="submit">নিশ্চিত করুন</button>
+        </div>
+    </form>
+{% else %}
+    <p class="text-danger text-center">ভেরিফিকেশন লিঙ্কটি সঠিক নয় অথবা এর মেয়াদ শেষ হয়ে গেছে।</p>
+{% endif %}
+
+{% endblock %}

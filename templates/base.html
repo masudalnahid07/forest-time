@@ -6,20 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
     <title>{% block title %}Forest Time - Stylish Magazine Blog{% endblock title %}</title>
 
     {% block seo %}
     <meta name="description" content="Forest Time - A stylish magazine and garden blog for nature lovers. Explore the beauty of nature.">
     <meta name="keywords" content="garden, blog, magazine, forest, lifestyle, nature">
-    <meta name="author" content="Forest Time Team">
+    <meta name="author" content="Masud Al Nahid">
     
+    <meta property="og:site_name" content="Forest Time">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Forest Time - Stylish Magazine Blog">
     <meta property="og:description" content="Explore the best garden and nature-related blogs.">
-    <meta property="og:image" content="{% static 'images/version/garden-logo.png' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/version/garden-logo.png' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Forest Time - Stylish Magazine Blog">
+    <meta name="twitter:description" content="Explore the best garden and nature-related blogs.">
     {% endblock seo %}
 
-    {% block canonical %}{% endblock canonical %}
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock canonical %}">
 
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
@@ -27,9 +36,11 @@
     <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
     <link href="{% static 'css/colors.css' %}" rel="stylesheet">
     <link href="{% static 'css/version/garden.css' %}" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
 </head>
-<body>
 
     <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
         {% csrf_token %}

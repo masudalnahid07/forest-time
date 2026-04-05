@@ -2,6 +2,30 @@
 <footer class="footer">
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
+                <div class="footer-legal-links text-center">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item">
+                            <a href="{% url 'home' %}" style="color: inherit; font-weight: 500; text-decoration: none;">Home</a>
+                            {% if all_legal_pages %}
+                                <span class="mx-2" style="opacity: 0.5;">|</span>
+                            {% endif %}
+                        </li>
+
+                        {% for p in all_legal_pages %}
+                            <li class="list-inline-item">
+                                <a href="{{ p.get_absolute_url }}" style="color: inherit; font-weight: 500; text-decoration: none;">{{ p.title }}</a>
+                                {% if not forloop.last %}
+                                    <span class="mx-2" style="opacity: 0.5;">|</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px; margin-bottom: 30px;">
+            </div>
+        </div>
+        <div class="row">
             <div class="col-lg-8 offset-lg-2">
                 <div class="widget">
                     <div class="footer-text text-center">
@@ -51,8 +75,3 @@
         </div>
     </div>
 </footer>
-
-
-<button id="smart-scroll-top" title="Scroll to top">
-<i class="fa fa-arrow-up"></i>
-</button>

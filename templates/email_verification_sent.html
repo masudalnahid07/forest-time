@@ -22,9 +22,11 @@
                 </p>
                 
                 <div class="mt-2">
-                    <a href="#" class="d-inline-block mb-4" style="color: #4f46e5; font-weight: 600; text-decoration: none; font-size: 1.05rem;">
+                        <a href="{% url 'resend_email' %}?email={{ user_email }}" 
+                        class="d-inline-block mb-4" 
+                        style="color: #4f46e5; font-weight: 600; text-decoration: none; font-size: 1.05rem;">
                         Resend email
-                    </a>
+                        </a>
                     <br>
                     <a href="{% url 'register' %}" class="d-inline-block" style="color: #555; text-decoration: underline; font-size: 0.95rem;">
                         Sign up with another email address

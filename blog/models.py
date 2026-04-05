@@ -19,24 +19,34 @@ User = get_user_model()
 def compress_and_convert_to_webp(image_field):
     if not image_field:
         return image_field
+    
+    try:
+        img = Image.open(image_field)
         
-    img = Image.open(image_field)
-    
-    if img.mode in ("RGBA", "P"):
-        img = img.convert("RGB")
-    
-    output = BytesIO()
-    max_width = 1000 
-    
-    if img.width > max_width:
-        output_size = (max_width, int((max_width / img.width) * img.height))
-        img = img.resize(output_size, Image.LANCZOS)
-    
-    img.save(output, format='WEBP', quality=85)
-    output.seek(0)
-    
-    name = os.path.splitext(image_field.name)[0] + '.webp'
-    return ContentFile(output.read(), name=name)
+        # ট্রান্সপারেন্সি বজায় রাখা
+        if img.mode == "P":
+            img = img.convert("RGBA")
+            
+        output = BytesIO()
+        max_width = 1000 
+        
+        if img.width > max_width:
+            output_size = (max_width, int((max_width / img.width) * img.height))
+            img = img.resize(output_size, Image.Resampling.LANCZOS)
+        
+        # SEO এর জন্য method=6 এবং কোয়ালিটি ৮৫
+        img.save(output, format='WEBP', quality=85, method=6)
+        output.seek(0)
+        
+        # ফাইল নেম ক্লিন করা
+        file_name = os.path.basename(image_field.name)
+        name = os.path.splitext(file_name)[0] + '.webp'
+        
+        return ContentFile(output.read(), name=name)
+        
+    except Exception as e:
+        print(f"Image processing error: {e}")
+        return image_field
 
 
 # --- অথর প্রোফাইল মডেল ---
@@ -44,29 +54,47 @@ class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
     full_name = models.CharField(max_length=100, blank=True, help_text="Type your full name")
     author_image = models.ImageField(
-    upload_to="profiles/%Y/%m/%d/",
-    null=True,
-    blank=True,
-    default='upload/user_defult.jpeg',  # তাহলে MEDIA_ROOT/upload/user_defult.jpeg এ ফাইল দরকার
-)
+        upload_to="profiles/%Y/%m/%d/",
+        null=True,
+        blank=True,
+        default='upload/user_defult.jpeg',
+    )
     bio = RichTextField(config_name="extends", blank=True, null=True)
 
     def __str__(self):
         return self.full_name if self.full_name else self.user.username
 
     def save(self, *args, **kwargs):
-        # ইমেজ ফিল্ডের নাম 'author_image' অনুযায়ী লজিক ফিক্স করা হয়েছে
+        # ১. ইমেজ এবং ডিফল্ট নাম চেক
         if self.author_image and 'user_defult.jpeg' not in self.author_image.name:
             try:
-                if not self.pk:
-                    self.author_image = compress_and_convert_to_webp(self.author_image)
-                else:
-                    old_instance = Author.objects.get(pk=self.pk)
-                    if old_instance.author_image != self.author_image:
+                if self.pk:
+                    # ডাটাবেস থেকে পুরাতন অবজেক্টটি আনা
+                    old_instance = Author.objects.filter(pk=self.pk).first()
+                    
+                    if old_instance and old_instance.author_image != self.author_image:
+                        # নতুন ইমেজকে WebP তে কনভার্ট করা
                         self.author_image = compress_and_convert_to_webp(self.author_image)
-            except Exception:
-                pass
+                        
+                        # ২. পুরাতন ফাইল ডিলিট করার নিরাপদ উপায় (Storage API)
+                        if old_instance.author_image and 'user_defult.jpeg' not in old_instance.author_image.name:
+                            try:
+                                # storage এবং name আলাদাভাবে ডিফাইন করা
+                                img_storage = getattr(old_instance.author_image, 'storage', None)
+                                img_name = old_instance.author_image.name 
+                                if img_storage and img_storage.exists(img_name):    
+                                    img_storage.delete(img_name)
+
+                            except Exception:
+                                pass
+                else:
+                    # নতুন প্রোফাইলের জন্য ইমেজ কনভার্ট
+                    self.author_image = compress_and_convert_to_webp(self.author_image)
+                    
+            except Exception as e:
+                print(f"Error in save method: {e}")
         
+        # ৩. সব কন্ডিশনের বাইরে সেভ কল করা
         super().save(*args, **kwargs)
 
 
@@ -163,25 +191,47 @@ class BlogPost(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        # ১. টাইটেল এবং স্লাগ অটো-জেনারেট লজিক
         if self.title:
             self.title = self.title.title()
         if not self.slug:
             self.slug = slugify(self.title)
         
+        # ইউনিক স্লাগ নিশ্চিত করা
         original_slug = self.slug
         counter = 1
         while BlogPost.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
             self.slug = f"{original_slug}-{counter}"
             counter += 1
         
+        # ২. ইমেজ অপ্টিমাইজেশন এবং ডিলিট লজিক
         if self.feature_img:
             try:
-                this = BlogPost.objects.get(pk=self.pk)
-                if this.feature_img != self.feature_img:
+                if self.pk:
+                    # ডাটাবেস থেকে পুরাতন পোস্টটি আনা
+                    old_post = BlogPost.objects.filter(pk=self.pk).first()
+                    
+                    if old_post and old_post.feature_img != self.feature_img:
+                        # নতুন ছবিকে WebP তে কনভার্ট করা
+                        self.feature_img = compress_and_convert_to_webp(self.feature_img)
+                        
+                        # পুরাতন ছবি সার্ভার থেকে ডিলিট করা (নেমচিপ হোস্টিংয়ের জন্য জরুরি)
+                        if old_post.feature_img:
+                            try:
+                                img_storage = getattr(old_post.feature_img, 'storage', None)
+                                img_name = old_post.feature_img.name
+                                if img_storage and img_storage.exists(img_name):
+                                    img_storage.delete(img_name)
+                            except Exception:
+                                pass
+                else:
+                    # একদম নতুন পোস্টের ক্ষেত্রে ছবি কনভার্ট করা
                     self.feature_img = compress_and_convert_to_webp(self.feature_img)
-            except BlogPost.DoesNotExist:
-                self.feature_img = compress_and_convert_to_webp(self.feature_img)
-            
+                    
+            except Exception as e:
+                print(f"BlogPost image optimization error: {e}")
+        
+        # ৩. মেইন সেভ মেথড কল করা
         super().save(*args, **kwargs)
 
 
@@ -212,25 +262,56 @@ class Reply(models.Model):
 # --- প্রোফাইল মডেল ---
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    image = models.ImageField(upload_to='profile_pics', null=True, blank=True)
+    image = models.ImageField(upload_to='profile_pics/%Y/%m/%d/', null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
     full_name = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
 
+    def save(self, *args, **kwargs):
+        # প্রোফাইল ইমেজ অপ্টিমাইজেশন এবং ডিলিট লজিক
+        if self.image:
+            try:
+                if self.pk:
+                    # ডাটাবেস থেকে পুরাতন প্রোফাইলটি আনা
+                    old_profile = Profile.objects.filter(pk=self.pk).first()
+                    
+                    if old_profile and old_profile.image != self.image:
+                        # নতুন ছবিকে WebP তে কনভার্ট করা
+                        self.image = compress_and_convert_to_webp(self.image)
+                        
+                        # পুরাতন ছবি সার্ভার থেকে ডিলিট করা
+                        if old_profile.image:
+                            try:
+                                img_storage = getattr(old_profile.image, 'storage', None)
+                                img_name = old_profile.image.name
+                                if img_storage and img_storage.exists(img_name):
+                                    img_storage.delete(img_name)
+                            except Exception:
+                                pass
+                else:
+                    # একদম নতুন প্রোফাইলের ক্ষেত্রে ছবি কনভার্ট করা
+                    self.image = compress_and_convert_to_webp(self.image)
+                    
+            except Exception as e:
+                print(f"Profile image optimization error: {e}")
+        
+        # মেইন সেভ মেথড কল করা
+        super().save(*args, **kwargs)
 
-# --- সিগন্যালস ---
+
+# --- সিগন্যালস (নিরাপদ লজিক) ---
 @receiver(post_save, sender=User)
 def create_or_update_user_profiles(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
-        Author.objects.create(user=instance)
-    else:
-        if hasattr(instance, 'profile'):
-            instance.profile.save()
-        if hasattr(instance, 'author_profile'):
-            instance.author_profile.save()
+        # নতুন ইউজার তৈরি হলে প্রোফাইল এবং অথর অবজেক্ট তৈরি হবে
+        # get_or_create ব্যবহার করা নিরাপদ যাতে ডুপ্লিকেট না হয়
+        Profile.objects.get_or_create(user=instance)
+        Author.objects.get_or_create(user=instance)
+    
+    # নোট: এখানে else ব্লকে প্রোফাইল .save() কল করার দরকার নেই। 
+    # এতে ইমেজ প্রসেসিং লজিক বারবার ট্রিগার হওয়ার ঝুঁকি থাকে।
 
 
 class EmailChangeRequest(models.Model):
@@ -241,3 +322,45 @@ class EmailChangeRequest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} wants to change email to {self.new_email}"
+    
+
+#--- স্ট্যাটিক পেজ মডেল  শুরু---
+class StaticPage(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True, help_text="উদা: about-us, privacy-policy")
+    content = RichTextField(config_name="extends") 
+    meta_description = models.CharField(max_length=160, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    
+    # নতুন ফিল্ড: পেইজের সিরিয়াল মেনটেইন করার জন্য
+    order = models.PositiveIntegerField(default=0, help_text="পেইজটি কোন সিরিয়ালে থাকবে (যেমন: ১, ২, ৩)")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Static Page"
+        verbose_name_plural = "Static Pages"
+        ordering = ['order', 'title'] # এটি ডাটাবেস লেভেলে সিরিয়াল ঠিক রাখবে
+
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse('static_page', kwargs={'slug': self.slug})
+    
+    def save(self, *args, **kwargs):
+        if self.title:
+            self.title = self.title.title()
+        if not self.slug:
+            self.slug = slugify(self.title)
+        
+        original_slug = self.slug
+        counter = 1
+        while StaticPage.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+            self.slug = f"{original_slug}-{counter}"
+            counter += 1
+        
+        super().save(*args, **kwargs)
+
+#--- স্ট্যাটিক পেজ মডেল শেষ---

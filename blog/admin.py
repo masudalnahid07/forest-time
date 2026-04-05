@@ -145,3 +145,12 @@ class EmailChangeRequestAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected email changes have been approved and updated!")
     
     approve_email_change.short_description = "Approve selected email changes"
+
+
+@admin.register(StaticPage)
+class StaticPageAdmin(admin.ModelAdmin):
+    # 'order' ফিল্ডটি list_display এবং list_editable এ রাখা হয়েছে
+    list_display = ('order', 'title', 'slug', 'is_active', 'updated_at')
+    list_editable = ('order', 'is_active') 
+    prepopulated_fields = {'slug': ('title',)}
+    list_display_links = ('title',) # টাইটেলে ক্লিক করলে এডিট পেইজে যাবে

@@ -25,7 +25,7 @@
       },
       "reviewRating": {
         "@type": "Rating",
-        "ratingValue": "{{ post.rating_value }}",
+        "ratingValue": "{{ post.rating_value|default:'5' }}",
         "bestRating": "5"
       },
       {% else %}
@@ -35,10 +35,18 @@
       "image": "{% if post.feature_img %}{{ request.scheme }}://{{ request.get_host }}{{ post.feature_img.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'upload/garden_single_01.jpg' %}{% endif %}",
       "author": {
         "@type": "Person",
-        "name": "{{ post.author.user.username|escapejs }}"
+        "name": "{{ post.author.user.get_full_name|default:post.author.user.username|escapejs }}"
       },
-      "datePublished": "{{ post.created_at|date:'Y-m-d' }}",
-      "description": "{{ post.meta_description|escapejs }}"
+      "publisher": {
+        "@type": "Organization",
+        "name": "Forest Time",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/version/garden-logo.png' %}"
+        }
+      },
+      "datePublished": "{{ post.created_at|date:'c' }}",
+      "description": "{{ post.meta_description|default:post.title|truncatewords:30|escapejs }}"
     }
     </script>
 {% endblock seo %}
@@ -67,10 +75,15 @@
                             </div>
                         </div>
 
-                        <div class="single-post-media" style="margin-bottom: 25px;">
-                            <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
-                                alt="{{ post.title }}" class="img-fluid" style="width: 100%; height: auto; border-radius: 4px;">
-                        </div>
+<div class="single-post-media" style="margin-bottom: 25px;">
+    <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
+         alt="{{ post.title }}" 
+         class="img-fluid" 
+         width="800" 
+         height="460" 
+         fetchpriority="high"
+         style="width: 100%; height: auto; border-radius: 4px;">
+</div>
 
                         <div class="blog-content" style="line-height: 1.9; font-size: 17px; color: #333;">
                             <div class="pp" style="color: inherit; margin-bottom: 30px;">
@@ -105,9 +118,15 @@
                         <div class="custombox authorbox clearfix" style="background: #f9f9f9; padding: 30px; border-radius: 4px; border: 1px solid #eee; margin-bottom: 40px;">
                             <h4 class="small-title" style="margin-bottom: 20px; font-weight: 700; background: #28a745; color: #fff; display: inline-block; padding: 3px 15px; border-radius: 4px;">About Author</h4>
                             <div class="row">
-                                <div class="col-lg-2 col-md-2">
-                                    <img src="{% if post.author.author_image %}{{ post.author.author_image.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" alt="{{ post.author.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-                                </div>
+<div class="col-lg-2 col-md-2">
+    <img src="{% if post.author.author_image %}{{ post.author.author_image.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" 
+         alt="{{ post.author.user.username }}" 
+         class="img-fluid rounded-circle" 
+         width="100" 
+         height="100" 
+         loading="lazy"
+         style="object-fit: cover; aspect-ratio: 1/1;">
+</div>
                             <div class="col-lg-10 col-md-10">
                                 <h4 style="font-weight: 700; margin-bottom: 10px;">
                                     {% if post.author.full_name %}
@@ -145,25 +164,30 @@
                             </div>
                         </div>
 
-                        <div class="custombox clearfix" style="margin-bottom: 40px;">
-                            <h4 class="small-title" style="margin-bottom: 25px; font-weight: 700; text-transform: uppercase; font-size: 18px; border-bottom: 2px solid #f1f1f1; display: inline-block; padding-bottom: 5px; color: #fff; background: #28a745; padding: 5px 15px;">You May Also Like</h4>
-                            <div class="row">
-                                {% for related in related_posts %}
-                                    <div class="col-lg-6 col-md-6">
-                                        <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
-                                            <a href="{% url 'single_post' related.slug %}">
-                                                <img src="{% if related.feature_img %}{{ related.feature_img.url }}{% else %}{% static 'upload/related_posts.jpg' %}{% endif %}" alt="{{ related.title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
-                                                    <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ related.title|truncatechars:45 }}</h4>
-                                                    <small style="font-size: 11px;">
-                                                        <span style="color: #28a745; font-weight: 600;"><i class="fa fa-folder-open"></i> {{ related.category.category_title }}</span>
-                                                        | <i class="fa fa-calendar"></i> {{ related.created_at|date:"d F, Y" }}
-                                                    </small>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                        <div class="custombox clearfix">
+    <h4 class="small-title">You May Also Like</h4>
+    <div class="row">
+        {% for r_post in related_posts %}
+        <div class="col-lg-6 col-md-6">
+            <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
+                <a href="{{ r_post.get_absolute_url }}">
+                    <img src="{{ r_post.feature_img.url }}" 
+                         alt="{{ r_post.title }}" 
+                         width="400" 
+                         height="200" 
+                         loading="lazy"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
+                        <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ r_post.title }}</h4>
+                        <small style="font-size: 11px;">
+                            <span style="color: #28a745; font-weight: 600;"><i class="fa fa-folder-open"></i> {{ r_post.category.name }}</span>
+                            | <i class="fa fa-calendar"></i> {{ r_post.created_at|date:"d M, Y" }}
+                        </small>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
                             </div>
                         </div>
 

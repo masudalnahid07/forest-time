@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .button {
+            background-color: #28a745;
+            border: none;
+            color: white !important;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            border: 1px solid #eee;
+        }
+        .footer {
+            font-size: 12px;
+            color: #777;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="color: #28a745;">Welcome to {{ site_name }}!</h2>
+        <p>Hello,</p>
+        <p>Thank you for creating an account with us. To ensure the security of your account, please confirm your email address by clicking the button below:</p>
+        
+        <div style="text-align: center;">
+            <a href="{{ activate_url }}" class="button">Confirm My Email</a>
+        </div>
+        
+        <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+        <p style="word-break: break-all; font-size: 13px; color: #28a745;">{{ activate_url }}</p>
+        
+        <p>If you did not sign up for this account, you can safely ignore this email.</p>
+        
+        <div class="footer">
+            <p>Best regards,<br>The {{ site_name }} Team</p>
+            <p>Domain: <a href="{{ site_domain }}">{{ site_domain }}</a></p>
+        </div>
+    </div>
+</body>
+</html>

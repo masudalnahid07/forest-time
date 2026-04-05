@@ -17,12 +17,19 @@ urlpatterns = [
     path("profile/", views.user_profile, name="profile"), # এই লাইনটি মিসিং ছিল
     path('profile/edit/<str:field_name>/', views.edit_field, name='edit_field'),
     
-    # ৩. অথেনটিকেশন (ডুপ্লিকেট রিমুভ করা হয়েছে)
+    # ৩. Registration, Login, Logout এবং Account Activation
     path("register/", views.register, name="register"),
     path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page='home'), name="logout"),
     path("activate/<uidb64>/<token>/", views.activate, name="activate"),
+    path('resend-email/', views.resend_activation_email, name='resend_email'),
     
+    #Email approval requests
+    path('dashboard/approve/<int:request_id>/', views.approve_email_request,name='approve_email_request'),
+    path('dashboard/reject/<int:request_id>/', views.reject_email_request, name='reject_email_request'),
+    path('profile/cancel-email-request/', views.cancel_email_request, name='cancel_email_request'),
+
+
     # ৪. ডাইনামিক পাথ ও অন্যান্য
     path("author/<str:username>/", views.authors, name="authors"),
     path("category/<slug:slug>/", views.category, name="category"),
@@ -36,17 +43,17 @@ urlpatterns = [
 
     # ৫. এডমিন ড্যাশবোর্ড
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
-    path('dashboard/approve/<int:request_id>/', views.approve_email_request,name='approve_email_request'),
-    
-    # এই নিচের লাইনটি আপনার কোডে নেই, এটি যোগ করুন:
-    path('dashboard/reject/<int:request_id>/', views.reject_email_request, name='reject_email_request'),
-    
-    path('profile/cancel-email-request/', views.cancel_email_request, name='cancel_email_request'),
+
+    #all auth urls
+    path('accounts/', include('allauth.urls')),
 
 
+    # ৬. স্ট্যাটিক পেইজ (এটি অবশ্যই single_post এর উপরে থাকতে হবে)
+    path('info/<slug:slug>/', views.static_page_detail, name='static_page'),
 
-    # ৬. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
-    path("<slug:slug>/", views.single_post, name="single_post"),
+    # ৭. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
+    path("<slug:slug>/", views.single_post, name="single_post"), 
+
 ]
 
 if settings.DEBUG:
