@@ -53,11 +53,14 @@
                         <hr class="invis">
 
                         <div class="newsletter-widget text-center">
-                            <form class="form-inline justify-content-center">
-                                <input type="email" class="form-control" placeholder="Enter your email address" required style="border-radius: 50px 0 0 50px; padding-left: 20px;">
-                                <button type="submit" class="btn btn-primary" style="border-radius: 0 50px 50px 0; padding: 0 25px;">Subscribe <i class="fa fa-envelope-open-o"></i></button>
-                            </form>
-                        </div>
+<form hx-post="{% url 'subscribe' %}" class="form-inline justify-content-center">
+    {% csrf_token %}
+    <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+    <button type="submit" class="btn btn-primary">Subscribe</button>
+</form>
+    
+    <div id="subscriber-message"></div>
+</div>
                     </div>
                 </div>
             </div>
@@ -75,3 +78,7 @@
         </div>
     </div>
 </footer>
+
+<button id="smart-scroll-top" title="Scroll to top">
+<i class="fa fa-arrow-up"></i>
+</button>

@@ -51,7 +51,10 @@ urlpatterns = [
     # ৬. স্ট্যাটিক পেইজ (এটি অবশ্যই single_post এর উপরে থাকতে হবে)
     path('info/<slug:slug>/', views.static_page_detail, name='static_page'),
 
-    # ৭. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
+    # ৭. সাবস্ক্রাইবারদের জন্য ইমেইল সাবস্ক্রিপশন পাথ
+    path('subscribe/', views.subscribe, name='subscribe'),
+
+    # ৮. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
     path("<slug:slug>/", views.single_post, name="single_post"), 
 
 ]

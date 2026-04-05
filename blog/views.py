@@ -497,3 +497,26 @@ def static_page_detail(request, slug):
     page = get_object_or_404(StaticPage, slug=slug, is_active=True)
     return render(request, 'pages/static_page.html', {'page': page})
 # --- ১১. স্ট্যাটিক পেজ ডিটেইল ভিউ শেষ ---
+
+#--- ১২. সাবস্ক্রিপশন ভিউ শুরু ---
+def subscribe(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        if email:
+            # ডাটাবেসে সেভ করা বা চেক করা
+            sub, created = Subscriber.objects.get_or_create(email=email)
+            
+            # HTTP 204 No Content রেসপন্স তৈরি
+            response = HttpResponse(status=204) 
+            
+            if created:
+                # সাকসেস ইভেন্ট ট্রিগার
+                response["HX-Trigger"] = "subscribed_success"
+            else:
+                # অলরেডি সাবস্ক্রাইবড ইভেন্ট ট্রিগার
+                response["HX-Trigger"] = "already_subscribed"
+            
+            return response
+            
+    return HttpResponse("Invalid Request", status=400)
+#--- ১২. সাবস্ক্রিপশন ভিউ শেষ ---

@@ -19,24 +19,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from blog.sitemaps import PostSitemap, CategorySitemap
+from blog.sitemaps import PostSitemap, CategorySitemap  # <-- এখান থেকে আসবে
 
-# ১. সাইটম্যাপ কনফিগারেশন
 sitemaps = {
-    'posts': PostSitemap,
-    'categories': CategorySitemap,
+    "posts": PostSitemap,
+    "categories": CategorySitemap,
 }
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('blog.urls')), # আপনার ব্লগের সব ইউআরএল
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-]
-
-# ২. মিডিয়া এবং স্ট্যাটিক ফাইল হ্যান্ডলিং (DEBUG মোডের জন্য)
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# ৩. কাস্টম ৪-০-৪ হ্যান্ডলার (এটি urlpatterns এর বাইরে থাকবে)
-handler404 = 'blog.views.custom_404_view'
+    path("admin/", admin.site.urls),
+    path("", include("blog.urls")),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

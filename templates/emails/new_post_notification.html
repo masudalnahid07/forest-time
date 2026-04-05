@@ -1,0 +1,17 @@
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; border: 1px solid #f0f0f0; max-width: 600px; margin: auto;">
+    <h1 style="color: #208957; text-align: center;">Forest Time 🌲</h1>
+    <p>Hello,</p>
+    <p>A new story has been published on <strong>Forest Time</strong> that you might find interesting!</p>
+    <hr style="border: 0; border-top: 1px solid #eee;">
+    <h2 style="color: #333;">{{ post.title }}</h2>
+    <p style="color: #666;">{{ post.summary|truncatewords:30 }}</p>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ site_url }}{{ post.get_absolute_url }}" 
+        style="background-color: #208957; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+        Read the Full Post
+        </a>
+    </div>
+    <p style="font-size: 11px; color: #999; margin-top: 30px; text-align: center;">
+        You received this email because you subscribed to Forest Time updates.
+    </p>
+</div>

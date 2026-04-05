@@ -67,8 +67,11 @@ INSTALLED_APPS = [
     # ৫. ব্যাকগ্রাউন্ড টাস্ক প্রসেসর
     'django_q',
 
+    # ৭. সিগন্যাল কানেক্টর (অ্যাপ কনফিগারেশনে উল্লেখ করা হয়েছে)
+    'blog.apps.BlogConfig',
+
     # ৬. আপনার অ্যাপ্লিকেশন
-    "blog",
+    #"blog",
     'crispy_forms',
     'crispy_bootstrap5',
 ]
