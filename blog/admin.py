@@ -154,3 +154,18 @@ class StaticPageAdmin(admin.ModelAdmin):
     list_editable = ('order', 'is_active') 
     prepopulated_fields = {'slug': ('title',)}
     list_display_links = ('title',) # টাইটেলে ক্লিক করলে এডিট পেইজে যাবে
+
+
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    # অ্যাডমিন প্যানেলে কোন কোন কলাম দেখাবে
+    list_display = ('email', 'subscribed_at') 
+    
+    # ইমেইল দিয়ে সার্চ করার সুবিধা
+    search_fields = ('email',) 
+    
+    # তারিখ অনুযায়ী ফিল্টার করার সুবিধা
+    list_filter = ('subscribed_at',) 
+    
+    # নতুন থেকে পুরাতন ক্রমানুসারে সাজানো
+    ordering = ('-subscribed_at',)

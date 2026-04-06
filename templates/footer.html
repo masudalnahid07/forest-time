@@ -53,14 +53,14 @@
                         <hr class="invis">
 
                         <div class="newsletter-widget text-center">
-<form hx-post="{% url 'subscribe' %}" class="form-inline justify-content-center">
-    {% csrf_token %}
-    <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
-    <button type="submit" class="btn btn-primary">Subscribe</button>
-</form>
+                        <form hx-post="{% url 'subscribe' %}" class="form-inline justify-content-center">
+                            {% csrf_token %}
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
     
-    <div id="subscriber-message"></div>
-</div>
+                        <div id="subscriber-message"></div>
+                        </div>
                     </div>
                 </div>
             </div>

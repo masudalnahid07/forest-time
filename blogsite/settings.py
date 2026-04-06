@@ -187,23 +187,25 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "login"
 
 
-# ১. Sender.net SMTP সেটিংস শুরু 
+
+
+
+
+# --- Email Configuration (Gmail SMTP) ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sender.net'
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-# আপনার Sender.net ড্যাশবোর্ড থেকে প্রাপ্ত SMTP Username
+# Load from .env for security
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-
-# আপনার জেনারেট করা SMTP/App Password (লগইন পাসওয়ার্ড নয়)
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-# আপনার ভেরিফাইড ডোমেইনের ইমেইল
-DEFAULT_FROM_EMAIL = 'FloorCrafted <admin@floorcrafted.com>'
+# Dynamic Sender Email
+DEFAULT_FROM_EMAIL = f"Forest Time <{EMAIL_HOST_USER}>"
+# --- End Email Configuration ---
 
-# ১. Sender.net SMTP সেটিংস শেষ 
+
 
 # JAZZMIN Admin Panel (সবগুলো সেটিংসকে একটি ডিকশনারিতে মার্জ করা হয়েছে)
 JAZZMIN_SETTINGS = {
@@ -277,3 +279,4 @@ Q_CLUSTER = {
 
 # Django-Q2 এর জন্য কাস্টম অ্যাকাউন্ট অ্যাডাপ্টার সেটিং
 ACCOUNT_ADAPTER = 'blog.adapters.MyAccountAdapter'
+

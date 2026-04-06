@@ -228,7 +228,7 @@ if (mySmartScrollBtn) {
 //*********** স্ক্রল বাটন শেষ **************
 
 
-// --- Subscription Notifications (HTMX + SweetAlert2) ---
+// --- Subscription Notifications (HTMX + SweetAlert2) start ---
 
 document.body.addEventListener('subscribed_success', function() {
     if (typeof Swal !== 'undefined') {
@@ -255,3 +255,5 @@ document.body.addEventListener('already_subscribed', function() {
         });
     }
 });
+
+// --- Subscription Notifications (HTMX + SweetAlert2) end ---
