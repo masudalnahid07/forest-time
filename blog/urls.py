@@ -54,6 +54,9 @@ urlpatterns = [
     # ৭. সাবস্ক্রাইবারদের জন্য ইমেইল সাবস্ক্রিপশন পাথ
     path('subscribe/', views.subscribe, name='subscribe'),
 
+    # ৮. মাস্টার এন্যালিটিক্স ড্যাশবোর্ড
+    path('admin-panel/analytics/', views.master_analytics_dashboard, name='full_analytics'),
+
     # ৮. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
     path("<slug:slug>/", views.single_post, name="single_post"), 
 

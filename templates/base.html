@@ -72,29 +72,30 @@
                     </div>
                     
                     <div class="col-lg-4 hidden-md-down text-center">
-                        <div class="topsearch" style="display: inline-block; padding-top: 10px;">
-                            {% if request.user.is_authenticated %}
-                                <a href="{% url 'profile' %}" style="margin-right: 15px;">
-                                    <i class="fa fa-user"></i> {{ user.username }}
-                                    {% if user.is_staff and pending_email_request %} 
-                                    <a href="{% url 'admin_dashboard' %}" title="View Pending Requests">
-                                        <span style="color: #ff5e5e; font-size: 12px; cursor: pointer;">🔴 (Pending)</span>
-                                        </a>
-                                    {% endif %}
-                                </a>
+                        <div class="topsearch" style="display: flex; align-items: center; justify-content: center; gap: 15px; padding-top: 10px;">
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'profile' %}" style="text-decoration: none;">
+            <i class="fa fa-user"></i> {{ user.username }}
+        </a>
 
-                                {% if request.user.is_superuser %}
-                                    <a href="{% url 'admin:index' %}" style="margin-right: 15px;"><i class="fa fa-dashboard"></i> Dashboard</a>
-                                {% endif %}
-                                
-                                <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();" style="margin-left: 10px; color: #ff5e5e;">
-                                    <i class="fa fa-sign-out"></i> Logout
-                                </a>
-                            {% else %}
-                                <a href="{% url 'login' %}" style="margin-right: 15px;"><i class="fa fa-sign-in"></i> Login</a>
-                                <a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Register</a>
-                            {% endif %}
-                        </div>
+        {% if request.user.is_superuser %}
+            <a href="{% url 'full_analytics' %}" style="text-decoration: none; color: #ffffff;">
+                <i class="fa fa-line-chart"></i> অ্যানালিটিক্স দেখুন
+            </a>
+            
+            <a href="{% url 'admin:index' %}" style="text-decoration: none; color: #ffffff;">
+                <i class="fa fa-dashboard"></i> Dashboard
+            </a>
+        {% endif %}
+        
+        <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();" style="color: #ff5e5e; text-decoration: none;">
+            <i class="fa fa-sign-out"></i> Logout
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}"><i class="fa fa-sign-in"></i> Login</a>
+        <a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Register</a>
+    {% endif %}
+</div>
                     </div>
 
                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
@@ -107,17 +108,25 @@
             </div>
         </div>
 
-        <div class="top-static-menu text-center" style="background: #208957; padding: 8px 0; border-bottom: 1px solid #1a7147;">
-            <ul class="list-inline" style="margin: 0; padding: 0;">
-                {% for p in all_legal_pages %}
-                    <li class="list-inline-item" style="margin: 0 15px;">
-                        <a href="{{ p.get_absolute_url }}" style="font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase; text-decoration: none; letter-spacing: 0.5px;">
-                            {{ p.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+<div class="top-static-menu text-center" style="background: #208957; padding: 8px 0; border-bottom: 1px solid #1a7147;">
+    <ul class="list-inline" style="margin: 0; padding: 0; display: flex; justify-content: center; flex-wrap: wrap;">
+        
+        <li class="list-inline-item" style="margin: 0 15px;">
+            <a href="{% url 'home' %}" style="font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase; text-decoration: none; letter-spacing: 0.5px;">
+                Home
+            </a>
+        </li>
+
+        {% for p in all_legal_pages %}
+            <li class="list-inline-item" style="margin: 0 15px;">
+                <a href="{{ p.get_absolute_url }}" style="font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase; text-decoration: none; letter-spacing: 0.5px;">
+                    {{ p.title }}
+                </a>
+            </li>
+        {% endfor %}
+
+    </ul>
+</div>
 
         <div class="header-section">
             <div class="container">

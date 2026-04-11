@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %} মাস্টার অ্যানালিটিক্স ড্যাশবোর্ড {% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">ওয়েবসাইট পারফরম্যান্স ও কিওয়ার্ড রিপোর্ট</h4>
+            <span class="badge badge-success">Live Data</span>
+        </div>
+        <div class="card-body p-0">
+            <iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/5a09e183-5263-44b7-8ca3-97b1fe4aeced/page/amouF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+            </div>
+    </div>
+</div>
+
+<style>
+    /* ড্যাশবোর্ডটিকে মোবাইল ফ্রেন্ডলি করার জন্য */
+    @media (max-width: 768px) {
+        iframe {
+            height: 600px;
+        }
+    }
+</style>
+{% endblock %}

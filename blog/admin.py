@@ -2,7 +2,10 @@ from django.contrib import admin
 from .models import EmailChangeRequest
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.urls import path
 from .models import *
+from blog.views import master_analytics_dashboard
+
 
 # ১. সাধারণ মডেলগুলো রেজিস্টার
 admin.site.register(Author)
@@ -169,3 +172,16 @@ class SubscriberAdmin(admin.ModelAdmin):
     
     # নতুন থেকে পুরাতন ক্রমানুসারে সাজানো
     ordering = ('-subscribed_at',)
+
+
+original_get_urls = admin.site.get_urls
+
+def get_urls():
+    urls = original_get_urls()
+    custom_urls = [
+        # এখানে 'admin_view' ব্যবহার করা হয়েছে যাতে এটি অ্যাডমিন প্রোটেকটেড থাকে
+        path('analytics-dashboard/', admin.site.admin_view(master_analytics_dashboard), name="full_analytics"),
+    ]
+    return custom_urls + urls
+
+admin.site.get_urls = get_urls

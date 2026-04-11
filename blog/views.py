@@ -24,7 +24,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST, condition
 from taggit.models import Tag
 from django_q.tasks import async_task
-
+from django.contrib import admin
 
 from .models import * 
 from .forms import CustomRegistrationForm, PostForm
@@ -520,3 +520,20 @@ def subscribe(request):
             
     return HttpResponse("Invalid Request", status=400)
 #--- ১২. সাবস্ক্রিপশন ভিউ শেষ ---
+
+
+#--- ১৩. মাস্টার এন্যালিটিক্স ড্যাশবোর্ড --- শুরু ---
+@staff_member_required
+def master_analytics_dashboard(request):
+    # admin.site.each_context(request) ব্যবহারের ফলে আপনার analytics.html-এ 
+    # অ্যাডমিন প্যানেলের সাইডবার, হেডার এবং সিএসএস এক্সেস পাওয়া যাবে।
+    context = admin.site.each_context(request)
+    
+    context.update({
+        'title': 'ওয়েবসাইট পারফরম্যান্স ও কিওয়ার্ড রিপোর্ট',
+        'is_popup': False,
+        'has_permission': True,
+    })
+    
+    return render(request, 'dashboard/analytics.html', context)
+#--- ১৩. মাস্টার এন্যালিটিক্স ড্যাশবোর্ড --- শেষ ---

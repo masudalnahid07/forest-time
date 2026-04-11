@@ -207,12 +207,11 @@ DEFAULT_FROM_EMAIL = f"Forest Time <{EMAIL_HOST_USER}>"
 
 
 
-# JAZZMIN Admin Panel (সবগুলো সেটিংসকে একটি ডিকশনারিতে মার্জ করা হয়েছে)
+# JAZZMIN Admin Panel (সংশোধিত)
 JAZZMIN_SETTINGS = {
     "site_title": "My Admin",
     "site_header": "My Blog Admin",
     "site_brand": "My Blog",
-    # "site_logo": "img/logo.png", # ফাইল থাকলে আন-কমেন্ট করুন
     "welcome_sign": "Welcome to the Blog Admin",
     "copyright": "My Blog Ltd",
     "show_sidebar": True,
@@ -220,9 +219,23 @@ JAZZMIN_SETTINGS = {
     
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        # ১. এখানে ওপরের মেনুতে অ্যানালিটিক্স লিঙ্ক যুক্ত হলো
+        {"name": "Analytics", "url": "admin:full_analytics", "icon": "fas fa-chart-line"},
         {"name": "Website", "url": "/", "new_window": True},
         {"model": "auth.User"},
     ],
+
+    # ২. বামের সাইডবারে "Custom Links" সেকশনে লিঙ্কটি দেখানোর জন্য এটি যোগ করুন
+    "custom_links": {
+        "blog": [ # আপনার অ্যাপের নাম 'blog' হলে এখানে তার নিচে দেখাবে
+            {
+                "name": "Live Analytics", 
+                "url": "admin:full_analytics", 
+                "icon": "fas fa-chart-bar",
+                "permissions": ["auth.view_group"]
+            },
+        ],
+    },
 
     "icons": {
         "auth": "fas fa-users-cog",
