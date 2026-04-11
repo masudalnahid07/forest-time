@@ -25,6 +25,7 @@ from django.views.decorators.http import require_POST, condition
 from taggit.models import Tag
 from django_q.tasks import async_task
 from django.contrib import admin
+from bs4 import BeautifulSoup
 
 from .models import * 
 from .forms import CustomRegistrationForm, PostForm
@@ -436,33 +437,114 @@ def resend_activation_email(request):
 @staff_member_required
 @csrf_exempt 
 def live_seo_checker(request):
-    if request.method != "POST": return HttpResponse("Invalid Request")
+    if request.method != "POST": 
+        return HttpResponse("Invalid Request")
 
+    # ১. ডাটা রিসিভ করা
     keyword = request.POST.get('focus_keyword', '').strip().lower()
     title = request.POST.get('title', '').strip().lower()
     slug_input = request.POST.get('slug', '').strip().lower()
-    meta_desc = request.POST.get('meta_description', '').strip().lower() 
+    meta_desc = request.POST.get('meta_description', '').strip()
+    meta_keys = request.POST.get('meta_keywords', '').strip().lower()
     content_html = request.POST.get('post_details', '')
+
+    # কন্টেন্ট ক্লিন করা (এনালাইসিসের জন্য)
     content_text = strip_tags(content_html).lower()
 
     if not keyword:
         return HttpResponse("<div class='alert alert-warning'>⚠️ Focus Keyword missing!</div>")
 
-    # এনালাইসিস লজিক
-    title_len = len(title)
-    title_match = "✅ Good" if 0 < title_len <= 60 else "❌ Too long or empty"
+    # --- ২. কীওয়ার্ড কাউন্ট (Regex - Whole Word) ---
+    pattern = r'\b' + re.escape(keyword) + r'\b'
+    content_count = len(re.findall(pattern, content_text))
+    meta_keys_count = len(re.findall(pattern, meta_keys))
+    meta_desc_count = len(re.findall(pattern, meta_desc.lower()))
+
+    # --- ৩. মেটা ডেসক্রিপশন (Length & Color) ---
+    meta_len = len(meta_desc)
+    if 120 <= meta_len <= 160:
+        meta_color, meta_icon = "#28a745", "✅"
+    else:
+        meta_color, meta_icon = "#dc3545", "⚠️"
+
+    meta_desc_match = f'<span style="color: {meta_color}; font-weight: bold;">{meta_icon} {meta_len} Chars</span> (Found {meta_desc_count} times)'
+
+    # --- ৪. কীওয়ার্ড ডেনসিটি (Pro Formula) ---
+    word_list = content_text.split()
+    total_word_count = len(word_list)
+    words_in_keyword = len(keyword.split())
+
+    if total_word_count > 0:
+        density = (content_count * words_in_keyword / total_word_count) * 100
+    else:
+        density = 0
+
+    if 1.0 <= density <= 2.5:
+        density_match = f"✅ {density:.2f}% (Perfect)"
+    elif density > 2.5:
+        density_match = f'<span style="color: #dc3545; font-weight: bold;">⚠️ {density:.2f}% (Too High)</span>'
+    else:
+        density_match = f"⚠️ {density:.2f}% (Too Low)"
+
+    # --- ৫. লিংক এবং মাল্টিমিডিয়া ---
+    soup = BeautifulSoup(content_html, 'html.parser')
+    links = soup.find_all('a', href=True)
+    images = soup.find_all('img')
+
+    domain = "floorcrafted.com"
+    internal_count = sum(1 for link in links if link['href'].startswith('/') or domain in link['href'])
+    outbound_count = sum(1 for link in links if link['href'].startswith('http') and domain not in link['href'])
+
+    # ইমেজ অল্ট টেক্সট চেক (অতিরিক্ত SEO টিপ)
+    img_with_alt = sum(1 for img in images if img.get('alt'))
+    multimedia_match = f"✅ {len(images)} Images ({img_with_alt} with Alt)" if len(images) > 0 else "❌ No Images"
+
+    # --- ৬. টাইটেল, স্লাগ এবং প্রথম প্যারাগ্রাফ ---
+    title_match = "✅ Good" if keyword in title else "❌ Missing in Title"
     
     effective_slug = slug_input if slug_input else slugify(title)
-    slug_match = "✅ OK" if slugify(keyword) in effective_slug else "❌ Missing keyword"
+    keyword_slug = slugify(keyword).replace('-', '')
+    slug_match = "✅ OK" if keyword_slug in effective_slug.replace('-', '') else "❌ Missing keyword"
 
-    content_count = content_text.count(keyword)
-    content_match = f"✅ Found {content_count} times" if content_count > 0 else "❌ Not found"
+    first_paragraph = soup.find('p')
+    first_para_has_keyword = re.search(pattern, first_paragraph.get_text().lower()) if first_paragraph else False
+    first_para_match = "✅ Found in intro" if first_para_has_keyword else "❌ Not in intro"
 
+    # --- ৭. হেডিংস (H1, H2) ---
+    headings = soup.find_all(['h1', 'h2'])
+    h_count = sum(1 for h in headings if re.search(pattern, h.get_text().lower()))
+    headings_match = f"✅ Found in {h_count} heading(s)" if h_count > 0 else "❌ Not in H1/H2"
+
+    # --- ৮. কন্টেন্ট লেন্থ ---
+    if total_word_count >= 1500:
+        length_score = "✅ Great"
+    elif 800 <= total_word_count < 1500:
+        length_score = "ℹ️ Decent"
+    else:
+        length_score = "⚠️ Short"
+    content_length_match = f"{total_word_count} words ({length_score})"
+
+    # --- ৯. ফাইনাল কনটেক্সট ---
     context = {
-        'keyword': keyword, 'title_match': title_match, 'slug_match': slug_match,
-        'content_match': content_match, 'url_length_match': f"{len(effective_slug)} chars",
+        'keyword': keyword,
+        'title_match': title_match,
+        'meta_desc_match': meta_desc_match,
+        'meta_keys_match': f"✅ Found {meta_keys_count} times" if meta_keys_count > 0 else "❌ Not found",
+        'content_match': f"✅ Found {content_count} times",
+        'density_match': density_match,
+        'keyword_used_match': first_para_match,
+        'slug_match': slug_match,
+        'url_length_match': f"{len(effective_slug)} chars",
+        'internal_match': f"✅ {internal_count}" if internal_count > 0 else "❌ Missing",
+        'outbound_match': f"✅ {outbound_count}" if outbound_count > 0 else "🔗 None",
+        'paragraph_match': "✅ Good size" if sum(1 for p in soup.find_all(['p', 'div']) if len(p.get_text().split()) > 150) == 0 else "❌ Too long",
+        'multimedia_match': multimedia_match,
+        'headings_match': headings_match,
+        'content_length_match': content_length_match,
     }
-    return HttpResponse(render_to_string('partials/seo_checker_result.html', context))
+
+    html = render_to_string('partials/seo_checker_result.html', context)
+    return HttpResponse(html) # এখানে ফিক্স করা হয়েছে
 
 # --- ১০. আপলোড এবং ৪-০-৪ ---
 @csrf_exempt
