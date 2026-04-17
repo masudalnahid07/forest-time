@@ -2100,40 +2100,34 @@ color: #fff !important;
 }
 
 
-/* Pros and Cons লিস্টের গ্যাপ কমানোর জন্য CSS */
-/* CKEditor Content Container */
-    .pp {
-        line-height: 1.8 !important; /* পুরো আর্টিকেলের রিডাবিলিটি বাড়াবে */
-    }
+/* --- Final List Gap Fix for Forest Time --- */
 
-    /* List Item Container */
-    .pp ul, .pp ol {
-        margin-top: 15px !important;
-        margin-bottom: 20px !important;
-        padding-left: 35px !important;
-    }
+/* ১. লিস্ট আইটেমের ভেতরের সব প্যারাগ্রাফের মার্জিন ও প্যাডিং জিরো করা */
+.pp ul li p, 
+.pp ol li p,
+.blog-content ul li p,
+.blog-content ol li p {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline !important; /* এটি লেখাকে বুলেটের ঠিক পাশ থেকে শুরু করবে */
+}
 
-    /* Individual List Items */
-    .pp li {
-        margin-bottom: 8px !important; /* আইটেমগুলোর মাঝে হালকা গ্যাপ (ঘিঞ্জি ভাব কমাবে) */
-        position: relative;
-    }
+/* ২. লিস্ট আইটেমগুলোর মাঝখানের গ্যাপ কমানো */
+.pp ul li, 
+.pp ol li,
+.blog-content ul li,
+.blog-content ol li {
+    margin-bottom: 4px !important; /* ২-৪ পিক্সেল গ্যাপ রাখাটাই স্ট্যান্ডার্ড */
+    line-height: 1.6 !important;
+    list-style-position: outside !important;
+}
 
-    /* CKEditor Inside Paragraph Fix */
-    .pp li p {
-        margin: 0 !important;          /* প্যারাগ্রাফের বাড়তি মার্জিন মুছে ফেলা */
-        padding: 0 !important;
-        display: inline;               /* ডটের সাথে একই লাইনে রাখবে */
-        line-height: 1.6 !important;   /* লাইনের উচ্চতা আরামদায়ক করবে */
-    }
-
-    /* Pros and Cons Headings */
-    .pp h3 {
-        margin-top: 20px !important;
-        margin-bottom: 10px !important;
-        font-weight: 700;
-        color: #222;
-    }
+/* ৩. পুরো লিস্টের চারপাশের বাড়তি জায়গা ঠিক করা */
+.pp ul, .pp ol {
+    padding-left: 20px !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
 
 /* বাটন ক্লিক করার সময় ইফেক্ট */
 .btn:active {
@@ -2405,3 +2399,25 @@ img[width][height] {
 }
 
 /* Global Image Optimization for SEO & Core Web Vitals End*/
+
+
+/* Topbar Icon and Text Alignment Fix */
+.topbar-section .list-inline-item a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important; /* আইকন এবং লেখার মাঝখানের দূরত্ব */
+    text-decoration: none !important;
+}
+
+.topbar-section .list-inline-item i {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* নিশ্চিত করতে যে লিস্ট আইটেমগুলো ফ্লেক্স হিসেবে কাজ করছে */
+.topbar-section .list-inline {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from . import views
+from .api import api
 from .views import custom_upload_function
 
 urlpatterns = [
@@ -56,6 +57,9 @@ urlpatterns = [
 
     # ৮. মাস্টার এন্যালিটিক্স ড্যাশবোর্ড
     path('admin-panel/analytics/', views.master_analytics_dashboard, name='full_analytics'),
+
+    # ৯. API রাউটস
+    path('api/v2/', api.urls),
 
     # ৮. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
     path("<slug:slug>/", views.single_post, name="single_post"), 
