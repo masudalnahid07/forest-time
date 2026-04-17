@@ -62,28 +62,48 @@
                         
                         <div class="blog-title-area">
                             <span class="color-green"><a href="{% url 'category' post.category.category_slug %}" title="">{{post.category.category_title}}</a></span>
-                            <h1 style="font-weight: 900; font-size: 38px; margin-top: 10px; margin-bottom: 15px; color: inherit; line-height: 1.3;">{{post.title}}</h1>
                             
-                            <div class="blog-meta big-meta" style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
-                                <small style="color: #999; margin-right: 15px;">{{ post.created_at|date:"d M, Y"}}</small>
-                                <small style="color: #999; margin-right: 15px;">by {{ post.author }}</small>
-                                <small style="color: #999;"><i class="fa fa-eye"></i> {{ post.views_count }} Views</small>
+                            <h1 style="font-weight: 900; font-size: 38px; margin-top: 10px; margin-bottom: 20px; color: inherit; line-height: 1.3; display: flex; align-items: center; flex-wrap: wrap;">
+                                {{post.title}}
+
+                                {# --- Edit Button Start --- #}
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user == post.author.user or request.user.is_superuser %}
+                                        <a href="{% url 'edit_article' post.slug %}" 
+                                           style="background: #ffeb3b; color: #000; font-weight: bold; font-size: 13px; padding: 5px 15px; margin-left: 20px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; box-shadow: 0 0 15px rgba(255, 235, 59, 0.8); border: 1px solid #fbc02d;">
+                                            <i class="fa fa-edit" style="margin-right: 6px;"></i> Edit Article
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                                {# --- Edit Button End --- #}
+                            </h1>
+                            
+                            {# --- Black Button Meta Data Start --- #}
+                            <div class="blog-meta big-meta" style="border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 25px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <span style="background: #222; color: #fff; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center;">
+                                    <i class="fa fa-calendar" style="margin-right: 8px; color: #28a745;"></i> {{ post.created_at|date:"d M, Y"}}
+                                </span>
+
+                                <span style="background: #222; color: #fff; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center;">
+                                    <i class="fa fa-user" style="margin-right: 8px; color: #28a745;"></i> by {{ post.author }}
+                                </span>
+
+                                <span style="background: #222; color: #fff; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center;">
+                                    <i class="fa fa-eye" style="margin-right: 8px; color: #28a745;"></i> {{ post.views_count }} Views
+                                </span>
                             </div>
+                            {# --- Black Button Meta Data End --- #}
 
                             <div style="margin-bottom: 25px;">
                                 {% include "partials/social_share_custom.html" %}
                             </div>
                         </div>
 
-<div class="single-post-media" style="margin-bottom: 25px;">
-    <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
-         alt="{{ post.title }}" 
-         class="img-fluid" 
-         width="800" 
-         height="460" 
-         fetchpriority="high"
-         style="width: 100%; height: auto; border-radius: 4px;">
-</div>
+                        <div class="single-post-media" style="margin-bottom: 25px;">
+                            <img src="{% if post.feature_img %}{{ post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
+                                alt="{{ post.title }}" class="img-fluid" width="800" height="460" fetchpriority="high"
+                                style="width: 100%; height: auto; border-radius: 4px;">
+                        </div>
 
                         <div class="blog-content" style="line-height: 1.9; font-size: 17px; color: #333;">
                             <div class="pp" style="color: inherit; margin-bottom: 30px;">
@@ -118,76 +138,51 @@
                         <div class="custombox authorbox clearfix" style="background: #f9f9f9; padding: 30px; border-radius: 4px; border: 1px solid #eee; margin-bottom: 40px;">
                             <h4 class="small-title" style="margin-bottom: 20px; font-weight: 700; background: #28a745; color: #fff; display: inline-block; padding: 3px 15px; border-radius: 4px;">About Author</h4>
                             <div class="row">
-<div class="col-lg-2 col-md-2">
-    <img src="{% if post.author.author_image %}{{ post.author.author_image.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" 
-         alt="{{ post.author.user.username }}" 
-         class="img-fluid rounded-circle" 
-         width="100" 
-         height="100" 
-         loading="lazy"
-         style="object-fit: cover; aspect-ratio: 1/1;">
-</div>
-                            <div class="col-lg-10 col-md-10">
-                                <h4 style="font-weight: 700; margin-bottom: 10px;">
-                                    {% if post.author.full_name %}
-                                        {{ post.author.full_name }}
-                                    {% else %}
-                                        {{ post.author.user.username }}
-                                    {% endif %}
-                                </h4>
-
-                                <p style="font-size: 15px; color: #666;">
-                                    {{ post.author.bio|default:"No bio available."|safe|linebreaks }}
-                                </p>
-<div class="author-social-links">
-    <a href="{{ post.author.facebook }}" target="_blank" class="social-icon facebook">
-        <i class="fa fa-facebook"></i>
-    </a>
-    <a href="{{ post.author.twitter }}" target="_blank" class="social-icon twitter">
-        <i class="fa fa-twitter"></i>
-    </a>
-    <a href="{{ post.author.youtube }}" target="_blank" class="social-icon youtube">
-        <i class="fa fa-youtube"></i>
-    </a>
-    <a href="{{ post.author.linkedin }}" target="_blank" class="social-icon linkedin">
-        <i class="fa fa-linkedin"></i>
-    </a>
-    <a href="{{ post.author.reddit }}" target="_blank" class="social-icon reddit">
-        <i class="fa fa-reddit"></i>
-    </a>
-    <a href="{{ post.author.website }}" target="_blank" class="social-icon website">
-        <i class="fa fa-globe"></i>
-    </a>
-</div>
-
-                            </div>
+                                <div class="col-lg-2 col-md-2">
+                                    <img src="{% if post.author.author_image %}{{ post.author.author_image.url }}{% else %}{% static 'upload/author.jpg' %}{% endif %}" 
+                                         alt="{{ post.author.user.username }}" class="img-fluid rounded-circle" 
+                                         width="100" height="100" loading="lazy" style="object-fit: cover; aspect-ratio: 1/1;">
+                                </div>
+                                <div class="col-lg-10 col-md-10">
+                                    <h4 style="font-weight: 700; margin-bottom: 10px;">
+                                        {% if post.author.full_name %}{{ post.author.full_name }}{% else %}{{ post.author.user.username }}{% endif %}
+                                    </h4>
+                                    <p style="font-size: 15px; color: #666;">
+                                        {{ post.author.bio|default:"No bio available."|safe|linebreaks }}
+                                    </p>
+                                    <div class="author-social-links">
+                                        <a href="{{ post.author.facebook }}" target="_blank" class="social-icon facebook"><i class="fa fa-facebook"></i></a>
+                                        <a href="{{ post.author.twitter }}" target="_blank" class="social-icon twitter"><i class="fa fa-twitter"></i></a>
+                                        <a href="{{ post.author.youtube }}" target="_blank" class="social-icon youtube"><i class="fa fa-youtube"></i></a>
+                                        <a href="{{ post.author.linkedin }}" target="_blank" class="social-icon linkedin"><i class="fa fa-linkedin"></i></a>
+                                        <a href="{{ post.author.reddit }}" target="_blank" class="social-icon reddit"><i class="fa fa-reddit"></i></a>
+                                        <a href="{{ post.author.website }}" target="_blank" class="social-icon website"><i class="fa fa-globe"></i></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="custombox clearfix">
-    <h4 class="small-title">You May Also Like</h4>
-    <div class="row">
-        {% for r_post in related_posts %}
-        <div class="col-lg-6 col-md-6">
-            <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
-                <a href="{{ r_post.get_absolute_url }}">
-                    <img src="{{ r_post.feature_img.url }}" 
-                         alt="{{ r_post.title }}" 
-                         width="400" 
-                         height="200" 
-                         loading="lazy"
-                         style="width: 100%; height: 100%; object-fit: cover;">
-                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
-                        <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ r_post.title }}</h4>
-                        <small style="font-size: 11px;">
-                            <span style="color: #28a745; font-weight: 600;"><i class="fa fa-folder-open"></i> {{ r_post.category.name }}</span>
-                            | <i class="fa fa-calendar"></i> {{ r_post.created_at|date:"d M, Y" }}
-                        </small>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {% endfor %}
+                            <h4 class="small-title">You May Also Like</h4>
+                            <div class="row">
+                                {% for r_post in related_posts %}
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="related-post-container" style="margin-bottom: 20px; border-radius: 6px; overflow: hidden; position: relative; height: 200px;">
+                                        <a href="{{ r_post.get_absolute_url }}">
+                                            <img src="{% if r_post.feature_img %}{{ r_post.feature_img.url }}{% else %}{% static 'upload/single_post_image.jpg' %}{% endif %}" 
+                                                alt="{{ r_post.title }}" width="400" height="200" loading="lazy"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 15px; color: #fff;">
+                                                <h4 style="color: #fff !important; font-size: 15px; margin-bottom: 5px; font-weight: 700;">{{ r_post.title }}</h4>
+                                                <small style="font-size: 11px;">
+                                                    <span style="color: #28a745; font-weight: 600;"><i class="fa fa-folder-open"></i> {{ r_post.category.category_title }}</span>
+                                                    | <i class="fa fa-calendar"></i> {{ r_post.created_at|date:"d M, Y" }}
+                                                </small>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -198,17 +193,14 @@
                             <div class="comments-list">
                                 {% for comment in comments %}
                                 <div class="media" style="margin-bottom: 25px; display: flex; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">
-                                    
                                     {% if comment.user.author_profile.author_image %}
-                                            <img src="{{ comment.user.author_profile.author_image.url }}"
-                                                alt="{{ comment.user.username }}"
-                                                class="rounded-circle"
-                                                style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd;">
-                                        {% else %}
-                                            <img src="{% static 'upload/user.jpeg' %}" alt="user"
-                                                class="rounded-circle"
-                                                style="width: 50px; height: 50px; margin-right: 15px; object-fit: cover;">
-                                        {% endif %}
+                                        <img src="{{ comment.user.author_profile.author_image.url }}"
+                                            alt="{{ comment.user.username }}" class="rounded-circle"
+                                            style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd; margin-right: 15px;">
+                                    {% else %}
+                                        <img src="{% static 'upload/user.jpeg' %}" alt="user" class="rounded-circle"
+                                            style="width: 50px; height: 50px; margin-right: 15px; object-fit: cover;">
+                                    {% endif %}
 
                                     <div class="media-body">
                                         <h4 class="media-heading user_name" style="font-size: 15px; font-weight: 700; margin-bottom: 5px;">
@@ -220,7 +212,7 @@
                                         <div class="replies" style="margin-left: 40px; border-left: 2px solid #eee; padding-left: 15px;">
                                             {% for reply in comment.replies.all %}
                                                 <div style="margin-bottom: 10px; display: flex; align-items: flex-start;">
-                                                    <div style="margin-bottom: 10px;">
+                                                    <div>
                                                         <h6 style="font-size: 13px; font-weight: 700;">{{ reply.user.username }} <small>{{ reply.created_at|date:"d M, Y" }}</small></h6>
                                                         <p style="font-size: 14px; color: #666;">{{ reply.text }}</p>
                                                     </div>

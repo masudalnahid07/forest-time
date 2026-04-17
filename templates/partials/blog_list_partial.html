@@ -22,35 +22,47 @@
         <div class="blog-meta big-meta col-md-8">
             <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
             
-            <h4 style="color: inherit;">
+            <h4 style="color: inherit; display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
                 <a href="{% url 'single_post' blog.slug %}" title="" style="color: inherit;">{{ blog.title }}</a>
                 
-                {# --- Edit Button --- #}
+                {# --- Edit Button: keeping the signature yellow style --- #}
                 {% if request.user.is_authenticated %}
                     {% if request.user == blog.author.user or request.user.is_superuser %}
-                        <a href="{% url 'edit_article' blog.slug %}" class="btn btn-outline-danger btn-sm" style="font-size: 10px; padding: 2px 8px; margin-left: 10px; border-radius: 4px; vertical-align: middle;">
-                            <i class="fa fa-edit"></i> Edit
+                        <a href="{% url 'edit_article' blog.slug %}" 
+                           style="background: #ffeb3b; color: #000; font-weight: bold; font-size: 10px; padding: 2px 8px; margin-left: 10px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; box-shadow: 0 0 8px rgba(255, 235, 59, 0.6); border: 1px solid #fbc02d;">
+                            <i class="fa fa-edit" style="margin-right: 3px;"></i> Edit
                         </a>
                     {% endif %}
                 {% endif %}
             </h4>
             
             <div id="inline-post-{{ blog.slug }}">
-                <p style="color: inherit;">{{ blog.post_details|striptags|truncatewords:30 }}
+                <p style="color: inherit; margin-bottom: 10px;">
+                    {{ blog.post_details|striptags|truncatewords:25 }}
                     
-                <a class="btn btn-primary btn-sm px-3 py-1" 
-                   style="border-radius:50px; cursor: pointer; color: white;"
-                   hx-get="{% url 'single_post' blog.slug %}"
-                   hx-target="#inline-post-{{ blog.slug }}"
-                   hx-swap="outerHTML">
-                    Read More <i class="fa fa-angle-down"></i>
-                </a>
+                    <a href="{% url 'single_post' blog.slug %}" 
+                       class="btn btn-primary btn-sm px-2 py-0" 
+                       style="border-radius:50px; color: white; text-decoration: none; font-weight: 500; font-size: 11px; line-height: 1.5;">
+                        Read More <i class="fa fa-angle-right"></i>
+                    </a>
                 </p>
             </div>
             
-            <small style="color: #999;"><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
-            <small style="color: #999;"> Posted Time: {{ blog.created_at|date:"d M, Y"}}</small>
-            <small><a href="#" title="" style="color: #28a745;">by {{ blog.author }}</a></small>
+            {# --- Compact Transparent Meta Data Buttons --- #}
+            <div style="display: flex; align-items: center; flex-wrap: nowrap; gap: 6px; margin-top: 10px;">
+                
+                <small style="background: transparent; color: #666; border: 1px solid #311010; padding: 2px 10px; border-radius: 50px; display: inline-flex; align-items: center; font-size: 11px; white-space: nowrap;">
+                    <i class="fa fa-eye" style="margin-right: 5px; color: #0d7526;"></i> {{ blog.views_count }}
+                </small>
+                
+                <small style="background: transparent; color: #666; border: 1px solid #301717; padding: 2px 10px; border-radius: 50px; display: inline-flex; align-items: center; font-size: 11px; white-space: nowrap;">
+                    <i class="fa fa-calendar" style="margin-right: 5px; color: #28a745;"></i> {{ blog.created_at|date:"d M, y" }}
+                </small>
+                
+                <small style="background: transparent; color: #666; border: 1px solid #471b1b; padding: 2px 10px; border-radius: 50px; display: inline-flex; align-items: center; font-size: 11px; white-space: nowrap;">
+                    <i class="fa fa-user" style="margin-right: 5px; color: #28a745;"></i> {{ blog.author }}
+                </small>
+            </div>
         </div>
     </div>
 

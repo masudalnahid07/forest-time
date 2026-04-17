@@ -119,14 +119,7 @@ def single_post(request, slug):
         "comments": comments,
         **get_sidebar_data(),
     }
-
-    # --- ৪. রেসপন্স এবং কাস্টম স্ট্যাটাস লজিক ---
-    if request.headers.get("HX-Request"):
-        response = render(request, "partials/inline_post.html", context)
-    else:
-        response = render(request, "garden-single.html", context)
-    # --- ৪. রেসপন্স এবং কাস্টম স্ট্যাটাস লজিক ---
-    return response
+    return render(request, "garden-single.html", context)
 
 @csrf_protect
 @require_POST

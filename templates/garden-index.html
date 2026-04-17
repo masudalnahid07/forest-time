@@ -36,17 +36,27 @@
                                     </a>
                                 </h4>
 
-                                {# --- Edit Button Fix Start --- #}
-                                {% if request.user.is_authenticated %}
-                                    {% if request.user == blog.author.user or request.user.is_superuser %}
-                                        <div class="edit-button-wrapper" style="margin-bottom: 5px;">
-                                            <a href="{% url 'edit_article' blog.slug %}" style="color: #ffeb3b; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-                                                <i class="fa fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-                                {# --- Edit Button Fix End --- #}
+{# --- Edit Button with Yellow Shadow Box Start --- #}
+{% if request.user.is_authenticated %}
+    {% if request.user == blog.author.user or request.user.is_superuser %}
+        <div class="edit-button-wrapper" style="margin-bottom: 10px;">
+            <a href="{% url 'edit_article' blog.slug %}" 
+               style="background: rgb(106, 156, 144); 
+                      color: #000; 
+                      font-weight: bold; 
+                      font-size: 12px; 
+                      padding: 4px 10px; 
+                      border-radius: 4px; 
+                      text-decoration: none; 
+                      display: inline-block; 
+                      box-shadow: 0 0 10px rgba(211, 194, 44, 0.7); 
+                      border: 1px solid #ada796;">
+                <i class="fa fa-edit"></i> Edit Post
+            </a>
+        </div>
+    {% endif %}
+{% endif %}
+{# --- Edit Button with Yellow Shadow Box End --- #}
 
                                 <small>{{ blog.created_at }}</small>
                                 <small>Posted_By {{ blog.author }}</small>
