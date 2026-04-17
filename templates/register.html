@@ -2,22 +2,22 @@
 {% load static %}
 
 {% block content %}
-<section class="section wb">
+<section class="section wb py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8 col-sm-12">
-                <div class="page-wrapper">
-                    <div class="custombox clearfix" style="padding: 30px; border: 1px solid #eee;">
-                        <h4 class="small-title" style="color: inherit; border-bottom: 2px solid #28a745; display: inline-block; margin-bottom: 25px;">Create an Account</h4>
+                <div class="page-wrapper shadow-sm rounded">
+                    <div class="custombox p-4 p-md-5 border rounded bg-white">
+                        <div class="text-center mb-4">
+                            <h4 class="small-title d-inline-block pb-2 mb-4" style="color: inherit; border-bottom: 3px solid #28a745;">Create an Account</h4>
+                        </div>
                         
-                        {# মেসেজ বা এলার্ট হ্যান্ডেলিং #}
+                        {# মেসেজ বা এলার্ট হ্যান্ডেলিং (BS5 Updated) #}
                         {% if messages %}
                             {% for message in messages %}
-                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm" role="alert">
                                     {{ message }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             {% endfor %}
                         {% endif %}
@@ -26,21 +26,24 @@
                         <form method="POST" class="form-wrapper registration-form">
                             {% csrf_token %}
                             
-                            <div class="form-group custom-reg-fields">
-                                {# এখানে জ্যাঙ্গো ডিফল্ট পাসওয়ার্ড হেল্পার টেক্সটগুলোও স্টাইল করা হয়েছে #}
+                            <div class="custom-reg-fields mb-4">
+                                {# জ্যাঙ্গো ফর্ম এরর এবং ফিল্ড হ্যান্ডেলিং #}
                                 {{ form.as_p }}
                             </div>
                             
-                            <button type="submit" class="btn btn-primary btn-block" style="border-radius: 50px; padding: 10px; font-weight: bold;">
-                                <i class="fa fa-user-plus"></i> Register Now
-                            </button>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                                    <i class="fa fa-user-plus me-1"></i> Register Now
+                                </button>
+                            </div>
                         </form>
                         
                         <div class="mt-4 text-center">
-                            <p style="color: inherit; opacity: 0.8;">Already have an account? 
-                                <a href="{% url 'login' %}" style="color: #28a745; font-weight: bold;">Log in here</a>
+                            <p class="text-secondary">Already have an account? 
+                                <a href="{% url 'login' %}" class="text-success fw-bold text-decoration-none">Log in here</a>
                             </p>
-                            <p><a href="{% url 'home' %}" class="text-muted" style="font-size: 13px;"><i class="fa fa-angle-left"></i> Back to Home</a></p>
+                            <hr class="my-4 opacity-25">
+                            <p><a href="{% url 'home' %}" class="text-muted small text-decoration-none"><i class="fa fa-angle-left"></i> Back to Home</a></p>
                         </div>
                     </div>
                 </div>
@@ -49,52 +52,74 @@
     </div>
 </section>
 
+{% block extra_css %}
 <style>
-    /* ডার্ক মোড এবং রেজিস্ট্রেশন ফিল্ড অপ্টিমাইজেশন */
+    /* রেজিস্ট্রেশন ফিল্ড অপ্টিমাইজেশন */
     .custom-reg-fields p {
-        margin-bottom: 20px;
+        margin-bottom: 1.2rem;
         color: inherit;
     }
 
-    /* পাসওয়ার্ড রিকোয়ারমেন্টস (Help Text) ছোট এবং ক্লিন করার জন্য */
+    .custom-reg-fields label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* জ্যাঙ্গো হেল্প টেক্সট স্টাইলিং */
     .custom-reg-fields .helptext {
         display: block;
         font-size: 11px;
-        color: #888;
+        color: #6c757d;
         margin-top: 5px;
         line-height: 1.4;
     }
 
+    /* ইনপুট ফিল্ড ক্লিন ডিজাইন */
     .custom-reg-fields input {
         width: 100%;
-        padding: 10px 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background: transparent;
-        color: inherit;
-        transition: 0.3s;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background: #f8f9fa;
+        color: #212529;
+        transition: all 0.3s ease-in-out;
     }
 
     .custom-reg-fields input:focus {
         border-color: #28a745;
+        background: #fff;
         outline: none;
-        box-shadow: 0 0 5px rgba(40, 167, 69, 0.2);
-    }
-
-    /* ডার্ক মোড ব্যাকগ্রাউন্ড ফিক্স */
-    body.dark-mode .custombox {
-        background: #1a1a1a !important;
-        border-color: #333 !important;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
     }
 
     /* এরর লিস্ট স্টাইলিং */
     .errorlist {
-        color: #ff4d4d;
+        color: #dc3545;
         list-style: none;
         padding: 0;
-        font-size: 12px;
-        margin-bottom: 5px;
-        font-weight: bold;
+        font-size: 13px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    /* ডার্ক মোড সাপোর্ট */
+    body.dark-mode .custombox {
+        background: #1a1a1a !important;
+        border-color: #333 !important;
+        color: #f8f9fa !important;
+    }
+
+    body.dark-mode .custom-reg-fields input {
+        background: #2c2c2c;
+        border-color: #444;
+        color: #fff;
+    }
+
+    body.dark-mode .custom-reg-fields input:focus {
+        background: #333;
     }
 </style>
+{% endblock extra_css %}
 {% endblock content %}

@@ -2,17 +2,22 @@
 {% load static %}
 
 {% block content %}
-<div class="page-title wb">
+<div class="page-title wb py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                <h2><i class="fa fa-edit bg-green"></i> Edit Article</h2>
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-8 col-sm-12">
+                <h2 class="m-0 text-dark fw-bold">
+                    <i class="fa fa-edit bg-green p-2 rounded-circle text-white me-2" style="font-size: 20px;"></i> 
+                    Edit Article
+                </h2>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                    <li class="breadcrumb-item active">Edit Article</li>
-                </ol>
+            <div class="col-lg-4 col-md-4 d-none d-md-block text-end">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-end mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Article</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
@@ -21,62 +26,105 @@
 <section class="section wb">
     <div class="container">
         <div class="row">
-            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                <div class="page-wrapper">
-                    <div class="blog-content" style="padding: 20px; border: 1px solid #eee; color: inherit;">
-                        <form method="POST" enctype="multipart/form-data">
+            <div class="col-lg-9 col-md-12">
+                <div class="page-wrapper bg-white p-4 p-md-5 rounded shadow-sm border">
+                    <div class="blog-content">
+                        <form method="POST" enctype="multipart/form-data" class="form-wrapper">
                             {% csrf_token %}
                             {{ form.media }}
                             
-                            <div class="form-group custom-form">
+                            <div class="custom-form mb-4">
+                                {# জ্যাঙ্গো ফর্ম ফিল্ডস #}
                                 {{ form.as_p }}
                             </div>
                             
-                            <hr>
-                            <div class="btn-group-action">
-                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Update Article</button>
-                                <a href="{% url 'single_post' post.slug %}" class="btn btn-secondary">Cancel</a>
+                            <hr class="my-4 opacity-25">
+                            
+                            <div class="d-flex gap-2 justify-content-start">
+                                <button type="submit" class="btn btn-success px-4 py-2 fw-bold rounded-pill shadow-sm">
+                                    <i class="fa fa-save me-1"></i> Update Article
+                                </button>
+                                <a href="{% url 'single_post' post.slug %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                                    Cancel
+                                </a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                {% include "partials/sidebar.html" %}
+            <div class="col-lg-3 col-md-12 mt-5 mt-lg-0">
+                <div class="sidebar sidebar-sticky">
+                    {% include "partials/sidebar.html" %}
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+{% block extra_css %}
 <style>
-    /* ডার্ক মোডে ফর্মের টেক্সট কালার ফিক্স */
+    /* ফর্ম এলিমেন্ট স্টাইলিং */
     .custom-form p {
-        color: inherit !important;
-    }
-    
-    .custom-form input, .custom-form select, .custom-form textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background: transparent;
-        color: inherit;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
     }
 
-    /* CKEditor কে রেসপন্সিভ করার জন্য */
+    .custom-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--bs-body-color);
+    }
+
+    .custom-form input[type="text"], 
+    .custom-form input[type="file"],
+    .custom-form select, 
+    .custom-form textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .custom-form input:focus, .custom-form select:focus {
+        border-color: #28a745;
+        background-color: #fff;
+        outline: none;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
+    }
+
+    /* CKEditor ৫ সাপোর্ট */
     .django_ckeditor_5 {
         width: 100% !important;
+        margin-bottom: 20px;
     }
+    
     .ck-editor__editable {
-        min-height: 400px;
-        color: #333 !important; /* এডিটরের ভেতরের টেক্সট সবসময় ডার্ক রাখা ভালো */
+        min-height: 450px !important;
+        border-radius: 0 0 8px 8px !important;
     }
 
-    body.dark-mode .blog-content {
-        background: #1a1a1a !important;
+    /* ডার্ক মোড ফিক্স */
+    body.dark-mode .page-wrapper {
+        background-color: #1a1a1a !important;
         border-color: #333 !important;
     }
+
+    body.dark-mode .custom-form input, 
+    body.dark-mode .custom-form select {
+        background-color: #2c2c2c;
+        border-color: #444;
+        color: #fff;
+    }
+
+    body.dark-mode .page-title.wb {
+        background-color: #1a1a1a !important;
+        border-bottom: 1px solid #333 !important;
+    }
+
+    .bg-green { background-color: #28a745 !important; }
 </style>
+{% endblock extra_css %}
 {% endblock content %}

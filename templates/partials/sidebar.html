@@ -1,15 +1,15 @@
 {% load static %}
 
 <div class="sidebar">
-    <div class="widget">
-        <h2 class="widget-title">Search</h2>
+    <div class="widget mb-5">
+        <h2 class="widget-title border-start border-4 border-success ps-3 fw-bold mb-4">Search</h2>
         <div class="search-container">
-            <form action="{% url 'search' %}" method="GET" id="searchForm" style="width: 100%; display: flex; align-items: center; position: relative;">
+            <form action="{% url 'search' %}" method="GET" id="searchForm" class="position-relative d-flex align-items-center">
                 <input type="text" 
                     name="q" 
                     id="sidebarSearch" 
-                    class="expandable-search" 
-                    placeholder="Instant Search ⚡&#xf002;" 
+                    class="form-control rounded-pill pe-5 shadow-sm" 
+                    placeholder="Instant Search ⚡" 
                     value="{{ query|default:'' }}"
                     required 
                     hx-get="{% url 'search' %}" 
@@ -17,34 +17,38 @@
                     hx-target="#live-search-results"
                     onkeydown="if(event.keyCode === 13 && this.value.trim() === '') return false;"
                     onkeyup="if(this.value.trim() === '') location.reload();">
-                <button type="submit" class="round-text-btn" onclick="if(document.getElementById('sidebarSearch').value.trim() === '') return false;">Search</button>
+                <button type="submit" class="btn btn-success rounded-pill position-absolute end-0 me-1 py-1 px-3 fw-bold btn-sm shadow-sm" style="z-index: 5;" onclick="if(document.getElementById('sidebarSearch').value.trim() === '') return false;">
+                    Search
+                </button>
             </form>
         </div>
     </div>
 
-    <div class="widget">
-        <h2 class="widget-title">Advertising</h2>
-        <div class="banner-spot clearfix">
-            <div class="banner-img">
-                <img src="{% static 'upload/banner_sidebar.jpg' %}" alt="Promotion" class="img-fluid" loading="lazy">
-            </div>
+    <div class="widget mb-5">
+        <h2 class="widget-title border-start border-4 border-success ps-3 fw-bold mb-4">Advertising</h2>
+        <div class="banner-spot rounded overflow-hidden shadow-sm">
+            <img src="{% static 'upload/banner_sidebar.jpg' %}" alt="Promotion" class="img-fluid w-100" loading="lazy">
         </div>
     </div>
 
-    <div class="widget">
-        <h2 class="widget-title">Recent Posts</h2>
+    <div class="widget mb-5">
+        <h2 class="widget-title border-start border-4 border-success ps-3 fw-bold mb-4">Recent Posts</h2>
         <div class="blog-list-widget">
-            <div class="list-group">
+            <div class="list-group list-group-flush bg-transparent">
             {% for recent in recent_posts %}
-                <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action flex-column align-items-start" style="padding: 10px 0; border: none; border-bottom: 1px solid #eee; background: transparent;">
-                    <div class="w-100 justify-content-between">
-                        {% if recent.feature_img %}
-                            <img src="{{ recent.feature_img.url }}" alt="{{ recent.title }}" class="img-fluid float-left" style="width: 55px; height: 55px; object-fit: cover; margin-right: 15px; border-radius: 4px;" loading="lazy">
-                        {% else %}
-                            <img src="{% static 'upload/sidebar_recent_post.jpg' %}" alt="Default" class="img-fluid float-left" style="width: 55px; height: 55px; object-fit: cover; margin-right: 15px; border-radius: 4px;" loading="lazy">
-                        {% endif %}
-                        <h5 class="mb-1" style="font-size: 14px; font-weight: bold; line-height: 1.4; color: inherit;">{{ recent.title|truncatechars:35 }}</h5>
-                        <small style="color: #999;">{{ recent.created_at|date:"d M, Y" }}</small>
+                <a href="{% url 'single_post' recent.slug %}" class="list-group-item list-group-item-action px-0 py-3 bg-transparent border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            {% if recent.feature_img %}
+                                <img src="{{ recent.feature_img.url }}" alt="{{ recent.title }}" class="rounded shadow-sm" style="width: 55px; height: 55px; object-fit: cover;" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'upload/sidebar_recent_post.jpg' %}" alt="Default" class="rounded shadow-sm" style="width: 55px; height: 55px; object-fit: cover;" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1 fw-bold text-dark lh-sm small">{{ recent.title|truncatechars:45 }}</h6>
+                            <small class="text-muted" style="font-size: 11px;"><i class="fa fa-calendar-o me-1"></i> {{ recent.created_at|date:"d M, Y" }}</small>
+                        </div>
                     </div>
                 </a>
             {% endfor %}
@@ -52,15 +56,15 @@
         </div>
     </div>
 
-    <div class="widget">
-        <h2 class="widget-title">Categories</h2>
+    <div class="widget mb-5">
+        <h2 class="widget-title border-start border-4 border-success ps-3 fw-bold mb-4">Categories</h2>
         <div class="link-widget">
-            <ul style="list-style: none; padding: 0;">
+            <ul class="list-group list-group-flush bg-transparent">
                 {% for cat in categories_list %}
-                    <li style="margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px;">
-                        <a href="{% url 'category' cat.category_slug %}" style="color: inherit; text-decoration: none; display: block;">
-                            {{ cat.category_title }} 
-                            <span style="float: right; color: #28a745; font-weight: bold;">({{ cat.post_count }})</span>
+                    <li class="list-group-item bg-transparent border-bottom border-dashed px-0 py-2">
+                        <a href="{% url 'category' cat.category_slug %}" class="d-flex justify-content-between align-items-center text-decoration-none text-secondary small fw-medium">
+                            <span><i class="fa fa-angle-right me-2 text-success"></i> {{ cat.category_title }}</span>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">{{ cat.post_count }}</span>
                         </a>
                     </li>
                 {% endfor %}
@@ -68,3 +72,40 @@
         </div>
     </div>
 </div>
+
+{% block extra_css %}
+<style>
+    /* ড্যাশড বর্ডার এবং হোভার ইফেক্ট */
+    .border-dashed {
+        border-bottom: 1px dashed #dee2e6 !important;
+    }
+    
+    .list-group-item-action:hover h6 {
+        color: #28a745 !important;
+    }
+
+    .widget-title {
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ডার্ক মোড সেটিংস */
+    body.dark-mode .widget-title {
+        color: #ffffff !important;
+    }
+    body.dark-mode .text-dark {
+        color: #f8f9fa !important;
+    }
+    body.dark-mode .list-group-item {
+        border-color: #333 !important;
+    }
+    body.dark-mode .border-dashed {
+        border-color: #444 !important;
+    }
+    body.dark-mode .badge.bg-success-subtle {
+        background-color: rgba(40, 167, 69, 0.2) !important;
+        color: #28a745 !important;
+    }
+</style>
+{% endblock extra_css %}

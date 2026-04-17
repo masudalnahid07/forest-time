@@ -2,17 +2,25 @@
 {% load static %}
 
 {% block content %}
-<div class="page-title wb">
+<div class="page-title wb py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                <h2 style="color: inherit;"><i class="fa fa-search bg-green"></i> Search Results</h2>
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-8 col-sm-12">
+                <h2 class="m-0 text-dark fw-bold">
+                    <i class="fa fa-search bg-green p-2 rounded-circle text-white me-2" style="font-size: 20px;"></i> 
+                    Search Results
+                </h2>
+                {% if query %}
+                    <p class="mt-2 text-secondary">Showing results for: <span class="fw-bold text-success">"{{ query }}"</span></p>
+                {% endif %}
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 hidden-xs-down hidden-sm-down">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                    <li class="breadcrumb-item active">Search</li>
-                </ol>
+            <div class="col-lg-4 col-md-4 d-none d-md-block text-end">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-end mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Search</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
@@ -22,10 +30,10 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="page-wrapper">
+                <div class="page-wrapper p-4 bg-white shadow-sm rounded">
                     
                     <div id="live-search-results">
-                        {# আপনার ফিক্স করা search_results.html পারশিয়ালটি এখানে লোড হবে #}
+                        {# HTMX বা সরাসরি লোড হওয়া রেজাল্ট পারশিয়াল #}
                         {% include "partials/search_results.html" %}
                     </div>
                     
@@ -35,18 +43,26 @@
     </div>
 </section>
 
+{% block extra_css %}
 <style>
-    /* সার্চ পেজের জন্য বিশেষ স্টাইলিং */
+    /* ডার্ক মোড সাপোর্ট (যদি style.css এ না থাকে) */
     body.dark-mode .page-title.wb {
         background-color: #1a1a1a !important;
         border-bottom: 1px solid #333 !important;
     }
     
-    /* রেজাল্ট না থাকলে এলার্ট বক্সের ডার্ক মোড সাপোর্ট */
-    body.dark-mode .alert-info {
-        background-color: #2c3e50;
-        border-color: #34495e;
-        color: #ecf0f1;
+    body.dark-mode .page-wrapper {
+        background-color: #1a1a1a !important;
+        border: 1px solid #333 !important;
+    }
+
+    body.dark-mode h2 {
+        color: #ffffff !important;
+    }
+
+    .bg-green {
+        background-color: #28a745 !important;
     }
 </style>
+{% endblock extra_css %}
 {% endblock content %}

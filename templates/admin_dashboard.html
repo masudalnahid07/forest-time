@@ -1,55 +1,69 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<section class="section wb">
+<section class="section wb py-5">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="custombox" style="background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                    <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: 700;">
-                        <i class="fa fa-shield"></i> Admin Request Dashboard
-                    </h2>
-                    <hr>
+                <div class="page-wrapper p-4 p-md-5 bg-white shadow rounded-4 border-0">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold text-dark">
+                            <i class="fa fa-shield text-success me-2"></i> Admin Request Dashboard
+                        </h2>
+                        <p class="text-muted">Manage and approve user email change requests securely.</p>
+                    </div>
                     
                     <div class="table-responsive">
-                        <table class="table table-hover" style="vertical-align: middle;">
-                            <thead class="thead-dark">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
                                 <tr>
-                                    <th>User</th>
+                                    <th class="ps-3">User</th>
                                     <th>Current Email</th>
                                     <th>Requested New Email</th>
                                     <th>Date</th>
-                                    <th class="text-center">Actions</th>
+                                    <th class="text-center pe-3">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for req in pending_requests %}
-                                <tr id="request-row-{{ req.id }}">
-                                    <td><strong>{{ req.user.username }}</strong></td>
+                                <tr id="request-row-{{ req.id }}" class="border-bottom">
+                                    <td class="ps-3">
+                                        <span class="fw-bold text-dark">{{ req.user.username }}</span>
+                                    </td>
                                     <td>{{ req.user.email }}</td>
-                                    <td class="text-primary font-weight-bold">{{ req.new_email }}</td>
-                                    <td>{{ req.created_at|date:"d M, Y" }}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-success btn-sm" 
-                                                hx-post="{% url 'approve_email_request' req.id %}" 
-                                                hx-target="#request-row-{{ req.id }}" 
-                                                hx-swap="outerHTML"
-                                                hx-confirm="Are you sure to APPROVE this email change?">
-                                            <i class="fa fa-check"></i> Approve
-                                        </button>
-                                        <button class="btn btn-danger btn-sm ml-2" 
-                                                hx-post="{% url 'reject_email_request' req.id %}" 
-                                                hx-target="#request-row-{{ req.id }}" 
-                                                hx-swap="outerHTML"
-                                                hx-confirm="Reject this request?">
-                                            <i class="fa fa-trash"></i> Reject
-                                        </button>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 fs-6 border border-primary-subtle">
+                                            {{ req.new_email }}
+                                        </span>
+                                    </td>
+                                    <td class="small text-secondary">{{ req.created_at|date:"d M, Y" }}</td>
+                                    <td class="text-center pe-3">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" 
+                                                    hx-post="{% url 'approve_email_request' req.id %}" 
+                                                    hx-target="#request-row-{{ req.id }}" 
+                                                    hx-swap="outerHTML"
+                                                    hx-confirm="Are you sure to APPROVE this email change?">
+                                                <i class="fa fa-check me-1"></i> Approve
+                                            </button>
+                                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm" 
+                                                    hx-post="{% url 'reject_email_request' req.id %}" 
+                                                    hx-target="#request-row-{{ req.id }}" 
+                                                    hx-swap="outerHTML"
+                                                    hx-confirm="Reject this request?">
+                                                <i class="fa fa-trash me-1"></i> Reject
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
                                     <td colspan="5" class="text-center py-5">
-                                        <h4 class="text-muted">No pending requests at the moment! 🎉</h4>
+                                        <div class="py-4">
+                                            <i class="fa fa-check-circle text-success mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                                            <h4 class="text-secondary fw-light">No pending requests at the moment!</h4>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -61,4 +75,34 @@
         </div>
     </div>
 </section>
-{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড সাপোর্ট */
+    body.dark-mode .page-wrapper {
+        background-color: #1a1a1a !important;
+        color: #f8f9fa !important;
+    }
+    body.dark-mode .table {
+        color: #f8f9fa !important;
+    }
+    body.dark-mode .table td {
+        border-color: #333 !important;
+    }
+    body.dark-mode .text-dark {
+        color: #ffffff !important;
+    }
+    body.dark-mode .badge.bg-primary-subtle {
+        background-color: rgba(13, 110, 253, 0.2) !important;
+        color: #6ea8fe !important;
+        border-color: rgba(13, 110, 253, 0.3) !important;
+    }
+
+    /* HTMX Loading state */
+    .htmx-request {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+</style>
+{% endblock extra_css %}
+{% endblock content %}

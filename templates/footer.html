@@ -1,84 +1,64 @@
 {% load static %}
-<footer class="footer">
+<footer class="footer py-5">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="footer-legal-links text-center">
-                    <ul class="list-inline mb-0">
+                <div class="footer-legal-links text-center mb-3">
+                    <ul class="list-inline mb-0 d-flex justify-content-center flex-wrap gap-2">
                         <li class="list-inline-item">
-                            <a href="{% url 'home' %}" style="color: inherit; font-weight: 500; text-decoration: none;">Home</a>
-                            {% if all_legal_pages %}
-                                <span class="mx-2" style="opacity: 0.5;">|</span>
-                            {% endif %}
+                            <a href="{% url 'home' %}" class="text-reset text-decoration-none fw-medium">Home</a>
                         </li>
-
                         {% for p in all_legal_pages %}
-                            <li class="list-inline-item">
-                                <a href="{{ p.get_absolute_url }}" style="color: inherit; font-weight: 500; text-decoration: none;">{{ p.title }}</a>
-                                {% if not forloop.last %}
-                                    <span class="mx-2" style="opacity: 0.5;">|</span>
-                                {% endif %}
+                            <li class="list-inline-item d-flex align-items-center">
+                                <span class="me-2 opacity-50">|</span>
+                                <a href="{{ p.get_absolute_url }}" class="text-reset text-decoration-none fw-medium">{{ p.title }}</a>
                             </li>
                         {% endfor %}
                     </ul>
                 </div>
-                <hr style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px; margin-bottom: 30px;">
+                <hr style="border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0;">
             </div>
         </div>
+
         <div class="row">
             <div class="col-lg-8 offset-lg-2">
-                <div class="widget">
-                    <div class="footer-text text-center">
-                        <a href="{% url 'home' %}">
-                            <img src="{% static 'images/version/garden-footer-logo.png' %}" alt="Forest Time Footer Logo" class="img-fluid" loading="lazy">
-                        </a>
-                        
-                        <p style="color: inherit; opacity: 0.8;">Forest Time is a personal blog for handcrafted photography content, gardening tips, and lifestyle stories from independent creatives around the world.</p>
-                        
-                        <div class="social">
-                            <a href="https://facebook.com/yourprofile" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Facebook">
-                                <i class="fa fa-facebook"></i>
-                            </a>               
-                            <a href="https://twitter.com/yourprofile" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Twitter">
-                                <i class="fa fa-twitter"></i>
-                            </a>
-                            <a href="https://instagram.com/yourprofile" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Instagram">
-                                <i class="fa fa-instagram"></i>
-                            </a>
-                            <a href="https://pinterest.com/yourprofile" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Pinterest">
-                                <i class="fa fa-pinterest"></i>
-                            </a>
-                        </div>
+                <div class="footer-text text-center">
+                    <a href="{% url 'home' %}" class="d-block mb-4">
+                        <img src="{% static 'images/version/garden-footer-logo.png' %}" alt="Forest Time Footer Logo" class="img-fluid" style="max-width: 200px;" loading="lazy">
+                    </a>
+                    
+                    <p class="text-secondary mb-4 px-md-5">Forest Time is a personal blog for handcrafted photography content, gardening tips, and lifestyle stories from independent creatives around the world.</p>
+                    
+                    <div class="social d-flex justify-content-center gap-3 mb-5">
+                        <a href="https://facebook.com/yourprofile" target="_blank" class="text-reset" data-bs-toggle="tooltip" title="Facebook"><i class="fa fa-facebook"></i></a>             
+                        <a href="https://twitter.com/yourprofile" target="_blank" class="text-reset" data-bs-toggle="tooltip" title="Twitter"><i class="fa fa-twitter"></i></a>
+                        <a href="https://instagram.com/yourprofile" target="_blank" class="text-reset" data-bs-toggle="tooltip" title="Instagram"><i class="fa fa-instagram"></i></a>
+                        <a href="https://pinterest.com/yourprofile" target="_blank" class="text-reset" data-bs-toggle="tooltip" title="Pinterest"><i class="fa fa-pinterest"></i></a>
+                    </div>
 
-                        <hr class="invis">
-
-                        <div class="newsletter-widget text-center">
-                        <form hx-post="{% url 'subscribe' %}" class="form-inline justify-content-center">
+                    <div class="newsletter-widget mx-auto" style="max-width: 500px;">
+                        <form hx-post="{% url 'subscribe' %}" class="d-flex gap-2 mb-2">
                             {% csrf_token %}
-                            <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                            <input type="email" name="email" class="form-control rounded-0" placeholder="Enter your email address" required>
+                            <button type="submit" class="btn btn-primary rounded-0 px-4">Subscribe</button>
                         </form>
-    
-                        <div id="subscriber-message"></div>
-                        </div>
+                        <div id="subscriber-message" class="small mt-2"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-5">
             <div class="col-md-12 text-center">
-                <br>
-                <div class="copyright" style="color: inherit; opacity: 0.6;">
-                    &copy; {% now "Y" %} **Forest Time**. All rights reserved. 
-                    <br>
-                    Developed by <a href="https://github.com/masudalnahid07" target="_blank" style="color: #28a745; font-weight: bold;">Masud Al Nahid</a>
+                <div class="copyright text-secondary small">
+                    &copy; {% now "Y" %} <span class="fw-bold text-dark">Forest Time</span>. All rights reserved. 
+                    <p class="mt-2">Developed by <a href="https://github.com/masudalnahid07" target="_blank" class="text-success fw-bold text-decoration-none">Masud Al Nahid</a></p>
                 </div>
             </div>
         </div>
     </div>
 </footer>
 
-<button id="smart-scroll-top" title="Scroll to top">
-<i class="fa fa-arrow-up"></i>
+<button id="smart-scroll-top" class="btn btn-success rounded-circle shadow" title="Scroll to top" style="position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; display: none; z-index: 999;">
+    <i class="fa fa-arrow-up"></i>
 </button>

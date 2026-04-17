@@ -1,7 +1,20 @@
 {% load static %}
 
+<script src="{% static 'js/jquery.min.js' %}"></script>
 
-</div><script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/tether.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/custom.js' %}"></script>
+
+<script>
+    /* ৩. HTMX Global CSRF Configuration */
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+
+    /* ৪. ডার্ক মোড টগল লজিক */
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    }
+</script>

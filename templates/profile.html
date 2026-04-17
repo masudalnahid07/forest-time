@@ -6,94 +6,81 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12">
-                <div class="page-wrapper">
+                <div class="page-wrapper p-0 shadow-none bg-transparent border-0">
                     
-                    <div id="profile-card-container">
+                    <div id="profile-card-container" class="mb-4">
                         {% include 'partials/profile_card.html' %}
                     </div>
 
-                    <hr class="invis">
-
-                    <div class="text-center" style="margin-bottom: 20px;">
-                        <button class="btn btn-outline-success" 
+                    <div class="text-center mb-4">
+                        <button class="btn btn-outline-success rounded-pill px-5 fw-bold shadow-sm" 
                                 type="button" 
-                                data-toggle="collapse" 
-                                data-target="#editProfileSection" 
-                                aria-expanded="false" 
-                                style="border-radius: 30px; padding: 10px 30px; font-weight: 700;">
-                            <i class="fa fa-edit"></i> Edit Profile Information
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#editProfileSection" 
+                                aria-expanded="false">
+                            <i class="fa fa-edit me-1"></i> Edit Profile Information
                         </button>
                     </div>
 
                     <div class="collapse" id="editProfileSection">
-                        <div class="custombox clearfix" style="background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #eee; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-                            <h4 class="small-title">Update Your Info</h4>
+                        <div class="custombox p-4 rounded-3 bg-white border shadow-sm">
+                            <h4 class="small-title mb-4 pb-2 border-bottom">Update Your Info</h4>
                             
                             <div class="list-group list-group-flush">
                                 
-                                {# ১. প্রোফাইল ইমেজ সেকশন ফিক্স #}
-                                <div id="author_image-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <div id="author_image-row" class="list-group-item d-flex justify-content-between align-items-center py-3 px-0 border-bottom">
                                     <div class="d-flex align-items-center">
-                                        <strong class="mr-2">Profile Image:</strong> 
+                                        <strong class="me-3">Profile Image:</strong> 
                                         {% if user.author_profile.author_image %}
-                                            <img src="{{ user.author_profile.author_image.url }}" class="rounded-circle ml-2" style="width: 45px; height: 45px; object-fit: cover; border: 2px solid #28a745;">
+                                            <img src="{{ user.author_profile.author_image.url }}" class="rounded-circle border border-2 border-success" style="width: 50px; height: 50px; object-fit: cover;">
                                         {% else %}
-                                            <img src="{% static 'upload/user_defult.jpeg' %}" class="rounded-circle ml-2" style="width: 45px; height: 45px; object-fit: cover; border: 1px solid #ddd;">
+                                            <img src="{% static 'upload/user_defult.jpeg' %}" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
                                         {% endif %}
                                     </div>
-                                    <button hx-get="{% url 'edit_field' 'author_image' %}" hx-target="#author_image-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary" style="border-radius: 20px;">
-                                        <i class="fa fa-camera"></i> Change
+                                    <button hx-get="{% url 'edit_field' 'author_image' %}" hx-target="#author_image-row" hx-swap="outerHTML" class="btn btn-sm btn-light rounded-pill px-3 text-primary border">
+                                        <i class="fa fa-camera me-1"></i> Change
                                     </button>
                                 </div>
 
-                                <div id="username-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div><strong>Username:</strong> <span class="ml-2">{{ user.username }}</span></div>
-                                    <button hx-get="{% url 'edit_field' 'username' %}" hx-target="#username-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary" style="border-radius: 20px;">
-                                        <i class="fa fa-pencil"></i> Edit
+                                <div id="username-row" class="list-group-item d-flex justify-content-between align-items-center py-3 px-0 border-bottom">
+                                    <div><strong class="me-2">Username:</strong> <span class="text-dark">{{ user.username }}</span></div>
+                                    <button hx-get="{% url 'edit_field' 'username' %}" hx-target="#username-row" hx-swap="outerHTML" class="btn btn-sm btn-light rounded-pill px-3 text-primary border">
+                                        <i class="fa fa-pencil me-1"></i> Edit
                                     </button>
                                 </div>
 
-                                <div id="full_name-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div><strong>Full Name:</strong> <span class="ml-2">{{ user.author_profile.full_name|default:"Not set" }}</span></div>
-                                    <button hx-get="{% url 'edit_field' 'full_name' %}" hx-target="#full_name-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary" style="border-radius: 20px;">
-                                        <i class="fa fa-pencil"></i> Edit
+                                <div id="full_name-row" class="list-group-item d-flex justify-content-between align-items-center py-3 px-0 border-bottom">
+                                    <div><strong class="me-2">Full Name:</strong> <span class="text-dark">{{ user.author_profile.full_name|default:"Not set" }}</span></div>
+                                    <button hx-get="{% url 'edit_field' 'full_name' %}" hx-target="#full_name-row" hx-swap="outerHTML" class="btn btn-sm btn-light rounded-pill px-3 text-primary border">
+                                        <i class="fa fa-pencil me-1"></i> Edit
                                     </button>
                                 </div>
 
-                                <div id="bio-row" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div style="flex: 1;"><strong>Bio:</strong> <span class="ml-2 text-muted">{{ user.author_profile.bio|truncatechars:50|default:"No bio added" }}</span></div>
-                                    <button hx-get="{% url 'edit_field' 'bio' %}" hx-target="#bio-row" hx-swap="outerHTML" class="btn btn-sm btn-light text-primary" style="border-radius: 20px;">
-                                        <i class="fa fa-pencil"></i> Edit
+                                <div id="bio-row" class="list-group-item d-flex justify-content-between align-items-center py-3 px-0 border-bottom">
+                                    <div class="pe-3"><strong class="me-2">Bio:</strong> <span class="text-muted small">{{ user.author_profile.bio|truncatechars:50|default:"No bio added" }}</span></div>
+                                    <button hx-get="{% url 'edit_field' 'bio' %}" hx-target="#bio-row" hx-swap="outerHTML" class="btn btn-sm btn-light rounded-pill px-3 text-primary border">
+                                        <i class="fa fa-pencil me-1"></i> Edit
                                     </button>
                                 </div>
 
-                                <div id="email-row" class="list-group-item d-flex justify-content-between align-items-center py-3" style="background-color: rgba(0,0,0,0.02);">
-                                    <div style="flex: 1;">
+                                <div id="email-row" class="list-group-item d-flex justify-content-between align-items-center py-3 px-0 border-0 rounded-bottom">
+                                    <div class="d-flex align-items-center flex-wrap gap-2">
                                         <strong>Email:</strong> 
-                                        <span class="ml-2">{{ user.email }}</span>
-                                        
+                                        <span class="text-dark">{{ user.email }}</span>
                                         {% if pending_email_request %}
-                                            <span class="badge badge-warning ml-2" style="font-size: 10px; font-weight: normal; padding: 3px 8px;">
-                                                <i class="fa fa-hourglass-half"></i> Approval Pending
+                                            <span class="badge bg-warning text-dark fw-normal rounded-pill px-2 py-1" style="font-size: 11px;">
+                                                <i class="fa fa-hourglass-half me-1"></i> Approval Pending
                                             </span>
-
                                             <button hx-post="{% url 'cancel_email_request' %}" 
-                                                    hx-target="#email-row" 
-                                                    hx-swap="outerHTML"
+                                                    hx-target="#email-row" hx-swap="outerHTML"
                                                     hx-confirm="Are you sure you want to cancel this request?"
-                                                    class="btn btn-sm btn-link text-danger" 
-                                                    style="font-size: 11px; text-decoration: none; padding: 0; margin-left: 10px;">
-                                                <i class="fa fa-times-circle"></i> Cancel Request
+                                                    class="btn btn-sm btn-link text-danger p-0 text-decoration-none small">
+                                                Cancel Request
                                             </button>
                                         {% endif %}
                                     </div>
-                                    
-                                    <button hx-get="{% url 'edit_field' 'email' %}" 
-                                            hx-target="#email-row" 
-                                            hx-swap="outerHTML" 
-                                            class="btn btn-sm btn-light text-primary"
-                                            style="border-radius: 20px;">
-                                        <i class="fa fa-pencil"></i> Edit
+                                    <button hx-get="{% url 'edit_field' 'email' %}" hx-target="#email-row" hx-swap="outerHTML" class="btn btn-sm btn-light rounded-pill px-3 text-primary border">
+                                        <i class="fa fa-pencil me-1"></i> Edit
                                     </button>
                                 </div>
 
@@ -110,31 +97,32 @@
     </div>
 </section>
 
+{% block extra_css %}
 <style>
-    /* ডার্ক মোডে ফর্ম এবং কার্ডের ব্যাকগ্রাউন্ড ফিক্স */
+    /* Dark Mode Global Support */
     body.dark-mode .custombox {
         background-color: #1a1a1a !important;
         border-color: #333 !important;
     }
     body.dark-mode .list-group-item {
         background-color: transparent !important;
-        color: #e0e0e0 !important;
+        color: #f8f9fa !important;
         border-color: #333 !important;
     }
-    body.dark-mode .text-muted {
-        color: #aaa !important;
+    body.dark-mode .list-group-item span.text-dark {
+        color: #fff !important;
+    }
+    body.dark-mode .btn-light {
+        background-color: #2c2c2c !important;
+        border-color: #444 !important;
+        color: #0d6efd !important;
     }
     
-    .list-group-item {
-        transition: all 0.3s ease;
-    }
-    .badge-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
+    /* Animation for HTMX loading */
     .htmx-request {
         opacity: .5;
-        cursor: wait;
+        transition: opacity 0.2s ease;
     }
 </style>
+{% endblock extra_css %}
 {% endblock content %}

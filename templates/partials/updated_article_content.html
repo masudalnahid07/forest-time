@@ -1,17 +1,31 @@
-<div class="pp" style="color: inherit; line-height: 1.8;">
+<div class="pp text-dark fs-5" style="line-height: 1.9;">
     {{ post.post_details|safe }}
 </div>
 
 {% if request.user.is_authenticated %}
     {% if request.user.id == post.author.user.id or request.user.is_superuser %}
-    <div style="text-align: right; margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">
-        <a style="cursor: pointer; color: #fff; font-weight: bold; border-radius: 4px; padding: 8px 20px; background-color: #f39c12; border: none; display: inline-block; text-decoration: none;" 
-        class="btn btn-warning" 
-        hx-get="{% url 'htmx_edit_article' post.slug %}" 
-        hx-target="#article-content-wrapper" 
-        hx-swap="innerHTML">
-        <i class="fa fa-edit"></i> Click To Edit
-        </a>
+    <div class="text-end mt-4 pt-3 border-top border-dashed">
+        <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm" 
+                hx-get="{% url 'htmx_edit_article' post.slug %}" 
+                hx-target="#article-content-wrapper" 
+                hx-swap="innerHTML">
+            <i class="fa fa-edit me-1"></i> Click To Edit
+        </button>
     </div>
     {% endif %}
 {% endif %}
+
+{% block extra_css %}
+<style>
+    /* ড্যাশবোর্ড বর্ডারের জন্য কাস্টম ড্যাশড স্টাইল */
+    .border-dashed {
+        border-top: 1px dashed #ccc !important;
+    }
+    
+    /* HTMX রিকোয়েস্ট চলাকালীন বাটনের অবস্থা */
+    .htmx-request {
+        opacity: 0.7;
+        cursor: wait;
+    }
+</style>
+{% endblock extra_css %}

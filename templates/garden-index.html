@@ -3,57 +3,59 @@
 
 {% block content %}
 
-<section class="section first-section">
-    <div class="container">
-        <div class="row">
+<section class="section first-section py-0">
+    <div class="container-fluid">
+        <div class="row gx-2">
             {% for blog in blogs %}
-            <div class="col-lg-4 col-md-4 col-sm-12">
-                <div class="masonry-box post-media">
+            <div class="col-lg-4 col-md-6 col-sm-12 p-1">
+                <div class="masonry-box post-media position-relative overflow-hidden rounded shadow-sm">
                     
                     {% if blog.feature_img %}
                         <img src="{{ blog.feature_img.url }}" 
-                            class="img-fluid" 
-                            alt="{{ blog.clean_alt_text }}" 
-                            {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
+                             class="img-fluid w-100" 
+                             alt="{{ blog.clean_alt_text }}" 
+                             style="height: 350px; object-fit: cover;"
+                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% else %}
                         <img src="{% static 'upload/defult_hero_image.jpg' %}" 
-                            class="img-fluid" 
-                            alt="{{ blog.clean_alt_text }}" 
-                            {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
+                             class="img-fluid w-100" 
+                             alt="Default Image" 
+                             style="height: 350px; object-fit: cover;"
+                             {% if forloop.counter <= 3 %} fetchpriority="high" {% else %} loading="lazy" {% endif %}>
                     {% endif %}
                     
                     <div class="shadoweffect">
-                        <div class="shadow-desc">
+                        <div class="shadow-desc p-3">
                             <div class="blog-meta">
-                                <span class="bg-aqua">
-                                    <a href="{% url 'category' blog.category.category_slug %}">
+                                <span class="badge bg-info mb-2">
+                                    <a href="{% url 'category' blog.category.category_slug %}" class="text-white text-decoration-none small">
                                         {{ blog.category.category_title }}
                                     </a>
                                 </span>
-                                <h4>
-                                    <a href="{% url 'single_post' blog.slug %}">
+                                <h4 class="mb-2">
+                                    <a href="{% url 'single_post' blog.slug %}" class="text-white text-decoration-none fw-bold">
                                         {{ blog.title }}
                                     </a>
                                 </h4>
 
-                                {# --- Edit Button Fix Start --- #}
+                                {# --- Edit Button (Modernized) --- #}
                                 {% if request.user.is_authenticated %}
                                     {% if request.user == blog.author.user or request.user.is_superuser %}
-                                        <div class="edit-button-wrapper" style="margin-bottom: 5px;">
-                                            <a href="{% url 'edit_article' blog.slug %}" style="color: #ffeb3b; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-                                                <i class="fa fa-edit"></i> Edit
+                                        <div class="edit-button-wrapper mb-2">
+                                            <a href="{% url 'edit_article' blog.slug %}" class="badge bg-warning text-dark text-decoration-none">
+                                                <i class="fa fa-edit"></i> Edit Article
                                             </a>
                                         </div>
                                     {% endif %}
                                 {% endif %}
-                                {# --- Edit Button Fix End --- #}
 
-                                <small>{{ blog.created_at }}</small>
-                                <small>Posted_By {{ blog.author }}</small>
+                                <div class="post-meta text-white-50 small">
+                                    <span><i class="fa fa-calendar-o"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+                                    <span class="ms-2"><i class="fa fa-user-o"></i> {{ blog.author }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             {% endfor %}
@@ -61,18 +63,20 @@
     </div>
 </section>
 
-<section class="section wb">
+<section class="section wb mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-9 col-md-12">
                 <div id="live-search-results">
-                    {# এখানে আপনার ব্লগ লিস্ট পারশিয়াল লোড হচ্ছে #}
+                    {# ব্লগ লিস্ট পারশিয়াল লোড হবে #}
                     {% include 'partials/blog_list_partial.html' %}
                 </div>
             </div> 
 
-            <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                {% include "partials/sidebar.html" %}
+            <div class="col-lg-3 col-md-12 mt-5 mt-lg-0">
+                <div class="sidebar sidebar-sticky">
+                    {% include "partials/sidebar.html" %}
+                </div>
             </div> 
         </div> 
     </div>

@@ -1,14 +1,47 @@
 {% autoescape off %}
-Hello {{ user.username }},
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #28a745; }
+        .content { padding: 30px 0; }
+        .button { 
+            display: inline-block; 
+            padding: 12px 30px; 
+            background-color: #28a745; 
+            color: #ffffff !important; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .footer { font-size: 12px; color: #888; text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #28a745; margin: 0;">Forest Time 🌲</h1>
+        </div>
+        <div class="content">
+            <p>Hello <strong>{{ user.username }}</strong>,</p>
+            <p>Thank you for joining <strong>Forest Time</strong>! Your account has been created successfully, but we just need to verify your email address to make sure it's really you.</p>
+            
+            <p style="text-align: center;">
+                <a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" class="button">Activate My Account</a>
+            </p>
 
-Thank you for registering at Forest Time. Your account has been created successfully. 
-
-To complete your registration and activate your account, please click the link below:
-
-http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
-
-If you did not sign up for this account, please ignore this email. No further action is required.
-
-Best regards,
-The Forest Time Team
+            <p style="margin-top: 30px;">If the button above doesn't work, copy and paste the following link into your browser:</p>
+            <p style="font-size: 13px; color: #4f46e5;">http://{{ domain }}{% url 'activate' uidb64=uid token=token %}</p>
+            
+            <p>If you did not sign up for this account, please ignore this email. No further action is required.</p>
+        </div>
+        <div class="footer">
+            &copy; {% now "Y" %} Forest Time Team. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
 {% endautoescape %}

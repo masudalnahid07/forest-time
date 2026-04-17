@@ -1,48 +1,64 @@
 {% load static %}
 
-<div id="profile-card-container"
-    class="custombox authorbox clearfix"
-    style="background: #f9f9f9; padding: 40px; border-radius: 12px; border: 1px solid #eee;">
-    <div class="row align-items-center">
+<div id="profile-card-container" class="custombox authorbox p-4 p-md-5 rounded-4 border shadow-sm" style="background-color: var(--bs-body-bg);">
+    <div class="row align-items-center g-4">
         <div class="col-md-3 text-center">
             <img src="{% if user.author_profile.author_image %}{{ user.author_profile.author_image.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&background=28a745&color=fff&size=128{% endif %}" 
-                class="img-fluid rounded-circle" alt="Avatar"
-                style="width: 140px; height: 140px; object-fit: cover; border: 5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                 class="img-fluid rounded-circle border border-4 border-white shadow" 
+                 alt="Avatar"
+                 style="width: 140px; height: 140px; object-fit: cover;">
         </div>
         
-        <div class="col-md-9">
-            <h2 style="font-weight: 900; margin-bottom: 5px; color: #333;">
+        <div class="col-md-9 text-center text-md-start">
+            <h2 class="fw-bolder mb-1 text-dark">
                 {{ user.author_profile.full_name|default:user.username }}
             </h2>
-            <p style="color: #28a745; font-weight: 600; margin-bottom: 8px;">@{{ user.username }}</p>
+            <p class="text-success fw-bold mb-2">@{{ user.username }}</p>
             
-            <p style="color: #666; font-size: 15px; line-height: 1.6;">
+            <p class="text-secondary small mb-3 lh-base">
                 {{ user.author_profile.bio|default:"No bio added yet." }}
             </p>
             
-            <hr style="margin: 15px 0;">
+            <hr class="my-3 opacity-25">
             
-            <div class="user-stats d-flex align-items-center flex-wrap" style="gap: 10px;">
-                <span class="badge bg-success"
-                    style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
-                    <i class="fa fa-comments"></i> Total Comments: {{ comments_count }}
+            <div class="user-stats d-flex justify-content-center justify-content-md-start align-items-center flex-wrap gap-2">
+                <span class="badge bg-success rounded-pill px-3 py-2 fw-medium shadow-sm">
+                    <i class="fa fa-comments me-1"></i> Comments: {{ comments_count }}
                 </span>
-                <span class="badge bg-info"
-                    style="padding: 8px 15px; color: #fff; font-size: 12px; border-radius: 20px;">
-                    <i class="fa fa-calendar"></i> Joined: {{ user.date_joined|date:"M Y" }}
+                <span class="badge bg-info text-white rounded-pill px-3 py-2 fw-medium shadow-sm">
+                    <i class="fa fa-calendar me-1"></i> Joined: {{ user.date_joined|date:"M Y" }}
                 </span>
             </div>
         </div>
     </div>
 
     {% if messages %}
-        <div id="msg-container" hx-get="{% url 'profile' %}" hx-trigger="load delay:3s" hx-swap="none">
+        <div id="msg-container" hx-get="{% url 'profile' %}" hx-trigger="load delay:3s" hx-swap="none" class="mt-4">
             {% for message in messages %}
-                <div class="alert alert-success mt-3"
-                    style="border-radius: 8px; border: none; background: #d4edda; color: #155724; font-size: 14px;">
-                    <i class="fa fa-check-circle"></i> {{ message }}
+                <div class="alert alert-success d-flex align-items-center border-0 shadow-sm rounded-3 py-2 px-3 m-0" role="alert">
+                    <i class="fa fa-check-circle me-2"></i>
+                    <div class="small fw-bold">{{ message }}</div>
                 </div>
             {% endfor %}
         </div>
     {% endif %}
 </div>
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড সাপোর্ট */
+    body.dark-mode #profile-card-container {
+        background-color: #1a1a1a !important;
+        border-color: #333 !important;
+    }
+    body.dark-mode .text-dark {
+        color: #f8f9fa !important;
+    }
+    body.dark-mode .border-white {
+        border-color: #2c2c2c !important;
+    }
+    body.dark-mode .bg-info {
+        background-color: #0dcaf0 !important;
+    }
+</style>
+{% endblock extra_css %}

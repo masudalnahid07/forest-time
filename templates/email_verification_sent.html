@@ -2,43 +2,70 @@
 {% load static %}
 
 {% block content %}
-<section class="d-flex align-items-center" style="min-height: 80vh; background-color: #ffffff;">
-    <div class="container-fluid px-0">
-        <div class="row w-100 mx-0">
+<section class="d-flex align-items-center py-5" style="min-height: 80vh; background-color: #ffffff;">
+    <div class="container">
+        <div class="row align-items-center">
             
-            <div class="col-lg-6 d-flex flex-column justify-content-center px-5" style="padding-top: 5rem; padding-bottom: 5rem; padding-left: 8% !important;">
+            <div class="col-lg-6 px-lg-5 text-center text-lg-start mb-5 mb-lg-0">
                 
-                <h1 class="font-weight-bold mb-4" style="color: #1a1a1a; font-size: 2.5rem; letter-spacing: -0.5px;">
-                    Great! Now let's verify your <br> email address.
+                <h1 class="display-5 fw-bold mb-4 text-dark" style="letter-spacing: -1px;">
+                    Great! Now let's verify <br class="d-none d-md-block"> your email address.
                 </h1>
                 
-                <p class="mb-4" style="font-size: 1.1rem; color: #4a4a4a; line-height: 1.6;">
-                    To validate your registration, an email has been sent to <br>
-                    <strong style="color: #000;">{{ user_email }}</strong> with a link to verify your account.
+                <p class="lead mb-4 text-secondary">
+                    To validate your registration, an email has been sent to <br class="d-none d-md-block">
+                    <strong class="text-dark">{{ user_email }}</strong> with a link to verify your account.
                 </p>
                 
-                <p class="mb-5" style="font-size: 1rem; color: #666;">
-                    If you have not received the email after a few minutes, please<br>check your spam folder.
-                </p>
+                <div class="alert alert-light border-start border-4 border-warning shadow-sm py-3 mb-5">
+                    <p class="mb-0 small text-muted">
+                        <i class="fa fa-info-circle me-2"></i> If you have not received the email after a few minutes, please <strong>check your spam folder</strong>.
+                    </p>
+                </div>
                 
-                <div class="mt-2">
-                        <a href="{% url 'resend_email' %}?email={{ user_email }}" 
-                        class="d-inline-block mb-4" 
-                        style="color: #4f46e5; font-weight: 600; text-decoration: none; font-size: 1.05rem;">
-                        Resend email
-                        </a>
-                    <br>
-                    <a href="{% url 'register' %}" class="d-inline-block" style="color: #555; text-decoration: underline; font-size: 0.95rem;">
-                        Sign up with another email address
+                <div class="d-flex flex-column gap-3">
+                    <a href="{% url 'resend_email' %}?email={{ user_email }}" 
+                       class="btn btn-primary btn-lg rounded-pill shadow-sm fw-bold px-5 py-3 align-self-lg-start">
+                        <i class="fa fa-paper-plane me-2"></i> Resend Verification Email
+                    </a>
+                    
+                    <a href="{% url 'register' %}" class="text-muted small text-decoration-none mt-2">
+                        <i class="fa fa-envelope-o me-1"></i> Sign up with another email address
                     </a>
                 </div>
             </div>
 
-            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background-color: #fdfcfb; border-left: 1px solid #f0f0f0;">
-                <img src="{% static 'upload/email_illustration.jpeg' %}" alt="Email Verification Illustration" class="img-fluid" style="max-width: 75%;">
+            <div class="col-lg-6 d-none d-lg-flex justify-content-center">
+                <div class="p-5 rounded-circle bg-light bg-opacity-50">
+                    <img src="{% static 'upload/email_illustration.jpeg' %}" alt="Email Verification" class="img-fluid" style="max-width: 80%; transform: rotate(-2deg);">
+                </div>
             </div>
 
         </div>
     </div>
 </section>
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড সাপোর্ট */
+    body.dark-mode section {
+        background-color: #121212 !important;
+    }
+    body.dark-mode h1, body.dark-mode strong {
+        color: #ffffff !important;
+    }
+    body.dark-mode .text-secondary, body.dark-mode .text-muted {
+        color: #b0b0b0 !important;
+    }
+    body.dark-mode .alert-light {
+        background-color: #1a1a1a !important;
+        border-color: #f39c12 !important;
+        color: #fff !important;
+    }
+    body.dark-mode .bg-light {
+        background-color: #1a1a1a !important;
+    }
+</style>
+{% endblock extra_css %}
+
 {% endblock content %}

@@ -1,73 +1,99 @@
 {% load static %}
 
 {% if posts.number == 1 %}
-<div class="blog-list clearfix">
+<div class="blog-list-wrapper">
 {% endif %}
 
     {% for blog in posts %}
-        <div class="blog-box row">
+        <div class="blog-box row align-items-center g-4 mb-5">
             <div class="col-md-4">
-                <div class="post-media">
+                <div class="post-media rounded overflow-hidden shadow-sm">
                     <a href="{% url 'single_post' blog.slug %}" title="{{ blog.title }}">
                         {% if blog.feature_img %}
-                            <img src="{{ blog.feature_img.url }}" alt="{{ blog.focus_keyword|default:blog.title }}" class="img-fluid" loading="lazy">
+                            <img src="{{ blog.feature_img.url }}" alt="{{ blog.focus_keyword|default:blog.title }}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 200px;" loading="lazy">
                         {% else %}
-                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default Image" class="img-fluid" loading="lazy">
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default Image" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 200px;" loading="lazy">
                         {% endif %}
-                        <div class="hovereffect"></div>
+                        <div class="hovereffect rounded"></div>
                     </a>
                 </div>
             </div>
 
             <div class="blog-meta big-meta col-md-8">
-                <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
+                <span class="badge bg-success mb-2">
+                    <a href="{% url 'category' blog.category.category_slug %}" class="text-white text-decoration-none small fw-bold">{{ blog.category.category_title }}</a>
+                </span>
                 
-                <h4 style="color: inherit;"><a href="{% url 'single_post' blog.slug %}" title="" style="color: inherit;">{{ blog.title }}</a></h4>
+                <h4 class="fw-bold mb-3">
+                    <a href="{% url 'single_post' blog.slug %}" class="text-dark text-decoration-none h-hover">{{ blog.title }}</a>
+                </h4>
                 
-                <div style="color: inherit;">
-                    <p>{{ blog.post_details|striptags|truncatewords:30 }}
-                        <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px; color: white;">Read More</a>
-                    </p>
+                <div class="text-secondary small mb-3">
+                    <p class="mb-2 lh-base">{{ blog.post_details|striptags|truncatewords:30 }}</p>
+                    <a href="{% url 'single_post' blog.slug %}" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm fw-bold">Read More</a>
                 </div>
 
-                <small style="color: #999;"><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
-                <small style="color: #999;"> Posted Time: {{ blog.created_at|date:"d M, Y" }}</small>
-                <small><a href="#" title="" style="color: #28a745;">by {{ blog.author.user.username }}</a></small>
+                <div class="post-info d-flex flex-wrap gap-3 small text-muted">
+                    <span><i class="fa fa-eye me-1"></i> {{ blog.views_count }} Views</span>
+                    <span><i class="fa fa-calendar-o me-1"></i> {{ blog.created_at|date:"d M, Y" }}</span>
+                    <span>by <a href="#" class="text-success text-decoration-none fw-bold">{{ blog.author.user.username }}</a></span>
+                </div>
             </div>
         </div>
 
-        <hr class="invis">
+        <hr class="invis my-5">
 
         {% if forloop.counter == 3 and posts.number == 1 %}
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-lg-12">
-                    <div class="banner-spot clearfix">
-                        <div class="banner-img">
-                            <img src="{% static 'upload/banner_05.jpg' %}" alt="Advertisement" class="img-fluid" loading="lazy">
-                        </div>
+                    <div class="banner-spot rounded overflow-hidden shadow-sm">
+                        <img src="{% static 'upload/banner_05.jpg' %}" alt="Advertisement" class="img-fluid w-100" loading="lazy">
                     </div>
                 </div>
             </div>
-            <hr class="invis">
+            <hr class="invis my-5">
         {% endif %}
 
     {% empty %}
         {% if posts.number == 1 %}
-            <div class="alert alert-info">No posts found in this category.</div>
+            <div class="alert alert-light border text-center py-5 shadow-sm">
+                <i class="fa fa-folder-open-o fs-1 text-muted mb-3 d-block"></i>
+                <p class="mb-0">No posts found in this category.</p>
+            </div>
         {% endif %}
     {% endfor %}
 
     {% if posts.has_next %}
     <div hx-get="?page={{ posts.next_page_number }}" 
-        hx-trigger="revealed delay:300ms" 
+        hx-trigger="revealed delay:200ms" 
         hx-swap="outerHTML"
-        class="text-center mt-4 mb-4" 
-        style="padding: 20px;">
-        <i class="fa fa-spinner fa-spin fa-2x" style="color: #28a745;"></i>
-        <p class="text-muted mt-2">Loading more posts...</p>
+        class="text-center py-5 border-top border-light-subtle">
+        <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted small mt-2 fw-bold text-uppercase" style="letter-spacing: 1px;">Fetching more posts...</p>
     </div>
     {% endif %}
 
 {% if posts.number == 1 %}
 </div>
 {% endif %}
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড এবং হোভার সাপোর্ট */
+    body.dark-mode .text-dark, body.dark-mode .h-hover {
+        color: #f8f9fa !important;
+    }
+    .h-hover:hover {
+        color: #28a745 !important;
+    }
+    .blog-list-wrapper {
+        animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock extra_css %}

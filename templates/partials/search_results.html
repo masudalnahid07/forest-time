@@ -1,54 +1,90 @@
 {% load static %}
 
-<div class="page-wrapper">
+<div class="page-wrapper p-0 bg-transparent border-0 shadow-none">
     <div class="blog-list clearfix">
+        
         {% if query %}
-            <div class="alert alert-success mb-4" role="alert" style="background-color: #28a745; color: white; border: none; border-radius: 8px;">
-                <i class="fa fa-search"></i> Search Results for: <strong>"{{ query }}"</strong>
+            <div class="alert bg-success text-white border-0 rounded-3 mb-5 p-3 shadow-sm d-flex align-items-center gap-2" role="alert">
+                <i class="fa fa-search"></i> 
+                <span>Search Results for: <strong class="text-white">"{{ query }}"</strong></span>
             </div>
         {% endif %}
 
         {% for blog in results %}
-        <div class="blog-box row">
+        <div class="blog-box row align-items-center g-4 mb-5">
             <div class="col-md-4">
-                <div class="post-media">
+                <div class="post-media rounded overflow-hidden shadow-sm">
                     <a href="{% url 'single_post' blog.slug %}" title="{{ blog.title }}">
                         {% if blog.feature_img %}
-                            <img src="{{ blog.feature_img.url }}" alt="{{ blog.focus_keyword|default:blog.title }}" class="img-fluid" loading="lazy">
+                            <img src="{{ blog.feature_img.url }}" alt="{{ blog.focus_keyword|default:blog.title }}" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 180px;" loading="lazy">
                         {% else %}
-                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default Image" class="img-fluid" loading="lazy">
+                            <img src="{% static 'upload/garden_sq_01.jpg' %}" alt="Default Image" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 180px;" loading="lazy">
                         {% endif %}
-                        <div class="hovereffect"></div>
+                        <div class="hovereffect rounded"></div>
                     </a>
                 </div>
             </div>
+
             <div class="blog-meta big-meta col-md-8">
-                <span class="bg-aqua"><a href="{% url 'category' blog.category.category_slug %}" title="">{{ blog.category.category_title }}</a></span>
+                <span class="badge bg-success mb-2">
+                    <a href="{% url 'category' blog.category.category_slug %}" class="text-white text-decoration-none small fw-bold">{{ blog.category.category_title }}</a>
+                </span>
                 
-                <h4 style="color: inherit;"><a href="{% url 'single_post' blog.slug %}" title="" style="color: inherit;">{{ blog.title }}</a></h4>
+                <h4 class="fw-bold mb-3">
+                    <a href="{% url 'single_post' blog.slug %}" class="text-dark text-decoration-none h-hover">{{ blog.title }}</a>
+                </h4>
                 
-                <div style="color: inherit;">
-                    <p>{{ blog.post_details|striptags|truncatewords:30 }}
-                        <a href="{% url 'single_post' blog.slug %}" class="btn btn-primary btn-sm px-3 py-1" style="border-radius:50px; color: white;">Read More</a>
-                    </p>
+                <div class="text-secondary small mb-3">
+                    <p class="mb-2">{{ blog.post_details|striptags|truncatewords:30 }}</p>
+                    <a href="{% url 'single_post' blog.slug %}" class="btn btn-success btn-sm rounded-pill px-4 fw-bold shadow-sm">Read More</a>
                 </div>
                 
-                <small style="color: #999;"><i class="fa fa-eye"></i> Total Views: {{ blog.views_count }}</small>
-                <small style="color: #999;"> Posted Time: {{ blog.created_at|date:"d M, Y"}}</small>
-                <small><a href="#" title="" style="color: #28a745;">by {{ blog.author }}</a></small>
+                <div class="post-info d-flex flex-wrap gap-3 small text-muted">
+                    <span><i class="fa fa-eye me-1"></i> {{ blog.views_count }} Views</span>
+                    <span><i class="fa fa-calendar-o me-1"></i> {{ blog.created_at|date:"d M, Y" }}</span>
+                    <span>by <a href="#" class="text-success text-decoration-none fw-bold">{{ blog.author }}</a></span>
+                </div>
             </div>
         </div>
-        <hr class="invis">
+        
+        {% if not forloop.last %}
+            <hr class="invis my-5">
+        {% endif %}
         
         {% empty %}
         <div class="row">
-            <div class="col-md-12 text-center mt-5 mb-5">
-                <i class="fa fa-frown-o fa-4x mb-3" style="color: #ccc;"></i>
-                <h4 class="text-muted">Sorry, no matching posts found for "{{ query }}".</h4>
-                <p>Try searching with different keywords or explore our categories.</p>
-                <a href="{% url 'home' %}" class="btn btn-outline-success mt-3" style="border-radius: 50px;">Go Back Home</a>
+            <div class="col-md-12 text-center py-5 my-5">
+                <div class="p-5 bg-light rounded-4 shadow-sm border border-dashed">
+                    <i class="fa fa-frown-o fa-5x mb-3 text-muted opacity-50"></i>
+                    <h4 class="fw-bold text-dark mt-3">Sorry, no matching posts found!</h4>
+                    <p class="text-secondary">Try searching with different keywords or explore our categories to find what you're looking for.</p>
+                    <a href="{% url 'home' %}" class="btn btn-success btn-lg rounded-pill px-5 mt-3 shadow-sm">
+                        <i class="fa fa-home me-2"></i> Go Back Home
+                    </a>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড এবং হোভার সাপোর্ট */
+    body.dark-mode .text-dark, body.dark-mode .h-hover {
+        color: #f8f9fa !important;
+    }
+    body.dark-mode .bg-light {
+        background-color: #1a1a1a !important;
+    }
+    body.dark-mode .border-dashed {
+        border-color: #333 !important;
+    }
+    .h-hover:hover {
+        color: #28a745 !important;
+    }
+    .border-dashed {
+        border: 2px dashed #dee2e6;
+    }
+</style>
+{% endblock extra_css %}

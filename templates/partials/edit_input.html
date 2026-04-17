@@ -1,74 +1,74 @@
 {% load static %}
 
-<div id="{{ field_name }}-row" class="list-group-item py-3"
-    style="background-color: #fdfdfd; border-left: 4px solid #28a745;">
+<div id="{{ field_name }}-row" class="list-group-item py-3 border-start border-4 border-success shadow-sm rounded-3 mb-2" style="background-color: var(--bs-body-bg);">
     <form hx-post="{% url 'edit_field' field_name %}" 
-        hx-target="#{{ field_name }}-row" 
-        hx-swap="outerHTML" 
-        hx-encoding="multipart/form-data">
+          hx-target="#{{ field_name }}-row" 
+          hx-swap="outerHTML" 
+          hx-encoding="multipart/form-data">
         {% csrf_token %}
-        <div class="d-flex align-items-center justify-content-between">
-            <div style="flex-grow: 1; margin-right: 15px;">
-
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            
+            <div class="flex-grow-1">
                 {% if field_name == 'author_image' %}
-                    <input type="file"
-                        name="author_image"
-                        class="form-control-file"
-                        accept="image/*"
-                        required>
+                    <input type="file" name="author_image" class="form-control rounded-pill" accept="image/*" required>
 
                 {% elif field_name == 'bio' %}
-                    <textarea name="bio"
-                            class="form-control"
-                            rows="2">{{ author_profile.bio }}</textarea>
+                    <textarea name="bio" class="form-control rounded-3" rows="2" placeholder="Write something about yourself...">{{ author_profile.bio }}</textarea>
 
                 {% elif field_name == 'email' %}
-                    <input type="email"
-                        name="email"
-                        class="form-control"
-                        value="{{ user.email }}"
-                        required>
-                    <small class="text-danger" style="font-size: 11px;">
-                        <i class="fa fa-info-circle"></i>
-                        Note: Changing email requires Admin approval.
-                    </small>
+                    <input type="email" name="email" class="form-control rounded-pill" value="{{ user.email }}" required>
+                    <div class="mt-1 d-flex align-items-center text-danger" style="font-size: 11px;">
+                        <i class="fa fa-info-circle me-1"></i>
+                        <span>Note: Changing email requires Admin approval.</span>
+                    </div>
 
                 {% elif field_name == 'username' %}
-                    <input type="text"
-                        name="username"
-                        class="form-control"
-                        value="{{ user.username }}">
+                    <input type="text" name="username" class="form-control rounded-pill" value="{{ user.username }}">
 
                 {% elif field_name == 'full_name' %}
-                    <input type="text"
-                        name="full_name"
-                        class="form-control"
-                        value="{{ author_profile.full_name }}">
+                    <input type="text" name="full_name" class="form-control rounded-pill" value="{{ author_profile.full_name }}">
 
                 {% else %}
-                    <input type="text"
-                        name="{{ field_name }}"
-                        class="form-control"
-                        value="">
+                    <input type="text" name="{{ field_name }}" class="form-control rounded-pill" value="">
                 {% endif %}
-
             </div>
 
-            <div class="btn-group">
-                <button type="submit"
-                        class="btn btn-success btn-sm"
-                        style="border-radius: 20px; padding: 5px 15px; font-weight: bold;">
-                    <i class="fa fa-check"></i> Save
+            <div class="btn-group gap-2">
+                <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm fw-bold">
+                    <i class="fa fa-check me-1"></i> Save
                 </button>
 
-                <button type="button"
-                        class="btn btn-light btn-sm ml-2" 
+                <button type="button" 
+                        class="btn btn-light btn-sm rounded-pill px-4 shadow-sm border fw-medium"
                         hx-get="{% url 'profile' %}"
-                        hx-target="body"
-                        style="border-radius: 20px; padding: 5px 15px; border: 1px solid #ddd;">
-                    <i class="fa fa-times"></i> Cancel
+                        hx-target="body">
+                    <i class="fa fa-times me-1"></i> Cancel
                 </button>
             </div>
         </div>
     </form>
 </div>
+
+{% block extra_css %}
+<style>
+    /* ডার্ক মোড এবং ইনপুট ফোকাস সাপোর্ট */
+    body.dark-mode .list-group-item {
+        background-color: #1a1a1a !important;
+        border-color: #28a745 !important;
+    }
+    body.dark-mode .form-control {
+        background-color: #2c2c2c;
+        border-color: #444;
+        color: #fff;
+    }
+    body.dark-mode .form-control:focus {
+        background-color: #333;
+        border-color: #28a745;
+    }
+    body.dark-mode .btn-light {
+        background-color: #2c2c2c;
+        border-color: #444;
+        color: #0d6efd;
+    }
+</style>
+{% endblock extra_css %}
