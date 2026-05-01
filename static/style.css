@@ -2320,42 +2320,49 @@ body:not(.dark-mode) .section {
 
 
 
-/* ৪. Author bio social links start*/    
+/* ৪. Author bio social links start */
 
-.author-social-links {
-    margin-top: 10px;
+.author-social-circles {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.author-social-links .social-icon {
-    display: inline-flex;
+.social-circle {
+    display: inline-flex; /* align-items কাজ করার জন্য এটি গুরুত্বপূর্ণ */
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    color: #fff;
-    font-size: 16px;
-    margin-right: 8px;          /* আইকনের মাঝে গ্যাপ */
-    text-decoration: none;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 18px;
     transition: all 0.3s ease;
 }
 
-/* আলাদা আলাদা রং */
-.author-social-links .facebook  { background: #3b5998; }
-.author-social-links .twitter   { background: #1da1f2; }
-.author-social-links .youtube   { background: #ff0000; }
-.author-social-links .linkedin  { background: #0077b5; }
-.author-social-links .reddit    { background: #ff4500; }
-.author-social-links .website   { background: #28a745; }
-
-/* hover effect */
-.author-social-links .social-icon:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+.social-circle:hover {
+    transform: translateY(-3px);
     opacity: 0.9;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* ৪. Author bio social links end*/
+/* কালার কোড */
+.fb { background-color: #3b5998; }
+.tw { background-color: #1da1f2; }
+.ln { background-color: #0077b5; }
+.rd { background-color: #ff4500; }
+.wa { background-color: #25d366; }
+.ws { background-color: #28a745; }
+
+/* আইকন সেন্টারিং ফিক্স */
+.social-circle i {
+    line-height: 1;
+    display: block;
+}
+
+/* ৪. Author bio social links end */
 
 
 /* Global Image Optimization for SEO & Core Web Vitals Start*/

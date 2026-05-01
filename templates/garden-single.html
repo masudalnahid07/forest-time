@@ -163,26 +163,37 @@
                                     <p style="font-size: 15px; color: #666;">
                                         {{ post.author.bio|default:"No bio available."|safe|linebreaks }}
                                     </p>
-                                    <div class="author-social-links">
-                                        {% if post.author.facebook %}
-                                            <a href="{{ post.author.facebook }}" target="_blank" class="social-icon facebook"><i class="fa fa-facebook"></i></a>
-                                        {% endif %}
-                                        {% if post.author.twitter %}
-                                            <a href="{{ post.author.twitter }}" target="_blank" class="social-icon twitter"><i class="fa fa-twitter"></i></a>
-                                        {% endif %}
-                                        {% if post.author.youtube %}
-                                            <a href="{{ post.author.youtube }}" target="_blank" class="social-icon youtube"><i class="fa fa-youtube"></i></a>
-                                        {% endif %}
-                                        {% if post.author.linkedin %}
-                                            <a href="{{ post.author.linkedin }}" target="_blank" class="social-icon linkedin"><i class="fa fa-linkedin"></i></a>
-                                        {% endif %}
-                                        {% if post.author.reddit %}
-                                            <a href="{{ post.author.reddit }}" target="_blank" class="social-icon reddit"><i class="fa fa-reddit"></i></a>
-                                        {% endif %}
-                                        {% if post.author.website %}
-                                            <a href="{{ post.author.website }}" target="_blank" class="social-icon website"><i class="fa fa-globe"></i></a>
-                                        {% endif %}
-                                    </div>
+<div class="author-social-circles">
+    <!-- ফেসবুক প্রোফাইল লিঙ্ক -->
+    <a href="https://www.facebook.com/yourusername" target="_blank" class="social-circle fb" title="Facebook">
+        <i class="fa fa-facebook"></i>
+    </a>
+
+    <!-- টুইটার প্রোফাইল লিঙ্ক -->
+    <a href="https://twitter.com/yourusername" target="_blank" class="social-circle tw" title="Twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
+    <!-- লিঙ্কডইন প্রোফাইল লিঙ্ক -->
+    <a href="https://www.linkedin.com/in/yourusername" target="_blank" class="social-circle ln" title="LinkedIn">
+        <i class="fa fa-linkedin"></i>
+    </a>
+
+    <!-- রেডিট প্রোফাইল লিঙ্ক -->
+    <a href="https://www.reddit.com/user/yourusername" target="_blank" class="social-circle rd" title="Reddit">
+        <i class="fa fa-reddit"></i>
+    </a>
+
+    <!-- হোয়াটসঅ্যাপ চ্যাট লিঙ্ক (এখানে আপনার ফোন নম্বর দিন) -->
+    <a href="https://wa.me/88017xxxxxxxx" target="_blank" class="social-circle wa" title="WhatsApp">
+        <i class="fa fa-whatsapp"></i>
+    </a>
+
+    <!-- আপনার ওয়েবসাইট লিঙ্ক -->
+    <a href="https://www.yourwebsite.com" target="_blank" class="social-circle ws" title="Website">
+        <i class="fa fa-link"></i>
+    </a>
+</div>
                                 </div>
                             </div>
                         </div>

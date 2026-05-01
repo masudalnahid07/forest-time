@@ -1,81 +1,70 @@
-import os
-from typing import List, Optional
-from ninja import NinjaAPI, Schema, File
-from ninja.files import UploadedFile
-from ninja.security import APIKeyHeader
-from django.shortcuts import get_object_or_404
-from django.db import IntegrityError
-from .models import BlogPost, Category, Author
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from . import views
+from .api import api
+from .views import custom_upload_function
 
-# ১. সিকিউরিটি চেক (Auth)
-class ApiKeyAuth(APIKeyHeader):
-    param_name = "X-API-KEY"
-    def authenticate(self, request, key):
-        if key == os.getenv("NINJA_API_KEY"):
-            return key
+urlpatterns = [
+    path("", views.home, name="home"),
+    
+    # ১. স্ট্যাটিক পাথ
+    path("upload/", custom_upload_function, name="custom_upload_file"),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
+    path("search/", views.search, name="search"),
+    
+    # ২. ইউজার প্রোফাইল ও এডিট (অবশ্যই single_post এর উপরে থাকতে হবে)
+    path("profile/", views.user_profile, name="profile"), # এই লাইনটি মিসিং ছিল
+    path('profile/edit/<str:field_name>/', views.edit_field, name='edit_field'),
+    
+    # ৩. Registration, Login, Logout এবং Account Activation
+    path("register/", views.register, name="register"),
+    path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(next_page='home'), name="logout"),
+    path("activate/<uidb64>/<token>/", views.activate, name="activate"),
+    path('resend-email/', views.resend_activation_email, name='resend_email'),
+    
+    #Email approval requests
+    path('dashboard/approve/<int:request_id>/', views.approve_email_request,name='approve_email_request'),
+    path('dashboard/reject/<int:request_id>/', views.reject_email_request, name='reject_email_request'),
+    path('profile/cancel-email-request/', views.cancel_email_request, name='cancel_email_request'),
 
-api = NinjaAPI(auth=ApiKeyAuth(), version="v2")
 
-# ২. ডাটা দেখানোর ফরম্যাট (Output Schema)
-class BlogPostSchema(Schema):
-    id: int
-    title: str
-    slug: str
-    post_type: str
-    category_id: Optional[int] = None
-    feature_img: Optional[str] = None
-    status: str
-    views_count: int
+    # ৪. ডাইনামিক পাথ ও অন্যান্য
+    path("author/<str:username>/", views.authors, name="authors"),
+    path("category/<slug:slug>/", views.category, name="category"),
+    path("toggle-status/<int:pk>/", views.toggle_status, name="toggle_status"),
+    path('article/edit/<slug:slug>/', views.edit_article, name='edit_article'),
+    path('404/', views.custom_404_view, name='error_404'),
+    path('live-seo-checker/', views.live_seo_checker, name='live_seo_checker'),
+    path("tag/<slug:slug>/", views.tag_posts, name="tag"),
+    path("reply/<int:comment_id>/", views.post_reply, name="post_reply"),
 
-    @staticmethod
-    def resolve_feature_img(obj):
-        if obj.feature_img:
-            return obj.feature_img.url
-        return None
 
-# ৩. ডাটা পাঠানোর ফরম্যাট (Input Schema)
-class BlogPostIn(Schema):
-    title: str
-    slug: Optional[str] = None
-    post_type: str = 'info'
-    category_id: Optional[int] = None
-    author_id: Optional[int] = None
-    post_details: str
-    status: str = 'draft'
-    focus_keyword: Optional[str] = None
-    meta_description: Optional[str] = None
+    # ৫. এডমিন ড্যাশবোর্ড
+    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
 
-# ৪. এন্ডপয়েন্টসমূহ (Endpoints)
+    #all auth urls
+    path('accounts/', include('allauth.urls')),
 
-# সব পোস্ট দেখা
-@api.get("/posts", response=List[BlogPostSchema])
-def list_posts(request):
-    return BlogPost.objects.all().order_by('-created_at')
 
-# নতুন পোস্ট তৈরি (টেক্সট ডাটা)
-@api.post("/create-posts")
-def create_post(request, data: BlogPostIn):
-    try:
-        category = Category.objects.filter(id=data.category_id).first() if data.category_id else None
-        author = Author.objects.filter(id=data.author_id).first() if data.author_id else None
-        
-        post_data = data.dict()
-        post_data.pop('category_id', None)
-        post_data.pop('author_id', None)
-        
-        post = BlogPost.objects.create(
-            **post_data, 
-            category=category, 
-            author=author
-        )
-        return {"id": post.id, "message": "Success"}
-    except IntegrityError:
-        return api.create_response(request, {"message": "Title/Slug already exists!"}, status=400)
+    # ৬. স্ট্যাটিক পেইজ (এটি অবশ্যই single_post এর উপরে থাকতে হবে)
+    path('info/<slug:slug>/', views.static_page_detail, name='static_page'),
 
-# ফিচার ইমেজ আপলোড (আলাদা ধাপ)
-@api.post("/posts/{post_id}/upload-image")
-def upload_post_image(request, post_id: int, file: UploadedFile = File(...)):
-    post = get_object_or_404(BlogPost, id=post_id)
-    post.feature_img = file
-    post.save()
-    return {"message": "Image uploaded successfully", "image_url": post.feature_img.url}
+    # ৭. সাবস্ক্রাইবারদের জন্য ইমেইল সাবস্ক্রিপশন পাথ
+    path('subscribe/', views.subscribe, name='subscribe'),
+
+    # ৮. মাস্টার এন্যালিটিক্স ড্যাশবোর্ড
+    path('admin-panel/analytics/', views.master_analytics_dashboard, name='full_analytics'),
+
+    # ৯. API রাউটস
+    path('api/v2/', api.urls),
+
+    # ৮. ক্যাচ-অল ডাইনামিক পাথ (সবার শেষে থাকবে)
+    path("<slug:slug>/", views.single_post, name="single_post"), 
+
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
